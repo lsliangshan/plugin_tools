@@ -7,6 +7,7 @@
     "activeTab",
     "tabs",
     "declarativeContent",
+    "file:///*",
     "https://secure.flickr.com/",
     "https://talkapi.dei2.com/",
     "http://*/*",
@@ -20,15 +21,11 @@
     {
       "matches": ["<all_urls>"],
       // 多个JS按顺序注入
-      "js": ["content-script.js"],
+      "js": ["js/jquery.json.js", "js/json2.js", "js/jsonlint.js", "content-script.js"],
       // JS的注入可以随便一点，但是CSS的注意就要千万小心了，因为一不小心就可能影响全局样式
       "css": [],
       // 代码注入的时间，可选值： "document_start", "document_end", or "document_idle"，最后一个表示页面空闲时，默认document_idle
       "run_at": "document_start"
     }
-  ],
-  "background": {
-    "scripts": ["popup.js"],
-    "persistent": false
-  }
+  ]
 }
