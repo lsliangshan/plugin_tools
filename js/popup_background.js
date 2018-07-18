@@ -33,3 +33,5 @@
 /**
  * Created by liangshan on 2018/7/18.
  */
+
+document.body.style.backgroundColor = 'lightgray';
