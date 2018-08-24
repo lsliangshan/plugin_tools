@@ -31,11 +31,52 @@
  **                                              不见满街漂亮妹，哪个归得程序员？
  */
 /**
- * Created by liangshan on 2018/7/18.
+ * Created by liangshan on 2018/7/24.
  */
+const StorageUtil = (function () {
+  const _getItem = function (name) {
+    return new Promise(resolve => {
+      let _value = localStorage.getItem(name) || ''
+      try {
+        _value = JSON.parse(_value)
+      } catch (err) {
+      }
+      resolve(_value)
+    })
+  }
 
-document.body.style.backgroundColor = 'lightgray';
+  const _setItem = function (name, value) {
+    return new Promise(resolve => {
+      let _value = value
+      if (typeof value !== 'string') {
+        _value = JSON.stringify(value)
+      }
+      localStorage.setItem(name, _value)
+      resolve(true)
+    })
+  }
 
-console.log(chrome.extension.getURL('popup.html'));
+  const _removeItem = function (name) {
+    return new Promise(resolve => {
+      if (localStorage.hasOwnProperty(name)) {
+        localStorage.removeItem(name)
+      }
+      resolve(true)
+    })
+  }
 
-location.href = chrome.extension.getURL('popup.html')
+  const _clear = function () {
+    return new Promise(resolve => {
+      localStorage.clear()
+      resolve(true)
+    })
+  }
+  return {
+    getItem: _getItem,
+    setItem: _setItem,
+    removeItem: _removeItem,
+    clear: _clear
+  }
+})()
+
+export default StorageUtil

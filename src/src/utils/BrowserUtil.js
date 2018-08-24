@@ -31,11 +31,24 @@
  **                                              不见满街漂亮妹，哪个归得程序员？
  */
 /**
- * Created by liangshan on 2018/7/18.
+ * Created by liangshan on 2018/7/24.
  */
+const BrowserUtil = (function () {
+  const _isPc = function () {
+    let sUserAgent = navigator.userAgent.toLowerCase()
+    let bIsIpad = sUserAgent.match(/ipad/i)
+    let bIsIphoneOs = sUserAgent.match(/iphone os/i)
+    let bIsMidp = sUserAgent.match(/midp/i)
+    let bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i)
+    let bIsUc = sUserAgent.match(/ucweb/i)
+    let bIsAndroid = sUserAgent.match(/android/i)
+    let bIsCE = sUserAgent.match(/windows ce/i)
+    let bIsWM = sUserAgent.match(/windows mobile/i)
+    return !(bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM)
+  }
+  return {
+    isPc: _isPc
+  }
+})()
 
-document.body.style.backgroundColor = 'lightgray';
-
-console.log(chrome.extension.getURL('popup.html'));
-
-location.href = chrome.extension.getURL('popup.html')
+export default BrowserUtil

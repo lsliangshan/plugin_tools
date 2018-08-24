@@ -31,11 +31,22 @@
  **                                              不见满街漂亮妹，哪个归得程序员？
  */
 /**
- * Created by liangshan on 2018/7/18.
+ * Created by liangshan on 2018/4/16.
  */
+import Vue from 'vue'
+import marked from 'marked'
 
-document.body.style.backgroundColor = 'lightgray';
-
-console.log(chrome.extension.getURL('popup.html'));
-
-location.href = chrome.extension.getURL('popup.html')
+Vue.directive('md', {
+  componentUpdated (el, binding, vnode) {
+    let _len = (binding.arg ? Number(binding.arg) : 0)
+    let _val = binding.value ? binding.value : ''
+    if (_len > 0) {
+      if (binding.value && binding.value.length > _len) {
+        _val = binding.value.replace(binding.value.substring(_len), '...')
+      }
+    }
+    el.innerHTML = marked(_val, {
+      smartLists: true
+    })
+  }
+})

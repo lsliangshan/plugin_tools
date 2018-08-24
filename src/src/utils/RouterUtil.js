@@ -31,11 +31,25 @@
  **                                              不见满街漂亮妹，哪个归得程序员？
  */
 /**
- * Created by liangshan on 2018/7/18.
+ * Created by liangshan on 2018/7/24.
  */
+const RouterUtil = (function () {
+  const _title = function (title) {
+    document.title = (title || '智愚')
+  }
+  const _formatUrlParams = function (args) {
+    let s = []
+    for (let k in args) {
+      if (args.hasOwnProperty(k)) {
+        s.push(k + '=' + args[k])
+      }
+    }
+    return s.join('&')
+  }
+  return {
+    title: _title,
+    formatUrlParams: _formatUrlParams
+  }
+})()
 
-document.body.style.backgroundColor = 'lightgray';
-
-console.log(chrome.extension.getURL('popup.html'));
-
-location.href = chrome.extension.getURL('popup.html')
+export default RouterUtil

@@ -1,7 +1,7 @@
 /***
  **                                                          _ooOoo_
  **                                                         o8888888o
- **                                                         88" . "88
+ **                                                         88' . '88
  **                                                         (| -_- |)
  **                                                          O\ = /O
  **                                                      ____/`---'\____
@@ -12,7 +12,7 @@
  **                                                   | \_| ''\---/'' | |
  **                                                    \ .-\__ `-` ___/-. /
  **                                                 ___`. .' /--.--\ `. . __
- **                                              ."" '< `.___\_<|>_/___.' >'"".
+ **                                              .'' '< `.___\_<|>_/___.' >'''.
  **                                             | | : `- \`.;`\ _ /`;.`/ - ` : | |
  **                                               \ \ `-. \_ __\ /__ _/ .-` / /
  **                                       ======`-.____`-.___\_____/___.-`____.-'======
@@ -31,11 +31,17 @@
  **                                              不见满街漂亮妹，哪个归得程序员？
  */
 /**
- * Created by liangshan on 2018/7/18.
+ * Created by liangshan on 2017/7/13.
  */
+function S4 () {
+  return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+}
+function getUUID () {
+  return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4())
+}
 
-document.body.style.backgroundColor = 'lightgray';
-
-console.log(chrome.extension.getURL('popup.html'));
-
-location.href = chrome.extension.getURL('popup.html')
+export const getters = {
+  UUID: (state, getters) => {
+    return getUUID()
+  }
+}

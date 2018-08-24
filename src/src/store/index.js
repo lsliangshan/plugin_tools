@@ -31,11 +31,74 @@
  **                                              不见满街漂亮妹，哪个归得程序员？
  */
 /**
- * Created by liangshan on 2018/7/18.
+ * Created by liangshan on 2017/7/13.
  */
+import Vue from 'vue'
+import Vuex from 'vuex'
+import * as actions from './actions'
+import * as mutations from './mutations'
+import * as getters from './getters'
 
-document.body.style.backgroundColor = 'lightgray';
+Vue.use(Vuex)
 
-console.log(chrome.extension.getURL('popup.html'));
+// const PROTOCOL = location.protocol
+// let allPath = ['/register', '/login']
+// let allPath = ['Register', 'Login']
+const store = new Vuex.Store({
+  actions: actions.actions,
+  mutations: mutations.mutations,
+  getters: getters.getters,
+  state: {
+    theme: 'dark',
+    logo: '/html/static/images/logo02.PNG',
+    themeColor: 'rgb(79, 192, 141)',
+    bodyStyles: {},
+    events: {
+      bodyClick: 'body-click',
+      windowResize: 'window-resize'
+    },
+    tools: [
+      {
+        label: 'JSON',
+        pathName: 'ToolJson'
+      },
+      {
+        label: 'URL',
+        pathName: 'ToolUrl'
+      },
+      {
+        label: '二维码',
+        pathName: 'ToolQRCode'
+      }
+    ],
+    assets: {
+    },
+    requestInfo: {
+    },
+    loginInfo: {
+    },
+    allRoles: [
+      {
+        value: 1,
+        name: '超级管理员'
+      },
+      {
+        value: 2,
+        name: '管理员'
+      },
+      {
+        value: 3,
+        name: '开发者'
+      },
+      {
+        value: 4,
+        name: '普通用户'
+      }
+    ],
+    needlessLogin: ['Login', 'Register', 'Forget', 'ActivityPreview', 'ArticleList', 'ArticleView'] // 不需要登录的页面
+  }
+})
 
-location.href = chrome.extension.getURL('popup.html')
+export default store
+
+global.store = store
