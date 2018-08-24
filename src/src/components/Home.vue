@@ -1,6 +1,7 @@
 <template>
   <div class="home_container" :style="homeStyles">
     <headers></headers>
+    <main-content></main-content>
   </div>
 </template>
 <style scoped>
@@ -25,7 +26,8 @@ export default {
     }
   },
   components: {
-    Headers: () => import('./parts/Headers.vue')
+    Headers: () => import('./parts/Headers.vue'),
+    MainContent: () => import('./parts/MainContent.vue')
   }
 }
 </script>

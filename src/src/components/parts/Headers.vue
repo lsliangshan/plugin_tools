@@ -23,7 +23,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 6px 6px -3px rgba(0,0,0,.2), 0 10px 14px 1px rgba(0,0,0,.14), 0 4px 18px 3px rgba(0,0,0,.12);
+    box-shadow: 0 1px 1px -3px rgba(0,0,0,.2), 0 1px 1px 1px rgba(0,0,0,.14), 0 1px 18px 1px rgba(0,0,0,.12);
   }
   .app_logo_container {
     max-height: 54px;

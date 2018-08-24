@@ -11,7 +11,39 @@ export const contentRouter = {
   },
   components: {
     HomeRouter: () => import('../components/Home.vue')
-  }
+  },
+  children: [
+    {
+      path: '/json',
+      name: 'ToolJson',
+      meta: {
+        title: 'JSON格式化'
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Json.vue')
+      }
+    },
+    {
+      path: '/url',
+      name: 'ToolUrl',
+      meta: {
+        title: 'URL参数格式化'
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Url.vue')
+      }
+    },
+    {
+      path: '/qrcode',
+      name: 'ToolQRCode',
+      meta: {
+        title: '二维码生成'
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Qrcode.vue')
+      }
+    }
+  ]
 }
 
 export default new Router({

@@ -1,6 +1,6 @@
 <template>
   <div class="top_menu_container">
-    <Menu mode="horizontal" theme="light" :active-name="tools[0].pathName">
+    <Menu mode="horizontal" theme="light" :active-name="activeTool" @on-select="useTool">
       <MenuItem v-for="(t, index) in tools" :key="index" :name="t.pathName">
         {{t.label}}
       </MenuItem>
@@ -31,11 +31,20 @@ export default {
   name: 'TopMenu',
   data () {
     return {
+      activeTool: ''
     }
   },
   computed: {
     tools () {
       return this.$store.state.tools
+    }
+  },
+  methods: {
+    useTool (name) {
+      this.activeTool = name
+      this.$router.replace({
+        name: name
+      })
     }
   },
   components: {}
