@@ -8,6 +8,7 @@ import store from './store'
 import * as filters from './filters'
 import mixins from './mixins'
 import iView from 'iview'
+import '../static/css/font-awesome/css/font-awesome.min.css'
 import 'iview/dist/styles/iview.css'
 
 sync(store, router)

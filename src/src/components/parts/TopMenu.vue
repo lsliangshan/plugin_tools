@@ -31,17 +31,18 @@ export default {
   name: 'TopMenu',
   data () {
     return {
-      activeTool: ''
     }
   },
   computed: {
     tools () {
       return this.$store.state.tools
+    },
+    activeTool () {
+      return this.$route.name || ''
     }
   },
   methods: {
     useTool (name) {
-      this.activeTool = name
       this.$router.replace({
         name: name
       })

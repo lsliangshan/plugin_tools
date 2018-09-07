@@ -53,4 +53,14 @@ export default {
     /*-webkit-user-select: none;*/
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   }
+  .unformat_wrapper textarea {
+    outline: none;
+    width: 100%;
+    height: 100%;
+    resize: none;
+  }
+  .unformat_wrapper .ivu-input:hover, .unformat_wrapper .ivu-input:focus {
+    border-color: #dcdee2;
+    box-shadow: none;
+  }
 </style>
