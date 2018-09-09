@@ -1,7 +1,12 @@
 <template>
   <div class="home_container" :style="homeStyles">
-    <headers></headers>
+    <div v-if="$route.name === 'Home'" class="home" :style="homeStyles">
+      <greeting></greeting>
+    </div>
+    <div key="otherRouter" v-else>
+      <headers></headers>
     <main-content></main-content>
+    </div>  
   </div>
 </template>
 <style scoped>
@@ -9,6 +14,13 @@
     width: 100%;
     height: 100%;
     background-color: #d5d5d5;
+  }
+  .home {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>
 <script>
@@ -26,6 +38,7 @@ export default {
     }
   },
   components: {
+    Greeting: () => import('./Greeting.vue'),
     Headers: () => import('./parts/Headers.vue'),
     MainContent: () => import('./parts/MainContent.vue')
   }

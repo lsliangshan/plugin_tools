@@ -50,51 +50,39 @@ const store = new Vuex.Store({
   getters: getters.getters,
   state: {
     theme: 'dark',
-    logo: '/html/static/images/logo02.PNG',
+    logo: '/html/static/images/new_logo.png',
     themeColor: 'rgb(79, 192, 141)',
     bodyStyles: {},
     events: {
       bodyClick: 'body-click',
       windowResize: 'window-resize'
     },
-    tools: [
-      {
-        label: 'JSON',
-        pathName: 'ToolJson'
-      },
-      {
-        label: 'URL',
-        pathName: 'ToolUrl'
-      },
-      {
-        label: '二维码',
-        pathName: 'ToolQRCode'
-      }
-    ],
-    assets: {
-    },
-    requestInfo: {
-    },
-    loginInfo: {
-    },
-    allRoles: [
-      {
-        value: 1,
-        name: '超级管理员'
-      },
-      {
-        value: 2,
-        name: '管理员'
-      },
-      {
-        value: 3,
-        name: '开发者'
-      },
-      {
-        value: 4,
-        name: '普通用户'
-      }
-    ],
+    tools: [{
+      label: 'JSON',
+      pathName: 'ToolJson'
+    }, {
+      label: 'URL',
+      pathName: 'ToolUrl'
+    }, {
+      label: '二维码',
+      pathName: 'ToolQRCode'
+    }],
+    assets: {},
+    requestInfo: {},
+    loginInfo: {},
+    allRoles: [{
+      value: 1,
+      name: '超级管理员'
+    }, {
+      value: 2,
+      name: '管理员'
+    }, {
+      value: 3,
+      name: '开发者'
+    }, {
+      value: 4,
+      name: '普通用户'
+    }],
     needlessLogin: ['Login', 'Register', 'Forget', 'ActivityPreview', 'ArticleList', 'ArticleView'] // 不需要登录的页面
   }
 })
