@@ -1,2 +1,0 @@
-webpackJsonp([1],{mBO0:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var o={render:function(){var t=this.$createElement;return(this._self._c||t)("div",{staticClass:"tool_container"},[this._v("\n  Tool Url\n")])},staticRenderFns:[]};var a=n("VU/8")({name:"ToolUrl",data:function(){return{}},computed:{},components:{}},o,!1,function(t){n("o7Qg")},"data-v-7ad6ae20",null);e.default=a.exports},o7Qg:function(t,e){}});
-//# sourceMappingURL=1.56aa480131ef962298eb.js.map
