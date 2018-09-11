@@ -1,6 +1,6 @@
 <template>
   <div class="tool_container" :style="containerstyles">
-    <Input v-model="urlStr" type="textarea" :rows="4" class="no-resize" placeholder="请输入url或JSON格式参数" @on-keydown="input" @on-change="change"/>
+    <Input v-model="urlStr" type="textarea" :rows="4" autofocus class="no-resize" placeholder="请输入url或JSON格式参数" @on-keydown="input" @on-change="change"/>
     <div class="result_container" :style="resultContainerStyles">
       <span class="result_placeholder" v-if="!formattedStr">URL参数解析</span>
       <div v-html="formattedStr" v-else></div>

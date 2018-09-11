@@ -3,7 +3,7 @@
     <div class="tool_container_wrapper">
       <div class="qrcode_wrapper">
         <div class="qrcode_input_wrapper">
-          <Input class="no-resize textarea100p" v-model="qrcodeStr" type="textarea" placeholder="请输入文字内容" @on-keydown="input" @on-change="change"/>
+          <Input class="no-resize textarea100p" v-model="qrcodeStr" autofocus type="textarea" placeholder="请输入文字内容" @on-keydown="input" @on-change="change"/>
         </div>
         <div class="qrcode_result_wrapper">
           <div class="popup_no_qrcode" key="noqrcode" v-if="!qrcodeStr">
@@ -14,7 +14,7 @@
           </div>
           <div class="qrcode_download_btn_container">
             <div class="qrcode_download_btn">
-              <Button type="primary" size="large" :disabled="!qrcodeStr" long @click="downloadFile">下载</Button>
+              <Button type="success" size="large" :disabled="!qrcodeStr" long @click="downloadFile">下载</Button>
             </div>
           </div>          
         </div>
@@ -24,14 +24,14 @@
 </template>
 <style scoped>
   .tool_container {
-    width: 100%;  
+    min-width: 1030px;
+    background-color: #F5F5F5;
   }
   .tool_container_wrapper {
     min-width: 1030px;
     height: 410px;
     padding: 30px 15px;
-    box-sizing: border-box;
-    background-color: #F5F5F5;
+    box-sizing: border-box;    
   }
   .qrcode_wrapper {
     width: 1000px;
@@ -111,7 +111,6 @@ export default {
     initQrcode () {
       const that = this      
       if (this.qrcodeStr) {
-        console.log('>>>>', this.qrcodeStr)
         QRCode.toCanvas(document.getElementById('qrcodeWrapperRef'), this.qrcodeStr, {
           errorCorrectionLevel: 'H',
           width: 300,
@@ -140,12 +139,10 @@ export default {
     },
     downloadFile(){
         let content = document.getElementById('qrcodeWrapperRef').toDataURL('image/png')
-        let aLink = document.createElement('a');
+        let aLink = document.createElement('a')
         
-        aLink.download = 'qrcode.png';
-        aLink.href = content;
-
-        console.log(aLink.href)
+        aLink.download = 'qrcode.png'
+        aLink.href = content
   
         aLink.click()
     }

@@ -2,7 +2,7 @@
   <div class="tool_container" :style="toolContainerStyles">
     <Split v-model="split" min="100">
         <div slot="left" class="demo-split-pane">
-            <Input v-model="jsonStr" type="textarea" class="unformat_wrapper" placeholder="请输入JSON字符串" />
+            <Input v-model="jsonStr" type="textarea" autofocus class="unformat_wrapper" placeholder="请输入JSON字符串" />
         </div>
         <div slot="trigger" class="trigger_container">
           <div class="trigger_wrapper">
