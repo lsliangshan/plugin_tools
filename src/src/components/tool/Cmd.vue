@@ -15,7 +15,7 @@
 				</div>
 				<div class="window_cmd_input">
 					<span>{{cmdPrefix}}</span>
-					<Input v-model="currentCommand" type="text" size="large" @on-enter="sendCommand"/>
+					<Input v-model="currentCommand" type="text" size="large" @on-enter="sendCommand" @on-keyup="keyupHandler"/>
 				</div>
 			</div>
 		</div>
@@ -159,7 +159,8 @@
 				allRoutePath: [],
 				historyConsoles: [
 				],
-				historyCommands: []
+				historyCommands: [],
+				activeHistoryIndex: -1
 			}
 		},
 		mounted () {
@@ -169,6 +170,17 @@
 		methods: {
 			toggleCmdContainer () {
 				this.shown = !this.shown
+			},
+			keyupHandler (e) {
+				if (e.keyCode === 38) {
+					// 上一条
+					this.activeHistoryIndex = (this.activeHistoryIndex - 1 + this.historyCommands.length) % this.historyCommands.length
+					this.currentCommand = this.historyCommands[this.activeHistoryIndex]
+				} else if (e.keyCode === 40) {
+					// 下一条
+					this.activeHistoryIndex = (this.activeHistoryIndex + 1) % this.historyCommands.length
+					this.currentCommand = this.historyCommands[this.activeHistoryIndex]
+				} else {}
 			},
 			async sendCommand () {
 				if (!this.currentCommand || !this.currentCommand.trim()) {
@@ -181,6 +193,7 @@
 				await this.dealWithCommand(this.currentCommand.trim())
 				if (this.historyCommands[this.historyCommands.length - 1] !== this.currentCommand.trim()) {
 					this.historyCommands.push(this.currentCommand.trim())
+					this.activeHistoryIndex = this.historyCommands.length
 				}
 				this.currentCommand = ''
 				this.scrollToConsoleBottom()
