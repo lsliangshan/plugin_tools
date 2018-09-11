@@ -104,6 +104,8 @@
 	}
 	.window_cmd_console_item_inner {
 		line-height: 1.5;
+		overflow: hidden;
+    	word-wrap: break-word;
 	}
 	.window_cmd_console_item.reply {
 		margin: 16px 0;
@@ -156,7 +158,8 @@
 				},
 				allRoutePath: [],
 				historyConsoles: [
-				]
+				],
+				historyCommands: []
 			}
 		},
 		mounted () {
@@ -176,6 +179,9 @@
 					text: '<span style="color: ' + this.consoleStyles.color.label + ';">' + this.cmdPrefix + '</span> ' + this.currentCommand
 				})
 				await this.dealWithCommand(this.currentCommand.trim())
+				if (this.historyCommands[this.historyCommands.length - 1] !== this.currentCommand.trim()) {
+					this.historyCommands.push(this.currentCommand.trim())
+				}
 				this.currentCommand = ''
 				this.scrollToConsoleBottom()
 			},
@@ -307,11 +313,16 @@
 					let _op = args.args.shift()
 					switch (_op) {						
 						case 'play':
-							this.commandPlay(args.args)
+							this.commandPlay({
+								args: args.args
+							})
 							break
 						case 'stop':
 						case 'pause':
 							this.commandStop()
+							break
+						case 'restart':
+							this.commandRestart()
 							break
 						case 'get':
 							this.audioGetOp({
@@ -319,6 +330,9 @@
 							})
 							break
 						case 'set':
+							this.audioSetOp({
+								args: args.args
+							})
 							break
 						case 'volume':
 							this.audioGetVolume()
@@ -355,9 +369,7 @@
 					let _opName = args.args.shift()
 					switch (_opName) {
 						case 'volume':
-							this.audioSetVolume({
-								args: args.args.shift()
-							})
+							this.audioSetVolume(args.args.shift())
 							break
 						default:
 							break
@@ -374,8 +386,11 @@
 				})
 			},
 			audioSetVolume (v) {
-				console.log('>>>>>>', v)
 				this.audio.el.volume = (parseFloat(v) / 100).toFixed(2)
+				this.autoReply({
+					status: 'success',
+					text: '音量已经设置为：' + v
+				})
 			},
 			commandPlay (args) {
 				/**
@@ -391,6 +406,10 @@
 					this.audio.src = args.args[0]					
 					setTimeout(() => {
 						this.audio.el.play()
+						this.autoReply({
+							status: 'success',
+							text: '正在播放: ' + args.args[0].substring(args.args[0].lastIndexOf('/') + 1, args.args[0].lastIndexOf('.'))
+						})
 					}, 1)
 				}
 			},
@@ -400,6 +419,17 @@
 				 * 暂停播放音频
 				 */
 				this.audio.el.pause()
+				this.autoReply({
+					status: 'success',
+					text: '音乐已经暂停'
+				})
+			},
+			commandRestart () {
+				this.audio.el.play()
+				this.autoReply({
+					status: 'success',
+					text: '继续播放: ' + this.audio.src.substring(this.audio.src.lastIndexOf('/') + 1, this.audio.src.lastIndexOf('.'))
+				})
 			},
 			clearConsole () {
 				this.historyConsoles = [
