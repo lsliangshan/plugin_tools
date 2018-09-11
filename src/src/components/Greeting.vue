@@ -104,7 +104,7 @@
 							// 	offset: 0,
 								// complete () {
 								// 	// that.$router.replace({
-								// 	// 	name: 'ToolJson'
+								// 	// 	name: 'json'
 								// 	// })
 								// }
 					// }
@@ -117,7 +117,7 @@
 								easing: 'linear',
 								complete () {
 									that.$router.replace({
-										name: 'ToolJson'
+										name: 'json'
 									})
 								}
 							}

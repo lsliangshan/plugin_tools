@@ -47,7 +47,7 @@ export default {
   methods: {
     goHome () {
       this.$router.replace({
-        name: 'Home'
+        name: 'home'
       })
     }
   },

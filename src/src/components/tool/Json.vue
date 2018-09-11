@@ -68,7 +68,7 @@ import '../../../static/js/jquery.json'
 import '../../../static/js/json2'
 import '../../../static/js/jsonlint'
 export default {
-  name: 'ToolJson',
+  name: 'json',
   data () {
     return {
       split: 0.5,

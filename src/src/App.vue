@@ -51,7 +51,8 @@ export default {
     -webkit-tap-highlight-color: transparent;
     -webkit-appearance: none;
     /*-webkit-user-select: none;*/
-    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    /*font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;*/
+    font: 12px/16px Menlo,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
   }
   .unformat_wrapper textarea {
     outline: none;
@@ -68,5 +69,24 @@ export default {
   }
   .textarea100p textarea {
     height: 100%;
+  }
+  .window_cmd_input input {
+    height: 40px;
+    color: #ccc;
+    font-size: 12px;
+    border: none;
+    user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: none;
+    background-color: transparent;
+  }
+  .window_cmd_input .ivu-input:hover {
+    border: none;
+    border-radius: 0;
+  }
+  .window_cmd_input .ivu-input:focus {
+    border: none;
+    box-shadow: none;
   }
 </style>

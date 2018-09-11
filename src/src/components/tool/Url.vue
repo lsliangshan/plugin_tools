@@ -33,7 +33,7 @@ import '../../../static/js/jquery.json'
 import '../../../static/js/json2'
 import '../../../static/js/jsonlint'
 export default {
-  name: 'ToolUrl',
+  name: 'url',
   data () {
     return {
       urlStr: '',

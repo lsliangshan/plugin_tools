@@ -1,0 +1,292 @@
+<template>
+	<div class="window_cmd_container">
+		<div class="window_cmd_inner" :class="{show: shown}">
+			<div class="window_cmd_toggle_container">
+				<div class="window_cmd_toggle" @click="toggleCmdContainer">
+					<Icon type="md-hammer" size="20" />
+				</div>
+			</div>
+			<div class="window_cmd_content">
+				<div class="window_cmd_console">
+					<div class="window_cmd_console_item" v-for="(item, index) in historyConsoles" :key="index" :class="item.type" >
+						<div class="window_cmd_console_item_inner" v-html="item.text"></div>
+					</div>
+					<div class="blank_div" style="height: 15px;"></div>
+				</div>
+				<div class="window_cmd_input">
+					<span>{{cmdPrefix}}</span>
+					<Input v-model="currentCommand" type="text" size="large" @on-enter="sendCommand"/>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<style scoped>
+	.window_cmd_container {
+		position: fixed;
+		z-index: 999999;
+		right: 15px;
+		bottom: 15px;
+		width: 450px;
+		height: 380px;
+		overflow: hidden;
+		background-color: transparent;
+	}
+	.window_cmd_inner {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		transform: translate3d(0, 340px, 0);
+		transition: all .2s cubic-bezier(0.215, 0.61, 0.355, 1);
+	}
+	.window_cmd_inner.show {
+		transform: translate3d(0, 0, 0);
+	}
+	.window_cmd_inner.hide {
+		
+	}
+	.window_cmd_toggle_container {
+		width: 100%;
+		height: 40px;
+		pointer-events: none;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+	}
+	.window_cmd_toggle {
+		pointer-events: auto;
+		width: 40px;
+		height: 40px;
+		cursor: pointer;
+		border-radius: 50%;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		transition: all .2s ease-in-out;
+	}
+	.window_cmd_toggle:hover {
+		background-color: rgb(79, 192, 141);
+		color: #FFFFFF;
+	}
+	.window_cmd_toggle:active {
+		opacity: .7;
+	}
+	.window_cmd_content	{
+		position: relative;
+		color: #ccc;
+		width: 100%;
+		height: 340px;
+		background-color: rgba(0, 0, 0, 1);		
+	}
+	.window_cmd_content:before {
+	    position: absolute;
+	    top: 0;
+	    width: 450px;
+	    z-index: 1;
+	    content: "";
+	    display: block;
+	    height: 19px;
+	    box-shadow: inset 0 5px 10px #000;
+	}
+	.window_cmd_console {
+		width: 100%;
+		height: 300px;
+		padding: 15px;
+		box-sizing: border-box;
+		overflow-y: auto;
+	}
+	.window_cmd_console_item {
+
+	}
+	.window_cmd_console_item_inner {
+		line-height: 1.5;
+	}
+	.window_cmd_console_item.reply {
+		margin: 16px 0;
+	}
+	.window_cmd_input {
+		width: 100%;
+		height: 40px;
+		color: #cccccc;
+		padding-left: 15px;
+		padding-right: 15px;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.window_cmd_input span {
+		width: 60px;
+		text-align: center;
+	}
+	.window_cmd_input input {
+		height: 40px;
+	}
+</style>
+
+<script>
+	import router from '../../router/content-routes.js'
+	export default {
+		name: 'Cmd',
+		data () {
+			return {
+				cmdPrefix: '~ root# ',
+				shown: true,
+				currentCommand: '',
+				allCommands: ['help', 'go', 'clear', 'reload'],
+				consoleStyles: {
+					color: {
+						label: 'rgb(79, 192, 141)',
+						normal: '#cccccc',
+						success: '#19be6b',
+						warning: '#ff9900',
+						error: '#ed4014'
+					}
+				},
+				allRoutePath: [],
+				historyConsoles: [
+				]
+			}
+		},
+		mounted () {
+			this.allRoutePath = this.getAllRoutePath()
+		},
+		methods: {
+			toggleCmdContainer () {
+				this.shown = !this.shown
+			},
+			async sendCommand () {
+				if (!this.currentCommand || !this.currentCommand.trim()) {
+					return
+				}
+				this.historyConsoles.push({
+					type: 'user',
+					text: '<span style="color: ' + this.consoleStyles.color.label + ';">' + this.cmdPrefix + '</span> ' + this.currentCommand
+				})
+				await this.dealWithCommand(this.currentCommand.trim())
+				this.currentCommand = ''
+				this.scrollToConsoleBottom()
+			},
+			autoReply (args) {
+				let _status = 'normal'
+				if (args.status && this.consoleStyles.color.hasOwnProperty(args.status)) {
+					_status = args.status
+				}
+				this.historyConsoles.push({
+					type: 'reply',
+					text: '<span style="color: ' + this.consoleStyles.color[_status] + ';">' + args.text + '</span>'
+				})
+			},
+			getCommandName (commandStr) {
+				return commandStr.split(' ')[0]
+			},
+			getCommandArgs (commandStr) {
+				let _a = commandStr.split(' ')
+				_a.shift()
+				return _a				
+			},
+			getAllRoutePath () {
+				let outPath = []
+				if (router.hasOwnProperty('name')) {
+					outPath.push(router.name)
+				}
+				for (let i = 0; i < router.children.length; i++) {
+					if (router.children[i].hasOwnProperty('name') && outPath.indexOf(router.children[i].name) < 0) {
+						outPath.push(router.children[i].name)
+					}
+				}
+				return outPath
+			},
+			dealWithCommand (commandStr) {
+				return new Promise(resolve => {
+					let _commandName = this.getCommandName(commandStr)
+					if (this.allCommands.indexOf(_commandName) < 0) {
+						this.autoReply({
+							status: 'error',
+							text: '命令 <b>' + _commandName + '</b> 不存在<br/><span style="color: #cccccc;">输入 help 查看帮助</span>'
+						})
+						resolve(true)
+					}
+					let _commandArgs = this.getCommandArgs(commandStr)
+					switch (_commandName) {
+						case 'clear':
+							this.clearConsole()
+							break
+						case 'go':
+							this.commandGo({
+								args: _commandArgs
+							})
+							break
+						case 'help':
+							this.commandHelp()
+							break
+						case 'reload':
+							this.commandReload()
+							break
+						default:
+							break
+					}
+					resolve(true)
+				})				
+			},
+			commandGo (args) {
+				/**
+				 * Command:  go
+				 */
+				if (!args.args || args.args.length < 1) {
+					this.autoReply({
+						status: 'normal',
+						text: '请输入待跳转的路由名称：' + this.allRoutePath.join('、') + '<br/>例如：go home'
+					})
+				} else {
+					if (this.allRoutePath.indexOf(args.args[0]) < 0) {
+						// 路由不存在
+						this.autoReply({
+							status: 'warning',
+							text: '路由 <b>' + args.args[0] + '</b> 不存在<br/><span style="color: #ccc;">请输入待跳转的路由名称：' + this.allRoutePath.join('、') + '</span><br/><span style="color: #ccc;">例如：go home</span>'
+						})
+					} else {
+						this.$router.replace({
+							name: args.args[0]
+						})
+					}					
+				}
+			},
+			commandHelp () {
+				/**
+				 * Command: help
+				 */
+				 this.autoReply({
+				 	status: 'normal',
+				 	text: '可用命令包括：' + this.allCommands.join('、')
+				 })
+			},
+			commandReload () {
+				/**
+				 * Command: reload
+				 * 页面刷新
+				 */
+				 this.$router.go(0)
+			},
+			clearConsole () {
+				this.historyConsoles = [
+					{
+						type: 'user',
+						text: '<span style="color: ' + this.consoleStyles.color.label + ';">' + this.cmdPrefix + '</span> clear'
+					}
+				]
+			},
+			scrollToConsoleBottom () {
+				setTimeout(() => {
+					document.querySelector('.window_cmd_console').scrollTo(0, 10000)
+				}, 10)
+			}
+		}
+	}
+</script>
+

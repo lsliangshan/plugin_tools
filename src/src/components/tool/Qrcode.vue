@@ -90,7 +90,7 @@
 <script>
 import QRCode from 'qrcode'
 export default {
-  name: 'ToolQRCode',
+  name: 'qrcode',
   data () {
     return {
       qrcodeStr: '',

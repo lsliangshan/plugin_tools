@@ -59,13 +59,13 @@ const store = new Vuex.Store({
     },
     tools: [{
       label: 'JSON',
-      pathName: 'ToolJson'
+      pathName: 'json'
     }, {
       label: 'URL',
-      pathName: 'ToolUrl'
+      pathName: 'url'
     }, {
       label: '二维码',
-      pathName: 'ToolQRCode'
+      pathName: 'qrcode'
     }],
     assets: {},
     requestInfo: {},
