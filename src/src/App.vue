@@ -66,4 +66,7 @@ export default {
   .no-resize textarea {
     resize: none;
   }
+  .textarea100p textarea {
+    height: 100%;
+  }
 </style>
