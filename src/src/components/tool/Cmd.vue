@@ -19,6 +19,7 @@
 				</div>
 			</div>
 		</div>
+		<audio style="width: 0; height: 0;" id="cmd_audio" :src="audio.src"></audio>
 	</div>
 </template>
 
@@ -135,10 +136,15 @@
 		name: 'Cmd',
 		data () {
 			return {
+				audio: {
+					src: '',
+					el: null,
+					volume: 50
+				},
 				cmdPrefix: '~ root# ',
 				shown: true,
 				currentCommand: '',
-				allCommands: ['help', 'go', 'clear', 'reload'],
+				allCommands: ['help', 'go', 'clear', 'reload', 'audio', 'play', 'stop'],
 				consoleStyles: {
 					color: {
 						label: 'rgb(79, 192, 141)',
@@ -154,6 +160,7 @@
 			}
 		},
 		mounted () {
+			this.audio.el = document.getElementById('cmd_audio')
 			this.allRoutePath = this.getAllRoutePath()
 		},
 		methods: {
@@ -228,6 +235,19 @@
 						case 'reload':
 							this.commandReload()
 							break
+						case 'audio':
+							this.commandAudio({
+								args: _commandArgs
+							})
+							break
+						case 'play':
+							this.commandPlay({
+								args: _commandArgs
+							})
+							break
+						case 'stop':
+							this.commandStop()
+							break
 						default:
 							break
 					}
@@ -272,6 +292,114 @@
 				 * 页面刷新
 				 */
 				 this.$router.go(0)
+			},
+			commandAudio (args) {
+				/**
+				 * Command: audio
+				 * audio相关操作
+				 */
+				if (!args.args || args.args.length < 1) {
+					this.autoReply({
+						status: 'error',
+						text: '请输入操作名，可用的操作名包括：play、stop、volume、set'
+					})
+				} else {
+					let _op = args.args.shift()
+					switch (_op) {						
+						case 'play':
+							this.commandPlay(args.args)
+							break
+						case 'stop':
+						case 'pause':
+							this.commandStop()
+							break
+						case 'get':
+							this.audioGetOp({
+								args: args.args
+							})
+							break
+						case 'set':
+							break
+						case 'volume':
+							this.audioGetVolume()
+							break
+						default:
+							break
+					}
+				}
+			},
+			audioGetOp (args) {
+				if (!args.args || args.args.length < 0) {
+					this.autoReply({
+						status: 'error',
+						text: '请输入想获取的属性，如 volume'
+					})
+				} else {
+					let _opName = args.args.shift()
+					switch (_opName) {
+						case 'volume':
+							this.audioGetVolume()
+							break
+						default:
+							break
+					}
+				}
+			},
+			audioSetOp (args) {
+				if (!args.args || args.args.length < 0) {
+					this.autoReply({
+						status: 'error',
+						text: '请输入想设置的属性，如 volume'
+					})
+				} else {
+					let _opName = args.args.shift()
+					switch (_opName) {
+						case 'volume':
+							this.audioSetVolume({
+								args: args.args.shift()
+							})
+							break
+						default:
+							break
+					}
+				}
+			},
+			audioGetVolume () {
+				/**
+				 * 获取当前音频的音量
+				 */
+				this.autoReply({
+					status: 'normal',
+					text: '当前音量：' + this.audio.el.volume * 100
+				})
+			},
+			audioSetVolume (v) {
+				console.log('>>>>>>', v)
+				this.audio.el.volume = (parseFloat(v) / 100).toFixed(2)
+			},
+			commandPlay (args) {
+				/**
+				 * Command: play
+				 * 播放音频
+				 */
+				if (!args.args || args.args.length < 1) {
+					this.autoReply({
+						status: 'warning',
+						text: '未指定音频资源'
+					})
+				} else {
+					this.audio.src = args.args[0]					
+					setTimeout(() => {
+						this.audio.el.play()
+					}, 1)
+				}
+			},
+			commandStop () {
+				/**
+				 * Command: stop
+				 * 暂停播放音频
+				 */
+				this.audio.el.pause()
 			},
 			clearConsole () {
 				this.historyConsoles = [
