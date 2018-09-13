@@ -32,10 +32,12 @@
 		width: 450px;
 		height: 380px;
 		overflow: hidden;
+		pointer-events: none;
 		background-color: transparent;
 	}
 	.window_cmd_inner {
 		position: absolute;
+		pointer-events: auto;
 		width: 100%;
 		height: 100%;
 		transform: translate3d(0, 340px, 0);
@@ -144,7 +146,7 @@
 					volume: 50
 				},
 				cmdPrefix: '~ root# ',
-				shown: true,
+				shown: false,
 				currentCommand: '',
 				allCommands: ['help', 'go', 'clear', 'reload', 'audio', 'play', 'stop'],
 				consoleStyles: {

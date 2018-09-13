@@ -19,6 +19,16 @@ export default {
       }
     },
     {
+      path: '/time',
+      name: 'time',
+      meta: {
+        title: '时间戳转换'
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Time.vue')
+      }
+    },
+    {
       path: '/url',
       name: 'url',
       meta: {

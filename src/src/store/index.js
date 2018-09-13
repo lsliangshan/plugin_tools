@@ -64,6 +64,9 @@ const store = new Vuex.Store({
       label: 'URL',
       pathName: 'url'
     }, {
+      label: '时间戳',
+      pathName: 'time'
+    }, {
       label: '二维码',
       pathName: 'qrcode'
     }],
