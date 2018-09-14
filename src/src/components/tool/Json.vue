@@ -77,11 +77,6 @@ export default {
       currentJsonStr: ''
     }
   },
-  created () {
-    this.$nextTick(() => {
-      document.title = 'JSON格式化'
-    })
-  },
   computed: {    
     bodyStyles () {
       return this.$store.state.bodyStyles

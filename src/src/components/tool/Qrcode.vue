@@ -25,7 +25,7 @@
 <style scoped>
   .tool_container {
     min-width: 1030px;
-    background-color: #F5F5F5;
+    background-color: #f8f8f8;
   }
   .tool_container_wrapper {
     min-width: 1030px;
@@ -66,11 +66,14 @@
     justify-content: center;
     font-size: 16px;
     color: #bbbbbb;
+    border: 1px solid #dcdee2;
   }
   .qrocde_canvas_container {
     width: 300px;
     height: 300px;
     background-color: #FFFFFF;
+    border: 1px solid #dcdee2;
+    box-sizing: content-box;
   }
   .qrcode_download_btn_container {
     position: absolute;

@@ -2,9 +2,11 @@
 	<div class="window_cmd_container">
 		<div class="window_cmd_inner" :class="{show: shown}">
 			<div class="window_cmd_toggle_container">
-				<div class="window_cmd_toggle" @click="toggleCmdContainer">
-					<Icon type="md-hammer" size="20" />
-				</div>
+				<Tooltip :content="shown ? '关闭操作框 cmd/ctrl + R' : '打开操作框 cmd/ctrl + R'" placement="left">
+		            <div class="window_cmd_toggle" @click="toggleCmdContainer">
+						<Icon type="md-hammer" size="20" />
+					</div>
+		        </Tooltip>
 			</div>
 			<div class="window_cmd_content">
 				<div class="window_cmd_console">
@@ -15,7 +17,7 @@
 				</div>
 				<div class="window_cmd_input">
 					<span>{{cmdPrefix}}</span>
-					<Input v-model="currentCommand" type="text" size="large" @on-enter="sendCommand" @on-keyup="keyupHandler"/>
+					<Input v-model="currentCommand" ref="cmdRef" type="text" size="large" @on-enter="sendCommand" @on-keyup="keyupHandler"/>
 				</div>
 			</div>
 		</div>
@@ -40,7 +42,7 @@
 		pointer-events: auto;
 		width: 100%;
 		height: 100%;
-		transform: translate3d(0, 340px, 0);
+		transform: translate3d(0, 341px, 0);
 		transition: all .2s cubic-bezier(0.215, 0.61, 0.355, 1);
 	}
 	.window_cmd_inner.show {
@@ -148,7 +150,7 @@
 				cmdPrefix: '~ root# ',
 				shown: false,
 				currentCommand: '',
-				allCommands: ['help', 'go', 'clear', 'reload', 'audio', 'play', 'stop'],
+				allCommands: ['help', 'go', 'clear', 'reload', 'audio', 'speak'],
 				consoleStyles: {
 					color: {
 						label: 'rgb(79, 192, 141)',
@@ -166,8 +168,21 @@
 			}
 		},
 		mounted () {
+			const that = this
+			window.onkeydown = function (ev) {
+				if ((ev.metaKey || ev.ctrlKey) && ev.keyCode === 82) {
+					that.toggleCmdContainer()
+					ev.preventDefault()
+					return false
+				}
+	        }
 			this.audio.el = document.getElementById('cmd_audio')
 			this.allRoutePath = this.getAllRoutePath()
+			this.historyConsoles.push({
+				type: 'user',
+				text: '<span style="color: ' + this.consoleStyles.color.label + ';">' + this.cmdPrefix + '</span> help'
+			})
+			this.commandHelp()
 		},
 		methods: {
 			toggleCmdContainer () {
@@ -261,14 +276,19 @@
 								args: _commandArgs
 							})
 							break
-						case 'play':
-							this.commandPlay({
+						case 'speak':
+							this.commadnSpeak({
 								args: _commandArgs
 							})
 							break
-						case 'stop':
-							this.commandStop()
-							break
+						// case 'play':
+						// 	this.commandPlay({
+						// 		args: _commandArgs
+						// 	})
+						// 	break
+						// case 'stop':
+						// 	this.commandStop()
+						// 	break
 						default:
 							break
 					}
@@ -357,6 +377,11 @@
 					}
 				}
 			},
+			commadnSpeak (args) {
+				for (let i = 0; i < args.args.length; i++) {
+					window.speechSynthesis.speak(new window.SpeechSynthesisUtterance(args.args[i]))
+				}
+			},
 			audioGetOp (args) {
 				if (!args.args || args.args.length < 0) {
 					this.autoReply({
@@ -401,10 +426,10 @@
 				})
 			},
 			audioSetVolume (v) {
-				this.audio.el.volume = (parseFloat(v) / 100).toFixed(2)
+				this.audio.el.volume = ((parseFloat(v) / 100).toFixed(2) > 1 ? 1 : (parseFloat(v) / 100).toFixed(2))
 				this.autoReply({
 					status: 'success',
-					text: '音量已经设置为：' + v
+					text: (v > 100 ? '音量上限为100，' : '') + '音量已经设置为：' + Math.min(v, 100)
 				})
 			},
 			commandPlay (args) {
@@ -458,6 +483,15 @@
 				setTimeout(() => {
 					document.querySelector('.window_cmd_console').scrollTo(0, 10000)
 				}, 10)
+			}
+		},
+		watch: {
+			shown (val) {
+				if (val) {
+					setTimeout(() => {
+						this.$refs.cmdRef.focus()
+					}, 100)
+				}
 			}
 		}
 	}

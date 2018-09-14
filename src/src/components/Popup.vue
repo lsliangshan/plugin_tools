@@ -31,6 +31,7 @@
 		font-weight: bold;
 		padding: 15px;
 		box-sizing: border-box;
+		word-break: break-all;
 	}
 	.popup_qrcode {
 		width: 300px;
@@ -39,8 +40,9 @@
 	.popup_no_qrcode {
 		width: 300px;
 		height: 300px;
-		padding: 15px;
+		padding: 15px 15px 0 15px;
 		box-sizing: border-box;
+		line-height: 1.5;
 	}
 	.popup_no_qrcode_inner {
 		width: 100%;

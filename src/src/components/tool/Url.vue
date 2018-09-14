@@ -13,6 +13,7 @@
     height: 100%;
     padding: 15px;
     box-sizing: border-box;
+    background-color: #f8f8f8;
   }
   .result_container {
     width: 100%;
@@ -22,6 +23,7 @@
     box-sizing: border-box;
     font-size: 16px;
     border: 1px solid #dcdee2;
+    background-color: #FFFFFF;
   }
   .result_placeholder {
     color: #dcdee2;
@@ -61,11 +63,6 @@ export default {
         height: (this.bodyStyles.height - 94 - 20 - 65 - 30) + 'px'
       }
     }
-  },
-  created () {
-    this.$nextTick(() => {
-      document.title = 'url参数解析'
-    })
   },
   methods: {
     input (e) {

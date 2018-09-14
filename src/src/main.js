@@ -29,6 +29,9 @@ Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
   iView.LoadingBar.start()
+  if (to.meta && to.meta.title) {
+    document.title = to.meta.title
+  }  
   next()
 })
 

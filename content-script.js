@@ -38,10 +38,10 @@ const insertCssAndJs = function () {
 }
 
 const addJsonOperation = function () {
-  let html = '<div style="position: fixed; right: 15px; top: 15px; min-width: 100px; height: 36px; background-color: red; z-index: 9999;">' +
-    '' +
-    '</div>'
-  document.body.innerHTML += html
+  // let html = '<div style="position: fixed; right: 15px; top: 15px; min-width: 100px; height: 36px; background-color: red; z-index: 9999;">' +
+  //   '' +
+  //   '</div>'
+  // document.body.innerHTML += html
 }
 
 const expandAll = function (currentJsonStr) {
