@@ -53,7 +53,7 @@
 	}
 	.tool_container {
 		width: 100%;
-		background-color: #f8f8f8;
+		/*background-color: #f8f8f8;*/
 		padding: 15px;
 		box-sizing: border-box;
 		display: flex;

@@ -6,9 +6,15 @@
 				<div class="settings_tag_label">设置</div>
 			</div>
 			<div class="settings_item">
+				<label class="settings_item_label">最多显示几项工具</label>
+				<div class="settings_item_value">
+					<Input type="text" :value="maxToolCount" @on-change="changeMaxToolCount" />
+				</div>
+			</div>
+			<div class="settings_item">
 				<label class="settings_item_label">工具</label>
 				<div class="settings_item_value" @click="openToolTagsModal">
-					<div class="router_item_tag" v-for="(item, index) in tools" :key="index" :class="{fade: (index >= maxToolCount)}">{{item.label}}</div>
+					<div class="router_item_tag" v-for="(item, index) in activeTools" :key="index" :class="{fade: (index >= maxToolCount)}">{{item.label}}</div>
 				</div>
 			</div>
 		</div>
@@ -17,6 +23,7 @@
         v-model="toolTagsModal.shown"
         :mask-closable="false"
         @on-ok="saveTools"
+        ok-text="保存"
         title="订制您常用的工具">
         	<div class="tool_modal_container">
         		<div class="tool_modal_panel tool_modal_left_container active">
@@ -35,6 +42,7 @@
         			<div class="tool_modal_panel_content">
         				<draggable v-model="toolTagsModal.inactiveItems" :options="{draggable: '.item', group: 'tools'}">
 				        	<div v-for="(item, index) in toolTagsModal.inactiveItems" :key="index" class="item draggable_item">
+				        		<Icon type="md-move" size="16" />
 				        		{{item.label}}
 				        	</div>
 				        </draggable>
@@ -50,7 +58,7 @@
 		height: 100%;
 		padding: 15px;
 		box-sizing: border-box;
-		background-color: #f5f5f5;
+		/*background-color: #f5f5f5;*/
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -81,8 +89,8 @@
 	}
 	.settings_tag_label {
 		position: absolute;
-		right: 6px;
-		top: 8px;
+		right: 4px;
+		top: 6px;
 		font-size: 13px;
 		color: #FFFFFF;
 		font-weight: bolder;
@@ -101,6 +109,7 @@
 		display: inline-block;
 		width: 80px;
 		font-size: 14px;
+		line-height: 16px;
 	}
 	.settings_item_value {
 		width: 100%;
@@ -108,7 +117,7 @@
 		padding: 0 15px;
 		box-sizing: border-box;
 		cursor: pointer;
-		background-color: #f8f8f8;
+		/*background-color: #f8f8f8;*/
 		overflow-x: auto;
 		display: flex;
 		flex-direction: row;
@@ -121,7 +130,7 @@
 		height: 24px;
 		padding: 0 10px;
 		border-radius: 4px;
-		margin-left: 8px;
+		margin-right: 8px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -172,6 +181,8 @@
 		overflow-y: auto;
 		padding: 0 10px;
 		box-sizing: border-box;
+		border-bottom-left-radius: 4px;
+		border-bottom-right-radius: 4px;
 	}
 	.tool_modal_panel_content>div {
 		height: 250px;
@@ -195,6 +206,7 @@
 </style>
 <script>
 	import * as types from '../../store/mutation-types.js'
+	import { StorageUtil } from '../../utils/index.js'
 	export default {
 		name: 'settings',
 		components: {
@@ -203,7 +215,7 @@
 		data () {
 			return {
 				toolTagsModal: {
-					shown: true,
+					shown: false,
 					activeItems: [],
 					inactiveItems: []
 				}
@@ -228,22 +240,54 @@
 	      	return {
 	      		height: (this.bodyStyles.height - 65 - 30) + 'px'
 	      	}
+	      },
+	      localStorageKeys () {
+	      	return this.$store.state.localStorageKeys
+	      },
+	      activeTools () {
+	      	return this.$store.state.activeTools
+	      },
+	      inactiveTools () {
+	      	return this.$store.state.inactiveTools
 	      }
 	    },
 	    created () {
 	    	this.$nextTick(() => {
-	    		this.toolTagsModal.activeItems = JSON.parse(JSON.stringify(this.tools))
-	    		// this.toolTagsModal.inactiveItems = JSON.parse(JSON.stringify(this.tools))
+	    		this.toolTagsModal.activeItems = JSON.parse(JSON.stringify(this.activeTools))
+	    		this.toolTagsModal.inactiveItems = JSON.parse(JSON.stringify(this.inactiveTools))
 	    	})
 	    },
 	    methods: {
+	    	getActiveTools () {
+	    		return new Promise(async (resolve) => {
+					let activeTools = await StorageUtil.getItem(this.localStorageKeys.activeTools)
+					resolve(activeTools || JSON.parse(JSON.stringify(this.tools)))
+	    		})
+	    	},
+	    	getInactiveTools () {
+	    		return new Promise(async (resolve) => {
+	    			let inactiveTools = await StorageUtil.getItem(this.localStorageKeys.inactiveTools)
+	    			resolve(inactiveTools || [])
+	    		})
+	    	},
 	    	openToolTagsModal () {
 	    		this.toolTagsModal.shown = true
 	    	},
-	    	saveTools () {
-				this.$store.commit(types.INIT_TOOLS, {
+	    	async saveTools () {
+				this.$store.commit(types.SET_ACTIVE_TOOLS, {
 					tools: this.toolTagsModal.activeItems
 				})
+				this.$store.commit(types.SET_INACTIVE_TOOLS, {
+					tools: this.toolTagsModal.inactiveTools
+				})
+				await StorageUtil.setItem(this.localStorageKeys.activeTools, this.toolTagsModal.activeItems)
+				await StorageUtil.setItem(this.localStorageKeys.inactiveTools, this.toolTagsModal.inactiveItems)
+
+	    	},
+	    	changeMaxToolCount (e) {	    		
+				this.$store.commit(types.SET_MAX_TOOL_COUNT, {
+					count: Number(e.target.value)
+				})				
 	    	}
 	    }
 	}

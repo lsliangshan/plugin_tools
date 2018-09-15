@@ -35,7 +35,9 @@
  */
 
 import * as types from './mutation-types'
-// import utils from '../utils/index'
+import {
+  StorageUtil
+} from '../utils/index'
 
 const findTemplateByUUID = function(uuid, arr, deep, sub) {
   let _deep = deep // deep为1或2
@@ -61,6 +63,16 @@ const findTemplateByUUID = function(uuid, arr, deep, sub) {
 export const mutations = {
   [types.INIT_TOOLS](state, data) {
     state.tools = data.tools
+  },
+  [types.SET_ACTIVE_TOOLS](state, data) {
+    state.activeTools = data.tools
+  },
+  [types.SET_INACTIVE_TOOLS](state, data) {
+    state.inactiveTools = data.tools
+  },
+  async [types.SET_MAX_TOOL_COUNT](state, data) {
+    state.maxToolCount = Number(data.count)
+    await StorageUtil.setItem(state.localStorageKeys.maxToolCount, Number(data.count))
   },
   [types.SHOW_POPUP](state, data) {
     state.popup = Object.assign({}, state.popup, data, {

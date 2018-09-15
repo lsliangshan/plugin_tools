@@ -25,7 +25,7 @@
 <style scoped>
   .tool_container {
     min-width: 1030px;
-    background-color: #f8f8f8;
+    /*background-color: #f8f8f8;*/
   }
   .tool_container_wrapper {
     min-width: 1030px;

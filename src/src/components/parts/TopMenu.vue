@@ -1,14 +1,14 @@
 <template>
   <div class="top_menu_container">
     <Menu mode="horizontal" theme="light" :active-name="activeTool" @on-select="useTool">
-      <MenuItem v-for="(t, index) in tools.slice(0, maxCount)" :key="index" :name="t.name">
+      <MenuItem v-for="(t, index) in activeTools.slice(0, maxCount)" :key="index" :name="t.name" v-if="activeTools">
         {{t.label}}
       </MenuItem>
-      <Submenu v-if="tools.length > maxCount" name="more">
+      <Submenu v-if="activeTools.length > maxCount" name="more">
         <template slot="title" style="line-height: 65px;">
           <Icon type="ios-more" size="20" />
         </template>
-        <MenuItem v-for="(t, index) in tools.slice(maxCount)" :key="index" :name="t.name" class="no_border_bottom">
+        <MenuItem v-for="(t, index) in activeTools.slice(maxCount)" :key="index" :name="t.name" class="no_border_bottom" v-if="activeTools">
           {{t.label}}
         </MenuItem>
       </Submenu>
@@ -33,11 +33,18 @@
   .top_menu_container .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item:hover,
   .top_menu_container .ivu-menu-light.ivu-menu-horizontal .ivu-menu-submenu-active,
   .top_menu_container .ivu-menu-light.ivu-menu-horizontal .ivu-menu-submenu:hover {
-    color: rgb(79, 192, 141);
+    color: rgb(79, 192, 141)!important;
     border-bottom: 2px solid rgb(79, 192, 141);
+  }
+  .top_menu_container .ivu-menu-light.ivu-menu-horizontal .ivu-menu-item {
+    color: #FFFFFF;
+  }
+  .top_menu_container .ivu-menu-submenu-title {
+    color: #FFFFFF;
   }
   .no_border_bottom {
     border-bottom: none!important;
+    color: #515a6e!important;
   }
 </style>
 <script>
@@ -56,6 +63,9 @@ export default {
     },
     activeTool () {
       return this.$route.name || ''
+    },
+    activeTools () {
+      return this.$store.state.activeTools
     }
   },
   methods: {

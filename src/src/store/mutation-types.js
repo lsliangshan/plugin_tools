@@ -121,6 +121,12 @@ export const SET_BODY_STYLES = 'SET_BODY_STYLES'
 
 export const INIT_TOOLS = 'INIT_TOOLS'
 
+export const SET_ACTIVE_TOOLS = 'SET_ACTIVE_TOOLS'
+
+export const SET_INACTIVE_TOOLS = 'SET_INACTIVE_TOOLS'
+
+export const SET_MAX_TOOL_COUNT = 'SET_MAX_TOOL_COUNT'
+
 // >>>> actions:
 
 // 登录1

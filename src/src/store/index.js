@@ -57,7 +57,14 @@ const store = new Vuex.Store({
       bodyClick: 'body-click',
       windowResize: 'window-resize'
     },
+    localStorageKeys: {
+      activeTools: 'local-active-tools',
+      inactiveTools: 'local-inactive-tools',
+      maxToolCount: 'local-max-tool-count'
+    },
     tools: [],
+    activeTools: [],
+    inactiveTools: [],
     maxToolCount: 3,
     assets: {},
     requestInfo: {},

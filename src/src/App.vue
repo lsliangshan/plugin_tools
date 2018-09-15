@@ -7,11 +7,23 @@
 <script>
 import * as types from './store/mutation-types'
 import router from './router/content-routes.js'
+import { StorageUtil } from './utils/index.js'
 export default {
   name: 'App',
   data () {
     return {
       events: this.$store.state.events
+    }
+  },
+  computed: {
+    tools () {
+      return this.$store.state.tools
+    },
+    maxToolCount () {
+      return this.$store.state.maxToolCount
+    },
+    localStorageKeys () {
+      return this.$store.state.localStorageKeys
     }
   },
   created () {
@@ -27,9 +39,18 @@ export default {
       })
     })
   },
-  mounted () {
+  async mounted () {
     this.$store.commit(types.INIT_TOOLS, {
       tools: this.getAllTools()
+    })
+    this.$store.commit(types.SET_ACTIVE_TOOLS, {
+      tools: await this.getActiveTools()
+    })
+    this.$store.commit(types.SET_INACTIVE_TOOLS, {
+      tools: await this.getInactiveTools()
+    })
+    this.$store.commit(types.SET_MAX_TOOL_COUNT, {
+      count: await this.getMaxToolCount()
     })
   },
   methods: {
@@ -69,6 +90,24 @@ export default {
         outPath.push(tempObj)
       }
       return outPath
+    },
+    getActiveTools () {
+      return new Promise(async (resolve) => {
+        let activeTools = await StorageUtil.getItem(this.localStorageKeys.activeTools)
+        resolve(activeTools || JSON.parse(JSON.stringify(this.tools)))
+      })
+    },
+    getInactiveTools () {
+      return new Promise(async (resolve) => {
+        let inactiveTools = await StorageUtil.getItem(this.localStorageKeys.inactiveTools)
+        resolve(inactiveTools || [])
+      })
+    },
+    getMaxToolCount () {
+      return new Promise(async (resolve) => {
+        let maxToolCount = await StorageUtil.getItem(this.localStorageKeys.maxToolCount)
+        resolve(maxToolCount || this.maxToolCount)
+      })
     }
   }
 }
@@ -82,8 +121,14 @@ export default {
     -webkit-tap-highlight-color: transparent;
     -webkit-appearance: none;
     /*-webkit-user-select: none;*/
-    /*font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;*/
-    font: 12px/16px Menlo,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
+    font-family: Menlo,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
+    /*font: 12px/16px Menlo,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;*/
+  }
+  #app {
+    /*background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537032993978&di=921b9815b1aabefc0b60ba1de79fc70c&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201605%2F31%2F234941i5wc5mii0juw3iat.jpg);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-color: red;*/
   }
   .unformat_wrapper textarea {
     outline: none;

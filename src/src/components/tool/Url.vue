@@ -3,17 +3,22 @@
     <Input v-model="urlStr" type="textarea" :rows="4" autofocus class="no-resize" placeholder="请输入url或JSON格式参数" @on-keydown="input" @on-change="change"/>
     <div class="result_container" :style="resultContainerStyles">
       <span class="result_placeholder" v-if="!formattedStr">URL参数解析</span>
-      <div v-html="formattedStr" v-else></div>
+      <div v-html="formattedStr" v-else class="fs16"></div>
     </div>
   </div>
 </template>
 <style scoped>
+  .fs16 {
+    font-size: 40px/40px;
+  }
   .tool_container {
     width: 100%;
+    max-width: 1000px;
     height: 100%;
     padding: 15px;
     box-sizing: border-box;
-    background-color: #f8f8f8;
+    margin: 0 auto;
+    /*background-color: #f8f8f8;*/
   }
   .result_container {
     width: 100%;
@@ -24,9 +29,11 @@
     font-size: 16px;
     border: 1px solid #dcdee2;
     background-color: #FFFFFF;
+    border-radius: 4px;
   }
   .result_placeholder {
-    color: #dcdee2;
+    color: #c5c5c5;
+    font-size: 14px;
     pointer-events: none;
   }
 </style>
@@ -102,6 +109,11 @@ export default {
       let _s = ''
       if (str.indexOf('?') < 0) {
         if (str.indexOf('&') < 0) {
+          if (str.indexOf('=') > 0) {
+            let _o = {}
+            _o[str.split('=')[0]] = str.split('=')[1]
+            return new JSONFormat(JSON.stringify(_o), 4).toString()
+          }
           return new JSONFormat('{}', 4).toString()
         } else {
           _s = str

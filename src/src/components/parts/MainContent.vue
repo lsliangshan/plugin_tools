@@ -9,7 +9,7 @@
     width: 100%;
     padding-top: 65px;
     box-sizing: border-box;
-    background-color: #ffffff;
+    /*background-color: #ffffff;*/
   }
 </style>
 

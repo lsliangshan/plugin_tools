@@ -2,7 +2,7 @@
 	<div class="window_cmd_container">
 		<div class="window_cmd_inner" :class="{show: shown}">
 			<div class="window_cmd_toggle_container">
-				<Tooltip :content="shown ? '关闭操作框 cmd/ctrl + R' : '打开操作框 cmd/ctrl + R'" placement="left">
+				<Tooltip :content="shown ? '关闭操作框 cmd/ctrl + shift + R' : '打开操作框 cmd/ctrl + shift + R'" placement="left">
 		            <div class="window_cmd_toggle" @click="toggleCmdContainer">
 						<Icon type="md-hammer" size="20" />
 					</div>
@@ -42,7 +42,7 @@
 		pointer-events: auto;
 		width: 100%;
 		height: 100%;
-		transform: translate3d(0, 341px, 0);
+		transform: translate3d(0, 340px, 0);
 		transition: all .2s cubic-bezier(0.215, 0.61, 0.355, 1);
 	}
 	.window_cmd_inner.show {
@@ -71,6 +71,7 @@
 		align-items: center;
 		justify-content: center;
 		transition: all .2s ease-in-out;
+		background-color: rgba(255, 255, 255, 0.5);
 	}
 	.window_cmd_toggle:hover {
 		background-color: rgb(79, 192, 141);
@@ -116,7 +117,7 @@
 	}
 	.window_cmd_input {
 		width: 100%;
-		height: 40px;
+		height: 39px;
 		color: #cccccc;
 		padding-left: 15px;
 		padding-right: 15px;
@@ -170,7 +171,7 @@
 		mounted () {
 			const that = this
 			window.onkeydown = function (ev) {
-				if ((ev.metaKey || ev.ctrlKey) && ev.keyCode === 82) {
+				if ((ev.metaKey || ev.ctrlKey) && ev.shiftKey && ev.keyCode === 82) {
 					that.toggleCmdContainer()
 					ev.preventDefault()
 					return false

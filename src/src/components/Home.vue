@@ -3,18 +3,34 @@
     <div v-if="$route.name === 'home'" class="home" :style="homeStyles">
       <greeting></greeting>
     </div>
-    <div key="otherRouter" v-else>
+    <div class="main_content" key="otherRouter" v-else>
       <headers></headers>
-    <main-content></main-content>
+      <main-content></main-content>
     </div>  
     <cmd></cmd>
   </div>
 </template>
 <style scoped>
   .home_container {
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    background-color: #d5d5d5;
+    overflow-x: auto;
+    /*background-color: #d5d5d5;*/    
+  }
+  .main_content {
+    position: sticky;
+    width: 100%;
+    left: 0;
+    top: 0;
+    background-image: url(/html/static/images/themes/bg.jpg);
+    background-attachment: fixed;
+    background-size: cover;
+    /*background-size: 100% 100%;*/
+    background-repeat: no-repeat;
+    background-position: center;
   }
   .home {
     width: 100%;
