@@ -74,6 +74,9 @@ export const mutations = {
     state.maxToolCount = Number(data.count)
     await StorageUtil.setItem(state.localStorageKeys.maxToolCount, Number(data.count))
   },
+  [types.SAVE_ACTIVE_THEME_INDEX](state, data) {
+    state.activeThemeIndex = data.activeThemeIndex
+  },
   [types.SHOW_POPUP](state, data) {
     state.popup = Object.assign({}, state.popup, data, {
       shown: true

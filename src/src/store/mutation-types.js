@@ -127,6 +127,8 @@ export const SET_INACTIVE_TOOLS = 'SET_INACTIVE_TOOLS'
 
 export const SET_MAX_TOOL_COUNT = 'SET_MAX_TOOL_COUNT'
 
+export const SAVE_ACTIVE_THEME_INDEX = 'SAVE_ACTIVE_THEME_INDEX'
+
 // >>>> actions:
 
 // 登录1

@@ -1,5 +1,5 @@
 <template>
-  <div class="headers_container">
+  <div class="headers_container" :style="headersContainerStyles">
     <div class="app_logo_container" @click="goHome">
       <img :src="logo">
     </div>
@@ -7,7 +7,7 @@
       <top-menu></top-menu>
       <div class="settings_container">
         <Tooltip content="打开设置 cmd/ctrl + o" placement="bottom-end">
-            <Icon type="ios-cog" size="24" @click="goSettings"/>
+            <Icon type="ios-cog" size="24" @click="goSettings" :style="settingsContainerStyles"/>
         </Tooltip>
       </div>
     </div>
@@ -70,6 +70,19 @@ export default {
   computed: {
     logo () {
       return this.$store.state.logo
+    },
+    activeThemeIndex () {
+      return this.$store.state.activeThemeIndex
+    },
+    headersContainerStyles () {
+      return {
+        backgroundColor: (this.activeThemeIndex.join(';').indexOf('-1') > -1 ? '#FFFFFF' : 'transparent')
+      }
+    },
+    settingsContainerStyles () {
+      return {
+        color: (this.activeThemeIndex.join(';').indexOf('-1') > -1 ? '#515a6e' : '#FFFFFF')
+      }
     }
   },
   methods: {

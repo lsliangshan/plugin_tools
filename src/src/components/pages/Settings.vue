@@ -17,6 +17,14 @@
 					<div class="router_item_tag" v-for="(item, index) in activeTools" :key="index" :class="{fade: (index >= maxToolCount)}">{{item.label}}</div>
 				</div>
 			</div>
+			<div class="settings_item">
+				<label class="settings_item_label">主题</label>
+				<div class="settings_item_value h100">
+					<div class="bg_preview" @click="openThemeImagesModal">
+						<img v-if="activeThemeIndex.join(';').indexOf('-1') < 0" :src="themeImages[activeThemeIndex[0]].sublist[activeThemeIndex[1]].img" />
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<Modal
@@ -50,9 +58,44 @@
         		</div>
         	</div>
 	    </Modal>
+
+	    <Modal
+        v-model="themeImagesModal.shown"
+        :mask-closable="false"
+        :fullscreen="true"
+        @on-ok="saveTheme"
+        ok-text="确定"
+        title="选择主题">
+        	<div class="themes_item_containner">
+        		<div class="themes_item_label">不设置背景图</div>
+        		<div class="themes_item_content">
+        			<div class="themes_item blank_theme" :data-index="-1" :data-sub-index="-1" @click="chooseThemeImage">
+        				<div class="themes_item_selected" v-if="cacheActiveThemeIndex[0] == -1 || cacheActiveThemeIndex[1] == -1">
+        					<Icon type="md-checkmark" size="40" />
+        				</div>
+        			</div>
+        		</div>
+        	</div>
+        	<div class="themes_item_container" v-for="(item, index) in themeImages" :key="index">
+        		<div class="themes_item_label">{{item.label}}</div>
+        		<div class="themes_item_content">
+        			<div class="themes_item" v-for="(itm, idx) in item.sublist" :key="idx" :data-index="index" :data-sub-index="idx" @click="chooseThemeImage">
+        				<img :src="itm.img" />
+        				<transition name="theme-item-transition" enter-active-class="animated fast fadeIn" leave-active-class="animated fast fadeOut">
+        					<div class="themes_item_selected" v-if="cacheActiveThemeIndex[0] == index && cacheActiveThemeIndex[1] == idx">
+	        					<Icon type="md-checkmark" size="40" />
+	        				</div>
+        				</transition>        				
+        			</div>
+        		</div>
+        	</div>
+	    </Modal>
 	</div>
 </template>
 <style scoped>
+	.h100 {
+		height: 100px!important;
+	}
 	.settings_container {
 		width: 100%;
 		height: 100%;
@@ -203,6 +246,73 @@
 		position: absolute;
 		left: 10px;		
 	}
+
+	.bg_preview {
+		width: 100px;
+		height: 100px;
+		border: 1px solid #c8c8c8;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: rgba(0,0,0,.1);
+	}
+	.bg_preview img {
+		max-width: 100%;
+		max-height: 100%;
+	}
+
+	.themes_item_containner {
+		width: 100%;	
+		margin-bottom: 15px;
+	}
+	.themes_item_label {
+		height: 32px;
+		line-height: 32px;
+	}
+	.themes_item_content {
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+	.themes_item {
+		position: relative;
+		width: 100px;
+		height: 100px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-right: 8px;
+		margin-bottom: 8px;
+		cursor: pointer;
+		border: 1px solid #f2f2f2;
+		border-radius: 4px;
+		overflow: hidden;
+	}
+	.themes_item img {
+		max-width: 100%;
+		max-height: 100%;
+		pointer-events: none;
+	}
+	.themes_item.blank_theme {
+		background-color: rgba(0,0,0,.1);
+	}
+	.themes_item_selected {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(79, 192, 141, .8);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		pointer-events: none;
+	}
+	.themes_item_selected i {
+		color: #FFFFFF;
+	}
 </style>
 <script>
 	import * as types from '../../store/mutation-types.js'
@@ -218,7 +328,11 @@
 					shown: false,
 					activeItems: [],
 					inactiveItems: []
-				}
+				},
+				themeImagesModal: {
+					shown: true
+				},
+				cacheActiveThemeIndex: [-1, -1]
 			}
 		},
 		computed: {
@@ -249,12 +363,19 @@
 	      },
 	      inactiveTools () {
 	      	return this.$store.state.inactiveTools
+	      },
+	      themeImages () {
+	      	return this.$store.state.themeImages
+	      },
+	      activeThemeIndex () {
+	      	return this.$store.state.activeThemeIndex
 	      }
 	    },
 	    created () {
 	    	this.$nextTick(() => {
 	    		this.toolTagsModal.activeItems = JSON.parse(JSON.stringify(this.activeTools))
 	    		this.toolTagsModal.inactiveItems = JSON.parse(JSON.stringify(this.inactiveTools))
+	    		this.cacheActiveThemeIndex = this.activeThemeIndex
 	    	})
 	    },
 	    methods: {
@@ -288,6 +409,17 @@
 				this.$store.commit(types.SET_MAX_TOOL_COUNT, {
 					count: Number(e.target.value)
 				})				
+	    	},
+	    	openThemeImagesModal () {
+	    		this.themeImagesModal.shown = true
+	    	},
+	    	chooseThemeImage (e) {
+	    		this.cacheActiveThemeIndex = [Number(e.target.dataset.index), Number(e.target.dataset.subIndex)]
+	    	},
+	    	saveTheme () {
+	    		this.$store.commit(types.SAVE_ACTIVE_THEME_INDEX, {
+	    			activeThemeIndex: this.cacheActiveThemeIndex
+	    		})
 	    	}
 	    }
 	}

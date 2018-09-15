@@ -1,11 +1,11 @@
 <template>
   <div class="top_menu_container">
     <Menu mode="horizontal" theme="light" :active-name="activeTool" @on-select="useTool">
-      <MenuItem v-for="(t, index) in activeTools.slice(0, maxCount)" :key="index" :name="t.name" v-if="activeTools">
+      <MenuItem v-for="(t, index) in activeTools.slice(0, maxCount)" :key="index" :name="t.name" v-if="activeTools" :style="topMenuItemStyle">
         {{t.label}}
       </MenuItem>
-      <Submenu v-if="activeTools.length > maxCount" name="more">
-        <template slot="title" style="line-height: 65px;">
+      <Submenu v-if="activeTools.length > maxCount" name="more" :style="topMenuItemStyle">
+        <template slot="title">
           <Icon type="ios-more" size="20" />
         </template>
         <MenuItem v-for="(t, index) in activeTools.slice(maxCount)" :key="index" :name="t.name" class="no_border_bottom" v-if="activeTools">
@@ -40,7 +40,7 @@
     color: #FFFFFF;
   }
   .top_menu_container .ivu-menu-submenu-title {
-    color: #FFFFFF;
+    /*color: #FFFFFF;*/
   }
   .no_border_bottom {
     border-bottom: none!important;
@@ -66,6 +66,14 @@ export default {
     },
     activeTools () {
       return this.$store.state.activeTools
+    },
+    activeThemeIndex () {
+      return this.$store.state.activeThemeIndex
+    },
+    topMenuItemStyle () {
+      return {
+        color: (this.activeThemeIndex.join(';').indexOf('-1') > -1 ? '#515a6e' : '#FFFFFF')
+      }
     }
   },
   methods: {

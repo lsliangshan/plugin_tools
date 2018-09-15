@@ -3,7 +3,7 @@
     <div v-if="$route.name === 'home'" class="home" :style="homeStyles">
       <greeting></greeting>
     </div>
-    <div class="main_content" key="otherRouter" v-else>
+    <div class="main_content" key="otherRouter" v-else :style="mainContentStyles">
       <headers></headers>
       <main-content></main-content>
     </div>  
@@ -25,12 +25,13 @@
     width: 100%;
     left: 0;
     top: 0;
-    background-image: url(/html/static/images/themes/bg.jpg);
+    /*background-image: url(/html/static/images/themes/bg.jpg);*/
     background-attachment: fixed;
     background-size: cover;
     /*background-size: 100% 100%;*/
     background-repeat: no-repeat;
     background-position: center;
+    background-color: #f2f2f2;
   }
   .home {
     width: 100%;
@@ -51,6 +52,17 @@ export default {
     homeStyles () {
       return {
         minHeight: this.$store.state.bodyStyles.height + 'px'
+      }
+    },
+    themeImages () {
+      return this.$store.state.themeImages
+    },
+    activeThemeIndex () {
+      return this.$store.state.activeThemeIndex
+    },
+    mainContentStyles () {
+      return {
+        backgroundImage: (this.activeThemeIndex.join(';').indexOf('-1') < 0 ? 'url(' + this.themeImages[this.activeThemeIndex[0]].sublist[this.activeThemeIndex[1]].img + ')' : '')
       }
     }
   },
