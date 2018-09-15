@@ -6,6 +6,7 @@
 
 <script>
 import * as types from './store/mutation-types'
+import router from './router/content-routes.js'
 export default {
   name: 'App',
   data () {
@@ -26,6 +27,11 @@ export default {
       })
     })
   },
+  mounted () {
+    this.$store.commit(types.INIT_TOOLS, {
+      tools: this.getAllTools()
+    })
+  },
   methods: {
     windowResize (e) {
       this.cacheBodyStyles()
@@ -38,6 +44,31 @@ export default {
           height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
         }
       })
+    },
+    getAllTools () {
+      let outPath = []
+      // let homeObj = {}
+      // if (router.hasOwnProperty('name')) {
+      //   homeObj.name = router.name
+      // }
+      // if (router.hasOwnProperty('meta') && router.meta.label) {
+      //   homeObj.label = router.meta.label
+      // } else {
+      //   homeObj.label = router.name
+      // }
+      for (let i = 0; i < router.children.length; i++) {
+        let tempObj = {}
+        if (router.children[i].hasOwnProperty('name')) {
+          tempObj.name = router.children[i].name
+        }
+        if (router.children[i].hasOwnProperty('meta') && router.children[i].meta.label) {
+          tempObj.label = router.children[i].meta.label
+        } else {
+          tempObj.label = router.children[i].name
+        }
+        outPath.push(tempObj)
+      }
+      return outPath
     }
   }
 }

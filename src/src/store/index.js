@@ -57,19 +57,8 @@ const store = new Vuex.Store({
       bodyClick: 'body-click',
       windowResize: 'window-resize'
     },
-    tools: [{
-      label: 'JSON',
-      pathName: 'json'
-    }, {
-      label: 'URL',
-      pathName: 'url'
-    }, {
-      label: '时间戳',
-      pathName: 'time'
-    }, {
-      label: '二维码',
-      pathName: 'qrcode'
-    }],
+    tools: [],
+    maxToolCount: 3,
     assets: {},
     requestInfo: {},
     loginInfo: {},

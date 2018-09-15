@@ -1,14 +1,14 @@
 <template>
   <div class="top_menu_container">
     <Menu mode="horizontal" theme="light" :active-name="activeTool" @on-select="useTool">
-      <MenuItem v-for="(t, index) in tools.slice(0, maxCount)" :key="index" :name="t.pathName">
+      <MenuItem v-for="(t, index) in tools.slice(0, maxCount)" :key="index" :name="t.name">
         {{t.label}}
       </MenuItem>
       <Submenu v-if="tools.length > maxCount" name="more">
         <template slot="title" style="line-height: 65px;">
           <Icon type="ios-more" size="20" />
         </template>
-        <MenuItem v-for="(t, index) in tools.slice(maxCount)" :key="index" :name="t.pathName" class="no_border_bottom">
+        <MenuItem v-for="(t, index) in tools.slice(maxCount)" :key="index" :name="t.name" class="no_border_bottom">
           {{t.label}}
         </MenuItem>
       </Submenu>
@@ -45,10 +45,12 @@ export default {
   name: 'TopMenu',
   data () {
     return {
-      maxCount: 3
     }
   },
   computed: {
+    maxCount () {
+      return this.$store.state.maxToolCount
+    },
     tools () {
       return this.$store.state.tools
     },

@@ -37,7 +37,7 @@
 import * as types from './mutation-types'
 // import utils from '../utils/index'
 
-const findTemplateByUUID = function (uuid, arr, deep, sub) {
+const findTemplateByUUID = function(uuid, arr, deep, sub) {
   let _deep = deep // deep为1或2
   let _sub = sub || 0
   let outIndex = [-1, -1]
@@ -59,82 +59,85 @@ const findTemplateByUUID = function (uuid, arr, deep, sub) {
 }
 
 export const mutations = {
-  [types.SHOW_POPUP] (state, data) {
+  [types.INIT_TOOLS](state, data) {
+    state.tools = data.tools
+  },
+  [types.SHOW_POPUP](state, data) {
     state.popup = Object.assign({}, state.popup, data, {
       shown: true
     })
   },
-  [types.SET_ALL_PLUGINS] (state, data) {
+  [types.SET_ALL_PLUGINS](state, data) {
     state.allPlugins = data.allPlugins
   },
-  [types.SET_LOADER] (state, data) {
+  [types.SET_LOADER](state, data) {
     state.loaders[data.name] = data.value.vm
   },
-  [types.DEL_LOADER] (state, data) {
+  [types.DEL_LOADER](state, data) {
     if (state.loaders[data.name]) {
       delete state.loaders[data.name]
     }
   },
-  [types.SET_SOCKET] (state, data) {
+  [types.SET_SOCKET](state, data) {
     state.socket.client = data.socket
   },
-  [types.UPDATE_LOGIN_INFO] (state, data) {
+  [types.UPDATE_LOGIN_INFO](state, data) {
     state.loginInfo = data
   },
-  [types.DISCONNECT_SOCKETIO] (state) {
+  [types.DISCONNECT_SOCKETIO](state) {
     state.socket.client.disconnect()
     state.socket.client = {}
   },
-  [types.UPDATE_AVATAR] (state, data) {
+  [types.UPDATE_AVATAR](state, data) {
     state.loginInfo.headIcon = data.avatar
   },
-  [types.TOGGLE_MENU] (state, data) {
+  [types.TOGGLE_MENU](state, data) {
     state.spanLeft = (state.spanLeft === state.minSpanLeft ? state.maxSpanLeft : state.minSpanLeft)
     state.spanRight = (state.spanRight === state.maxSpanRight ? state.minSpanRight : state.maxSpanRight)
     state.menuFold = (state.spanLeft === state.minSpanLeft)
   },
-  [types.FOLD_SIDE_MENU] (state, data) {
+  [types.FOLD_SIDE_MENU](state, data) {
     state.spanLeft = data.fold ? state.minSpanLeft : state.maxSpanLeft
     state.spanRight = data.fold ? state.maxSpanRight : state.minSpanRight
     state.menuFold = data.fold
   },
-  [types.TOGGLE_FULL_SCREEN] (state, data) {
+  [types.TOGGLE_FULL_SCREEN](state, data) {
     state.isFullScreen = data.isFullScreen
   },
-  [types.SET_SIMULATOR] (state, data) {
+  [types.SET_SIMULATOR](state, data) {
     Object.assign(state.simulator, data)
   },
-  [types.ACTIVE_COMPONENT] (state, data) {
+  [types.ACTIVE_COMPONENT](state, data) {
     Object.assign(state.activeComponent, data)
   },
-  [types.ADD_COMPONENT] (state, data) {
+  [types.ADD_COMPONENT](state, data) {
     let thisPage = state.activityInfo.data.pages[state.currentPageIndex].children
     thisPage.push(data)
   },
-  [types.INIT_LOCAL_TEMPLATE] (state, data) {
+  [types.INIT_LOCAL_TEMPLATE](state, data) {
     state.activityInfo = data.template
   },
-  [types.PREV_PAGE] (state) {
+  [types.PREV_PAGE](state) {
     // 上一页
     if (state.currentPageIndex > 0) {
       state.currentPageIndex -= 1
     }
   },
-  [types.NEXT_PAGE] (state) {
+  [types.NEXT_PAGE](state) {
     // 下一页
     if (state.currentPageIndex < state.activityInfo.data.pages.length - 1) {
       state.currentPageIndex += 1
     }
   },
-  [types.SET_CURRENT_PAGE_INDEX] (state, data) {
+  [types.SET_CURRENT_PAGE_INDEX](state, data) {
     if (Number(data.index) >= 0 && Number(data.index) <= state.activityInfo.data.pages.length - 1) {
       state.currentPageIndex = Number(data.index)
     }
   },
-  [types.UPDATE_ACTIVITY_PROPERTY] (state, data) {
+  [types.UPDATE_ACTIVITY_PROPERTY](state, data) {
     Object.assign(state.activityInfo.data, data)
   },
-  [types.SAVE_LOCAL_TEMPLATE] (state, data) {
+  [types.SAVE_LOCAL_TEMPLATE](state, data) {
     /**
      * type: zpm-page
      * uuid: xxxxxxx
@@ -171,42 +174,42 @@ export const mutations = {
       }
     }
   },
-  [types.SHOW_FULL_SCREEN_POPUP] (state, data) {
+  [types.SHOW_FULL_SCREEN_POPUP](state, data) {
     Object.assign(state.fullScreenPopup, data, {
       shown: true
     })
   },
-  [types.HIDE_FULL_SCREEN_POPUP] (state) {
+  [types.HIDE_FULL_SCREEN_POPUP](state) {
     state.fullScreenPopup = {
       shown: false,
       subCom: ''
     }
   },
-  [types.ACTIVITY_INFO_CHANGED] (state) {
+  [types.ACTIVITY_INFO_CHANGED](state) {
     state.activityInfoChanged = true
   },
-  [types.ACTIVITY_INFO_UNCHANGED] (state) {
+  [types.ACTIVITY_INFO_UNCHANGED](state) {
     state.activityInfoChanged = false
   },
-  [types.SET_APP_HEAER] (state, data) {
+  [types.SET_APP_HEAER](state, data) {
     state.appHeaderOperationArea = data
   },
-  [types.SHOW_SIMULATOR_GRID] (state) {
+  [types.SHOW_SIMULATOR_GRID](state) {
     state.grid.shown = true
   },
-  [types.HIDE_SIMULATOR_GRID] (state) {
+  [types.HIDE_SIMULATOR_GRID](state) {
     state.grid.shown = false
   },
-  [types.UPDATE_ACTIVE_POSITION] (state, data) {
+  [types.UPDATE_ACTIVE_POSITION](state, data) {
     state.activePosition = data.position
   },
-  [types.SET_COMMENTS] (state, data) {
+  [types.SET_COMMENTS](state, data) {
     state.article.comments = Object.assign({}, state.article.comments, data)
   },
-  [types.CACHE_ALL_ARTICLE_TAGS] (state, data) {
+  [types.CACHE_ALL_ARTICLE_TAGS](state, data) {
     state.allArticleTags = data.tags
   },
-  [types.SET_BODY_STYLES] (state, data) {
+  [types.SET_BODY_STYLES](state, data) {
     state.bodyStyles = data.styles
   }
 }

@@ -119,6 +119,8 @@ export const CACHE_ALL_ARTICLE_TAGS = 'CACHE_ALL_ARTICLE_TAGS'
 
 export const SET_BODY_STYLES = 'SET_BODY_STYLES'
 
+export const INIT_TOOLS = 'INIT_TOOLS'
+
 // >>>> actions:
 
 // 登录1

@@ -3,7 +3,14 @@
     <div class="app_logo_container" @click="goHome">
       <img :src="logo">
     </div>
-    <top-menu></top-menu>
+    <div class="headers_right">
+      <top-menu></top-menu>
+      <div class="settings_container">
+        <Tooltip content="打开或关闭设置 cmd/ctrl + o" placement="bottom-end">
+                <Icon type="ios-cog" size="24" @click="goSettings"/>
+            </Tooltip>
+      </div>
+    </div>
   </div>
 </template>
 <style scoped>
@@ -11,7 +18,7 @@
     position: fixed;
     top: 0;
     right: 0;
-    z-index: 9999;
+    z-index: 999;
     width: 100%;
     height: 65px;
     background-color: #ffffff;
@@ -32,6 +39,25 @@
   .app_logo_container img {
     max-height: 42px;
   }
+  .headers_right {
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .settings_container {
+    width: 32px;
+    height: 65px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .settings_container i {
+    width: 32px;
+      height: 65px;
+      line-height: 65px;
+  }
 </style>
 <script>
 export default {
@@ -48,6 +74,11 @@ export default {
     goHome () {
       this.$router.replace({
         name: 'home'
+      })
+    },
+    goSettings () {
+      this.$router.replace({
+        name: 'settings'
       })
     }
   },

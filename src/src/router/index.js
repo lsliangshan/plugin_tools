@@ -2,6 +2,7 @@ import Vue from 'vue'
 
 import Router from 'vue-router'
 import ContentRoutes from './content-routes.js'
+import PageRoutes from './page-routes.js'
 Vue.use(Router)
 
 export const popupRouter = {
@@ -9,7 +10,8 @@ export const popupRouter = {
   name: 'Popup',
   meta: {},
   components: {
-    HomeRouter: () => import('../components/Popup.vue')
+    HomeRouter: () =>
+      import ('../components/Popup.vue')
   }
 }
 
@@ -61,6 +63,7 @@ export const popupRouter = {
 export default new Router({
   routes: [
     popupRouter,
-    ContentRoutes
+    ContentRoutes,
+    PageRoutes
   ]
 })
