@@ -66,15 +66,18 @@ const store = new Vuex.Store({
       label: '卡通',
       sublist: [{
         label: '人物1',
-        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537032993975&di=6c4a07a14f56ae4ab598bcdc1eb71ccd&imgtype=0&src=http%3A%2F%2Fpic13.nipic.com%2F20110413%2F6998579_231733141000_2.jpg'
+        img: 'https://static.dei2.com/plugins_admin/img/bg.jpg'
       }, {
         label: '人物2',
+        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537032993975&di=6c4a07a14f56ae4ab598bcdc1eb71ccd&imgtype=0&src=http%3A%2F%2Fpic13.nipic.com%2F20110413%2F6998579_231733141000_2.jpg'
+      }, {
+        label: '人物3',
         img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537032993975&di=263fc8a258bf38c2911fb72eaf7c5a06&imgtype=0&src=http%3A%2F%2Fpic39.nipic.com%2F20140312%2F18176675_134521167152_2.jpg'
       }, {
-        label: '人物3',
+        label: '人物4',
         img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537042117109&di=f5ebee272ba132a1d868f91a79d76559&imgtype=0&src=http%3A%2F%2Fi2.hdslb.com%2Fbfs%2Farchive%2F36fa4d9b32a1efead39ba26c6e3442fc9e9d8c71.jpg'
       }, {
-        label: '人物3',
+        label: '人物5',
         img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537042302797&di=09905ffc4e551e42710444c12ca18abd&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F9%2F568394f497aa0.jpg'
       }]
     }],

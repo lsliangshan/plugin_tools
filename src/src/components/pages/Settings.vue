@@ -374,7 +374,10 @@
 	    created () {
 	    	this.$nextTick(() => {
 	    		this.toolTagsModal.activeItems = JSON.parse(JSON.stringify(this.activeTools))
-	    		this.toolTagsModal.inactiveItems = JSON.parse(JSON.stringify(this.inactiveTools))
+	    		try {
+	    			this.toolTagsModal.inactiveItems = JSON.parse(JSON.stringify(this.inactiveTools))
+	    		} catch (err) {
+	    		}
 	    		this.cacheActiveThemeIndex = this.activeThemeIndex
 	    	})
 	    },
