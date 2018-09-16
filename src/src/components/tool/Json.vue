@@ -9,8 +9,15 @@
             <Icon type="ios-code" size="14" />
           </div>
         </div>
-        <div slot="right" class="demo-split-pane">          
-            <div class="json_target" v-html="formatJsonStr">              
+        <div slot="right" class="demo-split-pane">
+            <div class="json_target" id="json-dest" v-html="formatJsonStr">              
+            </div>
+            <div class="operation_container">
+              <div class="operation_item copy-format-json" data-clipboard-target="#json-dest">
+                <Tooltip content="复制" placement="bottom">
+                    <Icon type="md-copy" size="20"/>
+                </Tooltip>                
+              </div>
             </div>
         </div>
     </Split>
@@ -27,8 +34,33 @@
     border: 1px solid #dcdee2;
   }
   .demo-split-pane{
+    position: relative;
     height: 100%;
     padding: 15px;
+  }
+  .operation_container {
+    position: absolute;
+    top: 23px;
+    right: 23px;
+    height: 32px;
+  }
+  .operation_item {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    margin-left: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .operation_item:hover {
+    background-color: #f2f2f2;
+  }
+  .operation_item i {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
   }
   .unformat_wrapper {
     width: 100%;
@@ -64,7 +96,7 @@
     height: 100%;
     font-size: 15px;
     overflow-y: auto;
-    background-color: #f2f2f2;
+    background-color: #ffffff;
     border-radius: 4px;
     padding: 8px;
     box-sizing: border-box;
@@ -74,6 +106,7 @@
 import '../../../static/js/jquery.json'
 import '../../../static/js/json2'
 import '../../../static/js/jsonlint'
+const Clipboard = require('clipboard')
 export default {
   name: 'json',
   data () {
@@ -110,6 +143,34 @@ export default {
         return ''
       }
     }
+  },
+  created () {
+    const that = this
+    this.$nextTick(() => {
+      const clipboard = new Clipboard('.copy-format-json', {})
+      clipboard.on('success', function (e) {
+        if (e.text.trim() !== '') {
+          let _msg = ''
+          if (e.action === 'copy') {
+            _msg = '复制成功'
+          } else if (e.action === 'cut') {
+            _msg = '剪切成功'
+          }
+          that.$Message.success(_msg)
+        }
+      })
+      clipboard.on('error', function (e) {
+        if (e.text.trim() !== '') {
+          let _msg = ''
+          if (e.action === 'copy') {
+            _msg = '复制失败'
+          } else if (e.action === 'cut') {
+            _msg = '剪切失败'
+          }
+          that.$Message.error(_msg)
+        }
+      })
+    })
   },
   components: {}
 }

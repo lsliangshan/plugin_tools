@@ -254,7 +254,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background-color: rgba(0,0,0,.1);
+		background-color: #f8f8f8;
 	}
 	.bg_preview img {
 		max-width: 100%;
@@ -296,7 +296,7 @@
 		pointer-events: none;
 	}
 	.themes_item.blank_theme {
-		background-color: rgba(0,0,0,.1);
+		background-color: #f8f8f8;
 	}
 	.themes_item_selected {
 		position: absolute;
@@ -330,7 +330,7 @@
 					inactiveItems: []
 				},
 				themeImagesModal: {
-					shown: true
+					shown: false
 				},
 				cacheActiveThemeIndex: [-1, -1]
 			}
