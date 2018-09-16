@@ -66,6 +66,8 @@
 		/*margin: 0 auto;*/
 		background-color: #FFFFFF;
 		border: 1px solid #dcdee2;
+		border-radius: 4px;
+		overflow: hidden;
 	}
 	.line {
 		width: 100%;

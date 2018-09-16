@@ -87,7 +87,8 @@ const store = new Vuex.Store({
     localStorageKeys: {
       activeTools: 'local-active-tools',
       inactiveTools: 'local-inactive-tools',
-      maxToolCount: 'local-max-tool-count'
+      maxToolCount: 'local-max-tool-count',
+      activeThemeIndex: 'local-active-theme-index'
     },
     tools: [],
     activeTools: [],

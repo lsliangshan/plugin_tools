@@ -45,6 +45,8 @@
     width: 670px;
     height: 350px;
     background-color: #FFFFFF;
+    border-radius: 4px;
+    overflow: hidden;
   }
   .textarea100p {
     height: 100%;
@@ -67,6 +69,8 @@
     font-size: 16px;
     color: #bbbbbb;
     border: 1px solid #dcdee2;
+    border-radius: 4px;
+    overflow: hidden;
   }
   .qrocde_canvas_container {
     width: 300px;

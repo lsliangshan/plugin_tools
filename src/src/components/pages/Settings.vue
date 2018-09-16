@@ -417,7 +417,7 @@
 	    		this.cacheActiveThemeIndex = [Number(e.target.dataset.index), Number(e.target.dataset.subIndex)]
 	    	},
 	    	saveTheme () {
-	    		this.$store.commit(types.SAVE_ACTIVE_THEME_INDEX, {
+	    		this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
 	    			activeThemeIndex: this.cacheActiveThemeIndex
 	    		})
 	    	}

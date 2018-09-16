@@ -24,6 +24,9 @@ export default {
     },
     localStorageKeys () {
       return this.$store.state.localStorageKeys
+    },
+    activeThemeIndex () {
+      return this.$store.state.activeThemeIndex
     }
   },
   created () {
@@ -51,6 +54,9 @@ export default {
     })
     this.$store.commit(types.SET_MAX_TOOL_COUNT, {
       count: await this.getMaxToolCount()
+    })
+    this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
+      activeThemeIndex: await this.getActiveThemeIndex()
     })
   },
   methods: {
@@ -107,6 +113,12 @@ export default {
       return new Promise(async (resolve) => {
         let maxToolCount = await StorageUtil.getItem(this.localStorageKeys.maxToolCount)
         resolve(maxToolCount || this.maxToolCount)
+      })
+    },
+    getActiveThemeIndex () {
+      return new Promise(async (resolve) => {
+        let activeThemeIndex = await StorageUtil.getItem(this.localStorageKeys.activeThemeIndex)
+        resolve(activeThemeIndex || this.activeThemeIndex)
       })
     }
   }

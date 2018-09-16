@@ -19,7 +19,7 @@
 <style scoped>
   .tool_container {
     width: 100%;
-    max-width: 1000px;
+    /*max-width: 1000px;*/
     margin: 0 auto;
   }
   .demo-split{
@@ -49,6 +49,7 @@
     height: 20px;
     border-radius: 5px;
     border: 1px solid #aaaaaa;
+    color: #aaaaaa;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -63,6 +64,10 @@
     height: 100%;
     font-size: 15px;
     overflow-y: auto;
+    background-color: #f2f2f2;
+    border-radius: 4px;
+    padding: 8px;
+    box-sizing: border-box;
   }
 </style>
 <script>
