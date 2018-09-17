@@ -1,6 +1,6 @@
 <template>
 	<div class="window_cmd_container">
-		<div class="window_cmd_inner" :class="{show: shown}">
+		<div class="window_cmd_inner" :class="{show: shown}" :style="{pointerEvents: (shown ? 'auto' : 'none')}">
 			<div class="window_cmd_toggle_container">
 				<Tooltip :content="shown ? '关闭操作框 cmd/ctrl + shift + R' : '打开操作框 cmd/ctrl + shift + R'" placement="left">
 		            <div class="window_cmd_toggle" @click="toggleCmdContainer">

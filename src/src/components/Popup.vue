@@ -1,6 +1,6 @@
 <template>
 	<div class="popup_container">
-		<div class="popup_title">{{windowInfo.title || windowInfo.url}}</div>
+		<div class="popup_title"><p>{{windowInfo.title || windowInfo.url}}</p></div>
 		<div class="popup_qrcode">
 			<div class="popup_no_qrcode" key="noqrcode" v-if="!windowInfo.url">
 				<div class="popup_no_qrcode_inner">请输入文字</div>
@@ -32,6 +32,13 @@
 		padding: 15px;
 		box-sizing: border-box;
 		word-break: break-all;
+	}
+	.popup_title p {
+		overflow : hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 4;
+		-webkit-box-orient: vertical;
 	}
 	.popup_qrcode {
 		width: 300px;

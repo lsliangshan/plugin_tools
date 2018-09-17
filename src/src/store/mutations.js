@@ -79,8 +79,15 @@ export const mutations = {
     await StorageUtil.setItem(state.localStorageKeys.activeThemeIndex, data.activeThemeIndex)
   },
   async [types.SET_BLANK_HOME_PAGE] (state, data) {
-    state.blankHomePage = data.blankHomePage
-    await StorageUtil.setItem(state.localStorageKeys.blankHomePage, data.blankHomePage.trim() || 'default')
+    if (!data.blankHomePage || data.blankHomePage.trim() === 'default') {
+      state.blankHomePage = 'default'
+    } else if (data.blankHomePage.match(/^\/\//)) {
+      state.blankHomePage = 'http://' + data.blankHomePage.replace(/^\/\//, '')
+    } else if (!data.blankHomePage.match(/^http(s?):/)) {
+      state.blankHomePage = 'http://' + data.blankHomePage
+    }
+    // state.blankHomePage = data.blankHomePage
+    await StorageUtil.setItem(state.localStorageKeys.blankHomePage, state.blankHomePage.trim() || 'default')
   },
   [types.SHOW_POPUP](state, data) {
     state.popup = Object.assign({}, state.popup, data, {

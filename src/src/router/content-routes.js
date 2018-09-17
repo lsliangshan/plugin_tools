@@ -53,5 +53,16 @@ export default {
       ContentRouter: () =>
         import ('../components/tool/Qrcode.vue')
     }
+  }, {
+    path: '/code',
+    name: 'code',
+    meta: {
+      label: 'CHAR',
+      title: 'html实体代码'
+    },
+    components: {
+      ContentRouter: () =>
+        import ('../components/tool/Code.vue')
+    }
   }]
 }
