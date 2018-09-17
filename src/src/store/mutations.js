@@ -78,6 +78,10 @@ export const mutations = {
     state.activeThemeIndex = data.activeThemeIndex
     await StorageUtil.setItem(state.localStorageKeys.activeThemeIndex, data.activeThemeIndex)
   },
+  async [types.SET_BLANK_HOME_PAGE] (state, data) {
+    state.blankHomePage = data.blankHomePage
+    await StorageUtil.setItem(state.localStorageKeys.blankHomePage, data.blankHomePage.trim() || 'default')
+  },
   [types.SHOW_POPUP](state, data) {
     state.popup = Object.assign({}, state.popup, data, {
       shown: true

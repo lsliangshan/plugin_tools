@@ -1,6 +1,12 @@
 <template>
 	<div class="settings_container" :style="settingsContainerStyles">
 		<div class="settings_inner" :style="settingsInnerStyles">
+			<div class="settings_item">
+				<label class="settings_item_label">我的主页</label>
+				<div class="settings_item_value">
+					<Input type="text" v-model="cacheBlankHomePage" @on-change="changeBlankHomePage"/>
+				</div>
+			</div>
 			<div class="settings_tag_container">
 				<div class="settings_tag_bg"></div>
 				<div class="settings_tag_label">设置</div>
@@ -103,7 +109,7 @@
 		box-sizing: border-box;
 		/*background-color: #f5f5f5;*/
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		justify-content: center;
 	}
 	.settings_inner {
@@ -332,7 +338,8 @@
 				themeImagesModal: {
 					shown: false
 				},
-				cacheActiveThemeIndex: [-1, -1]
+				cacheActiveThemeIndex: [-1, -1],
+				cacheBlankHomePage: ''
 			}
 		},
 		computed: {
@@ -352,7 +359,7 @@
 	      },
 	      settingsInnerStyles () {
 	      	return {
-	      		height: (this.bodyStyles.height - 65 - 30) + 'px'
+	      		maxHeight: (this.bodyStyles.height - 65 - 30) + 'px'
 	      	}
 	      },
 	      localStorageKeys () {
@@ -369,6 +376,9 @@
 	      },
 	      activeThemeIndex () {
 	      	return this.$store.state.activeThemeIndex
+	      },
+	      blankHomePage () {
+	      	return this.$store.state.blankHomePage
 	      }
 	    },
 	    created () {
@@ -379,6 +389,7 @@
 	    		} catch (err) {
 	    		}
 	    		this.cacheActiveThemeIndex = this.activeThemeIndex
+	    		this.cacheBlankHomePage = this.blankHomePage
 	    	})
 	    },
 	    methods: {
@@ -422,6 +433,11 @@
 	    	saveTheme () {
 	    		this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
 	    			activeThemeIndex: this.cacheActiveThemeIndex
+	    		})
+	    	},
+	    	changeBlankHomePage () {
+	    		this.$store.commit(types.SET_BLANK_HOME_PAGE, {
+	    			blankHomePage: this.cacheBlankHomePage
 	    		})
 	    	}
 	    }

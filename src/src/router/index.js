@@ -15,6 +15,15 @@ export const popupRouter = {
   }
 }
 
+export const blankRouter = {
+  path: '/blank',
+  name: 'blank',
+  meta: {},
+  components: {
+    HomeRouter: () => import('../components/pages/Blank.vue')
+  }
+}
+
 // export const contentRouter = ContentRoutes
 
 // export const contentRouter = {
@@ -63,6 +72,7 @@ export const popupRouter = {
 export default new Router({
   routes: [
     popupRouter,
+    blankRouter,
     ContentRoutes,
     PageRoutes
   ]

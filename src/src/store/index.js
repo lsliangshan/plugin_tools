@@ -60,7 +60,31 @@ const store = new Vuex.Store({
         img: '/html/static/images/themes/bg.jpg'
       }, {
         label: '风景2',
-        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537041976516&di=70c74141213407fe5f214f50e61ad3a0&imgtype=0&src=http%3A%2F%2Fwww.wallcoo.com%2Fflower%2Fdigital_flower_jp_03%2Fwallpapers%2F1920x1200%2Fwallcoo.com_Digital_Flower_Photo_321.jpg'
+        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537768398&di=449d2f7d25e45d84858aeee276fca91b&imgtype=jpg&er=1&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2Fe%2F52fc5991e5688.jpg'
+      }, {
+        label: '风景3',
+        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537173679284&di=59a836020a224b636800e34e9cf0b246&imgtype=0&src=http%3A%2F%2Fs9.knowsky.com%2Fbizhi%2Fl%2F1-5000%2F2009528155448360620259.jpg'
+      }, {
+        label: '风景4',
+        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537173679284&di=979674124c7ae45489a64bd439920500&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2Fa%2F587c5ce7a7131.jpg'
+      }, {
+        label: '风景5',
+        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537173679283&di=f58c136d3a43df65c834e66b04a4c577&imgtype=0&src=http%3A%2F%2Fimg.pconline.com.cn%2Fimages%2Fupload%2Fupc%2Ftx%2Fwallpaper%2F1301%2F28%2Fc1%2F17792394_1359358658037.jpg'
+      }, {
+        label: '风景6',
+        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537173679283&di=5d29914665b6e9856ab145346c5dfaab&imgtype=0&src=http%3A%2F%2Fs9.knowsky.com%2Fbizhi%2Fl%2F1-5000%2F200952811402685335493.jpg'
+      }, {
+        label: '风景7',
+        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537173679283&di=7e9ce6a180540a8146f9a9b8377d585d&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F7%2F5782fbca545ee.jpg%3Fdown'
+      }, {
+        label: '风景8',
+        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537173679282&di=82d94356f425195542c7bedcbabcd412&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F5%2F5930c3286fa8f.jpg'
+      }, {
+        label: '风景9',
+        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537173679282&di=936bcc931066b550fbd821ad1c01af85&imgtype=0&src=http%3A%2F%2Fimg.pconline.com.cn%2Fimages%2Fupload%2Fupc%2Ftx%2Fwallpaper%2F1307%2F10%2Fc3%2F23153395_1373426315890.jpg'
+      }, {
+        label: '风景10',
+        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537173679282&di=c6dc0c4db21329917136fae8d1c12f68&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2Fa%2F5879b516a8982.jpg'
       }]
     }, {
       label: '卡通',
@@ -91,8 +115,10 @@ const store = new Vuex.Store({
       activeTools: 'local-active-tools',
       inactiveTools: 'local-inactive-tools',
       maxToolCount: 'local-max-tool-count',
-      activeThemeIndex: 'local-active-theme-index'
+      activeThemeIndex: 'local-active-theme-index',
+      blankHomePage: 'local-blank-home-page'
     },
+    blankHomePage: 'default',
     tools: [],
     activeTools: [],
     inactiveTools: [],

@@ -61,6 +61,7 @@
 		justify-content: center;
 	}
 	.tool_inner {
+		position: relative;
 		width: 1000px;
 		height: 100%;
 		/*margin: 0 auto;*/
@@ -112,7 +113,7 @@
 	}
 	.bottom_tips {
 		position: absolute;
-	    bottom: 15px;
+	    bottom: 0;
 	    text-align: center;
 	    width: 100%;
 	    line-height: 30px;

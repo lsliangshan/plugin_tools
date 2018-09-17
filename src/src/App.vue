@@ -27,6 +27,9 @@ export default {
     },
     activeThemeIndex () {
       return this.$store.state.activeThemeIndex
+    },
+    blankHomePage () {
+      return this.$store.state.blankHomePage
     }
   },
   created () {
@@ -57,6 +60,9 @@ export default {
     })
     this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
       activeThemeIndex: await this.getActiveThemeIndex()
+    })
+    this.$store.commit(types.SET_BLANK_HOME_PAGE, {
+      blankHomePage: await this.getBlankHomePage()
     })
   },
   methods: {
@@ -119,6 +125,12 @@ export default {
       return new Promise(async (resolve) => {
         let activeThemeIndex = await StorageUtil.getItem(this.localStorageKeys.activeThemeIndex)
         resolve(activeThemeIndex || this.activeThemeIndex)
+      })
+    },
+    getBlankHomePage () {
+      return new Promise(async (resolve) => {
+        let blankHomePage = await StorageUtil.getItem(this.localStorageKeys.blankHomePage)
+        resolve(blankHomePage || this.blankHomePage)
       })
     }
   }

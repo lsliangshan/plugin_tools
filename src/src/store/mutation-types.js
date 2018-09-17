@@ -129,6 +129,9 @@ export const SET_MAX_TOOL_COUNT = 'SET_MAX_TOOL_COUNT'
 
 export const SET_ACTIVE_THEME_INDEX = 'SET_ACTIVE_THEME_INDEX'
 
+// 设置空白页面 地址
+export const SET_BLANK_HOME_PAGE = 'SET_BLANK_HOME_PAGE'
+
 // >>>> actions:
 
 // 登录1
