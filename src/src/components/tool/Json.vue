@@ -96,10 +96,13 @@
     height: 100%;
     font-size: 15px;
     overflow-y: auto;
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, .9);
     border-radius: 4px;
     padding: 8px;
     box-sizing: border-box;
+  }
+  .unformat_wrapper textarea {
+    background-color: rgba(255, 255, 255, .9);
   }
 </style>
 <script>

@@ -85,9 +85,10 @@ export const mutations = {
       state.blankHomePage = 'http://' + data.blankHomePage.replace(/^\/\//, '')
     } else if (!data.blankHomePage.match(/^http(s?):/)) {
       state.blankHomePage = 'http://' + data.blankHomePage
+    } else {
+      state.blankHomePage = data.blankHomePage
     }
-    // state.blankHomePage = data.blankHomePage
-    await StorageUtil.setItem(state.localStorageKeys.blankHomePage, state.blankHomePage.trim() || 'default')
+    await StorageUtil.setItem(state.localStorageKeys.blankHomePage, state.blankHomePage)
   },
   [types.SHOW_POPUP](state, data) {
     state.popup = Object.assign({}, state.popup, data, {

@@ -31,6 +31,12 @@
 					</div>
 				</div>
 			</div>
+			<div class="settings_item">
+				<label class="settings_item_label">清除缓存</label>
+				<div class="settings_item_value">
+					<Button type="warning" @click="clearAllStorage">清除缓存</Button>
+				</div>
+			</div>
 		</div>
 
 		<Modal
@@ -439,6 +445,23 @@
 	    		this.$store.commit(types.SET_BLANK_HOME_PAGE, {
 	    			blankHomePage: this.cacheBlankHomePage
 	    		})
+	    	},
+	    	clearAllStorage () {
+	    		const that = this
+	    		this.$Modal.confirm({
+                    title: '清除缓存',
+                    content: '删除缓存后，用户所有设置会恢复为默认，确定删除所有缓存？',
+                    okText: '确认',
+                    cancelText: '取消',
+                    async onOk () {
+						for (let k in that.localStorageKeys) {
+			    			if (that.localStorageKeys.hasOwnProperty(k)) {
+			    				await StorageUtil.removeItem(that.localStorageKeys[k])
+			    			}
+			    		}
+			    		that.$Message.success('缓存已经清除')
+                    }
+                })
 	    	}
 	    }
 	}

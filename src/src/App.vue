@@ -159,6 +159,7 @@ export default {
     width: 100%;
     height: 100%!important;
     resize: none;
+    background-color: rgba(255, 255, 255, .9);
   }
   .unformat_wrapper .ivu-input:hover, .unformat_wrapper .ivu-input:focus {
     border-color: #dcdee2;
@@ -188,5 +189,50 @@ export default {
   .window_cmd_input .ivu-input:focus {
     border: none;
     box-shadow: none;
+  }
+  .base64_container .ivu-tabs-content {
+    /*background: rgba(255, 255, 255, .9);*/
+    height: calc(100% - 33px)!important;    
+  }
+  .base64_container .ivu-tabs-bar {
+    border-color: transparent!important;
+    -webkit-user-select: none;
+  }
+  .base64_container > .ivu-tabs-card > .ivu-tabs-content > .ivu-tabs-tabpane {
+      background-color: rgba(255, 255, 255, .9);
+      border-top-right-radius: 4px;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+      /*padding: 16px;*/
+      /*box-sizing: border-box;*/
+  }
+  .base64_container > .ivu-tabs-card > .ivu-tabs-content {
+      height: 120px;
+      margin-top: -16px;
+      font-weight: bolder;
+  }
+  .base64_container > .ivu-tabs-card > .ivu-tabs-bar .ivu-tabs-tab-active {
+      border-color: transparent!important;
+      background-color: rgba(255, 255, 255, .9);
+      color: rgb(79, 192, 141)!important;
+  }
+  .base64_container .ivu-tabs-nav .ivu-tabs-tab:hover {
+      color: rgb(79, 192, 141)!important;
+  }
+  .no_bg textarea {
+    background-color: transparent!important;
+  }
+  .base64_container .error_input textarea {
+    color: #ed4014!important;
+  }
+  .base64_container .ivu-upload {
+    height: 100%;
+  }
+  .base64_container .ivu-upload-drag {
+    background-color: transparent;
+  }
+
+  .tool_url_container textarea {
+    background-color: rgba(255, 255, 255, .9);
   }
 </style>

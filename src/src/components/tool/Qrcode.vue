@@ -44,9 +44,11 @@
   .qrcode_input_wrapper {
     width: 670px;
     height: 350px;
-    background-color: #FFFFFF;
     border-radius: 4px;
     overflow: hidden;
+  }
+  .qrcode_input_wrapper textarea {
+    background-color: rgba(255, 255, 255, .9);
   }
   .textarea100p {
     height: 100%;
@@ -62,7 +64,7 @@
     top: 0;
     width: 300px;
     height: 300px;
-    background-color: #FFFFFF;
+    background-color: rgba(255, 255, 255, .9);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -75,7 +77,7 @@
   .qrocde_canvas_container {
     width: 300px;
     height: 300px;
-    background-color: #FFFFFF;
+    background-color: rgba(255, 255, 255, .9);
     border: 1px solid #dcdee2;
     box-sizing: content-box;
   }

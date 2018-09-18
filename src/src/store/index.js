@@ -105,7 +105,7 @@ const store = new Vuex.Store({
         img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537042302797&di=09905ffc4e551e42710444c12ca18abd&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fwallpaper%2F9%2F568394f497aa0.jpg'
       }]
     }],
-    activeThemeIndex: [0, 0],
+    activeThemeIndex: [0, 1],
     bodyStyles: {},
     events: {
       bodyClick: 'body-click',
@@ -122,7 +122,7 @@ const store = new Vuex.Store({
     tools: [],
     activeTools: [],
     inactiveTools: [],
-    maxToolCount: 3,
+    maxToolCount: 4,
     assets: {},
     requestInfo: {},
     loginInfo: {},

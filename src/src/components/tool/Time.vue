@@ -65,7 +65,7 @@
 		width: 1000px;
 		height: 100%;
 		/*margin: 0 auto;*/
-		background-color: #FFFFFF;
+		background-color: rgba(255, 255, 255, .9);
 		border: 1px solid #dcdee2;
 		border-radius: 4px;
 		overflow: hidden;

@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "dei2.tools",
   "description": "实用插件",
-  "version": "1.0",
+  "version": "1.0.1",
   "permissions": [
     "activeTab",
     "tabs",

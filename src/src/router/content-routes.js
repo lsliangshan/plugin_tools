@@ -32,6 +32,16 @@ export default {
         import ('../components/tool/Url.vue')
     }
   }, {
+    path: '/base64',
+    name: 'base64',
+    meta: {
+      label: 'BASE64',
+      title: 'base64转换'
+    },
+    components: {
+      ContentRouter: () => import('../components/tool/Base64.vue')
+    }
+  }, {
     path: '/time',
     name: 'time',
     meta: {
