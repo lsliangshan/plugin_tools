@@ -151,7 +151,7 @@
 				cmdPrefix: '~ root# ',
 				shown: false,
 				currentCommand: '',
-				allCommands: ['help', 'go', 'clear', 'reload', 'audio', 'speak'],
+				allCommands: ['help', 'go', 'clear', 'reload', 'audio', 'speak', 'ajax'],
 				consoleStyles: {
 					color: {
 						label: 'rgb(79, 192, 141)',
@@ -278,9 +278,12 @@
 							})
 							break
 						case 'speak':
-							this.commadnSpeak({
+							this.commandSpeak({
 								args: _commandArgs
 							})
+							break
+						case 'ajax':
+							this.commandAjax()
 							break
 						// case 'play':
 						// 	this.commandPlay({
@@ -295,6 +298,11 @@
 					}
 					resolve(true)
 				})				
+			},
+			commandAjax () {
+				this.$router.replace({
+					name: 'ajax'
+				})
 			},
 			commandGo (args) {
 				/**
@@ -378,7 +386,7 @@
 					}
 				}
 			},
-			commadnSpeak (args) {
+			commandSpeak (args) {
 				for (let i = 0; i < args.args.length; i++) {
 					window.speechSynthesis.speak(new window.SpeechSynthesisUtterance(args.args[i]))
 				}

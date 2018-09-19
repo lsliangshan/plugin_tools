@@ -38,8 +38,8 @@
 														<Input type="text" class="no_border_input" v-model="p.value" placeholder="请输入value"/>
 													</Col>
 													<Col :span="1" class="cell_item cell_item_last">
-														<Icon type="ios-close" class="item_remove_icon" size="20" :data-index="pi" data-type="headers" @click="removeRequestLine" v-if="pi < item.params.length - 1" />
-														<Icon type="ios-add" class="item_add_icon" size="20" data-type="headers" @click="addRequestLine" v-if="pi === (item.params.length - 1)" />
+														<Icon type="ios-close" class="item_remove_icon" size="20" :data-index="pi" data-type="params" @click="removeRequestLine" v-if="pi < item.params.length - 1" />
+														<Icon type="ios-add" class="item_add_icon" size="20" data-type="params" @click="addRequestLine" v-if="pi === (item.params.length - 1)" />
 													</Col>
 												</Row>
 								        	</div>
@@ -73,7 +73,25 @@
 				            	</div>				                
 				            </div>
 				            <div slot="bottom" class="demo-split-pane">
-				                <div class="ajax_response_container"></div>
+				                <div class="ajax_response_container" id="json-dest" v-html="formatJsonStr" :style="{fontSize: selectedFontSize + 'px'}">				                	
+				                </div>
+				                <div class="operation_container">
+				                	<div class="operation_item">
+						              	<Tooltip content="字体大小" placement="bottom">
+						                    <Dropdown trigger="hover" :transfer="true" @on-click="changeFontSize" class="custom_dropdown">
+										        <span>F-{{selectedFontSize}}</span>
+										        <DropdownMenu slot="list">
+										            <DropdownItem v-for="(fs, fsi) in allFontSize" :key="fsi" :name="fs" :selected="fs == selectedFontSize">{{fs}}</DropdownItem>
+										        </DropdownMenu>
+										    </Dropdown>
+						                </Tooltip>
+					              	</div>
+					              	<div class="operation_item copy-format-json" data-clipboard-target="#json-dest">
+					                	<Tooltip content="复制" placement="bottom">
+					                    	<Icon type="md-copy" size="20"/>
+					                	</Tooltip>
+					              	</div>					              
+					            </div>
 				            </div>
 				        </Split>						
 					</div>
@@ -120,6 +138,7 @@
 		height: calc(100% - 38px);
 	}
 	.demo-split-pane{
+		position: relative;
 	    height: 100%;
 	  }
 	  .ajax_request_container {
@@ -183,12 +202,53 @@
 	  	margin-top: 5px;
 	  	border: 1px solid #dcdee2;
 	  	border-top: none;
+	  	overflow-y: scroll;
+	  }
+	  .operation_container {
+	    position: absolute;
+	    top: 0px;
+	    right: 0px;
+	    height: 32px;
+	  }
+	  .operation_item {
+	    min-width: 32px;
+	    height: 32px;
+	    cursor: pointer;
+	    /*margin-left: 8px;*/
+	    display: inline-flex;
+	    align-items: center;
+	    justify-content: center;
+	  }
+	  .operation_item:hover {
+	    background-color: #f2f2f2;
+	  }
+	  .operation_item i {
+	    width: 32px;
+	    height: 32px;
+	    line-height: 32px;
+	    text-align: center;
+	  }
+	  .custom_dropdown {
+	  	max-height: 200px;
 	  	overflow-y: auto;
+	  	display: inline-flex;
+	  	align-items: center;
+	  	justify-content: center;
+	  }
+	  .custom_dropdown span {
+	  	display: inline-block;
+    	vertical-align: middle;
+    	font-size: 16px;
+    	margin-top: 4px;
 	  }
 </style>
 <script>
 	import qs from 'qs'
 	import axios from 'axios'
+	import '../../../static/js/jquery.json'
+	import '../../../static/js/json2'
+	import '../../../static/js/jsonlint'
+	const Clipboard = require('clipboard')
 	export default {
 		name: 'ajax',
 		data () {
@@ -197,6 +257,8 @@
 				currentMethod: 'POST',
 				currentTabName: '',
 				split: 0.3,
+				allFontSize: ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'],
+				selectedFontSize: '14',
 				blankHeadersLine: {
 					active: true,
 					key: '',
@@ -225,10 +287,14 @@
 							key: '',
 							value: ''
 						}
-					]
+					],
+					response: ''
 				},
 				ajaxTabs: [
-				]
+				],
+				jsonStr: '',
+				currentJson: '',
+      			currentJsonStr: ''
 			}
 		},
 		computed: {
@@ -267,7 +333,24 @@
 					}
 				}
 				return count
-			}
+			},
+			formatJsonStr () {
+		      let result = ''    
+		      if (this.ajaxTabs[Number(this.currentIndex)].response !== '') {
+		        let jsonStr = this.ajaxTabs[Number(this.currentIndex)].response
+		        try {
+		          this.currentJson = jsonlint.parse(jsonStr)
+		          this.currentJsonStr = JSON.stringify(this.currentJson)
+		          result = new JSONFormat(jsonStr, 4).toString()
+		        } catch (e) {
+		          result = '<span style="color: #f1592a; font-weight: bold;">' + e + '</span>'
+		          this.currentJsonStr = result
+		        }
+		        return result
+		      } else {
+		        return ''
+		      }
+		    }
 		},
 		created () {
 			this.ajaxTabs.push(this.getANewTab())
@@ -275,6 +358,41 @@
 				ban: false,
 				type: 'plus'
 			})
+			const that = this
+		    this.$nextTick(() => {
+		      const clipboard = new Clipboard('.copy-format-json', {})
+		      clipboard.on('success', function (e) {
+		        if (e.text.trim() !== '') {
+		          let _msg = ''
+		          if (e.action === 'copy') {
+		            _msg = '复制成功'
+		          } else if (e.action === 'cut') {
+		            _msg = '剪切成功'
+		          }
+		          that.$Message.success(_msg)
+		        }
+		      })
+		      clipboard.on('error', function (e) {
+		        if (e.text.trim() !== '') {
+		          let _msg = ''
+		          if (e.action === 'copy') {
+		            _msg = '复制失败'
+		          } else if (e.action === 'cut') {
+		            _msg = '剪切失败'
+		          }
+		          that.$Message.error(_msg)
+		        }
+		      })
+		    })
+		},
+		mounted () {
+			const that = this
+			window.onkeydown = function (ev) {
+				if (ev.keyCode === 9 && that.$route.name === 'ajax') {
+					ev.preventDefault()
+					return false
+				}
+			}
 		},
 		methods: {
 			getANewTab () {
@@ -398,18 +516,53 @@
 			},
 			async submit () {
 				let _currentObj = this.ajaxTabs[Number(this.currentIndex)]
-				let response = await this.ajax({
+				let requestParams = {
 					url: _currentObj.url,
 					method: _currentObj.method.toLowerCase()
-				})
+				}				
+				let _data = this.getParams()
+				if (!this.isEmptyObject(_data)) {
+					if (_currentObj.method.toLowerCase() === 'get') {
+						requestParams.params = _data
+					} else {
+						requestParams.data = _data
+					}
+				}
+				let _headers = this.getHeaders()
+				if (!this.isEmptyObject(_headers)) {
+					requestParams.headers = _headers
+				}
+				let response = await this.ajax(requestParams)
+				if (response.status === 200 && response.data.status === 200) {
+					_currentObj.response = JSON.stringify(response.data.data)
+				} else {
+					_currentObj.response = JSON.stringify(response.data)
+				}
 			},
 			ajax (args) {
 				return new Promise((resolve, reject) => {
 					if (!args.url || args.url.trim() === '') {
 						reject(new Error('url不能为空'))
 					}
-					console.log('>>>>>', args)
+					if (args.url.match(/^\/\//)) {
+						args.url = 'http://' + args.url.replace(/^\/\//, '')
+					} else if (args.url.match(/^http(s?):\/\//)) {						
+					} else {
+						args.url = 'http://' + args.url
+					}
+					if (!this.isEmptyObject(args.params) && args.method.toLowerCase() === 'get') {
+						if (args.url.indexOf('?') > 0) {
+							args.url += '&' + qs.stringify(args.params)
+						} else {
+							args.url += '?' + qs.stringify(args.params)
+						}
+						delete args.params
+					}
+					if (!this.isEmptyObject(args.data)) {
+						args.data = qs.stringify(args.data)
+					}
 					let requestParams = {
+						// url: 'http://127.0.0.1:3000/Zpm/cli/a',
 						url: 'https://talkapi.dei2.com/Zpm/cli/a',
 						method: 'POST',
 						data: qs.stringify(args)
@@ -420,6 +573,9 @@
 						reject(new Error(error.message))
 					})
 				})
+			},
+			changeFontSize (e) {
+				this.selectedFontSize = e
 			}
 		}
 	}

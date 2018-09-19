@@ -290,7 +290,7 @@ export default {
     overflow-x: auto!important;
   }
   .ajax_container .ivu-tabs-card > .ivu-tabs-nav-scroll::-webkit-scrollbar {
-      display: none;
+      display: block;
   }
   .ajax_container .ivu-tabs-card > .ivu-tabs-nav {
     display: flex;

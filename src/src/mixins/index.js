@@ -4,7 +4,7 @@
 
 export default {
   methods: {
-    isPc () {
+    isPc() {
       let sUserAgent = navigator.userAgent.toLowerCase()
       let bIsIpad = sUserAgent.match(/ipad/i)
       let bIsIphoneOs = sUserAgent.match(/iphone os/i)
@@ -16,11 +16,14 @@ export default {
       let bIsWM = sUserAgent.match(/windows mobile/i)
       return !(bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM)
     },
-    __S4 () {
+    __S4() {
       return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
     },
-    getUUID (prefix) {
+    getUUID(prefix) {
       return ((prefix || '') + this.__S4() + this.__S4() + '-' + this.__S4() + '-' + this.__S4() + '-' + this.__S4() + '-' + this.__S4() + this.__S4() + this.__S4())
+    },
+    isEmptyObject(obj) {
+      return !!obj && Object.keys(obj).length === 0 && obj.constructor === Object
     }
   }
 }
