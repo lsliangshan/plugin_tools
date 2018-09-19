@@ -15,6 +15,12 @@ export default {
       let bIsCE = sUserAgent.match(/windows ce/i)
       let bIsWM = sUserAgent.match(/windows mobile/i)
       return !(bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM)
+    },
+    __S4 () {
+      return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+    },
+    getUUID (prefix) {
+      return ((prefix || '') + this.__S4() + this.__S4() + '-' + this.__S4() + '-' + this.__S4() + '-' + this.__S4() + '-' + this.__S4() + this.__S4() + this.__S4())
     }
   }
 }

@@ -235,4 +235,81 @@ export default {
   .tool_url_container textarea {
     background-color: rgba(255, 255, 255, .9);
   }
+
+  .ajax_container .ivu-tabs-card > .ivu-tabs-bar {
+    border-color: transparent!important;
+    -webkit-user-select: none;
+  }
+  .ajax_container .ivu-tabs-card > .ivu-tabs-content > .ivu-tabs-tabpane {
+      background-color: transparent;
+      border-top-right-radius: 4px;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+      padding: 15px;
+      box-sizing: border-box;
+      background-color: rgba(255, 255, 255, 1);
+  }
+  .ajax_container .ivu-tabs-card > .ivu-tabs-content {
+      /*height: 120px;*/
+      height: calc(100% - 33px)!important;
+      margin-top: -16px;
+      font-weight: bolder;
+  }
+  .ajax_container .ivu-tabs-card > .ivu-tabs-bar .ivu-tabs-tab-active {
+      border-color: transparent!important;
+      background-color: rgba(255, 255, 255, .9);
+      color: rgb(79, 192, 141)!important;
+  }
+  .ajax_container .ivu-tabs-card > .ivu-tabs-nav .ivu-tabs-tab {
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .ajax_container .ivu-tabs-card > .ivu-tabs-nav .ivu-tabs-tab:last-child {
+    width: 50px;    
+    justify-content: center;
+    overflow: hidden;
+    font-size: 18px;
+  }
+  .ajax_container .ivu-tabs-card .ivu-tabs-nav .ivu-tabs-tab:last-child i {
+    display: none;
+  }
+  .ajax_container .ivu-tabs-card > .ivu-tabs-nav .ivu-tabs-tab:hover {
+      color: rgb(79, 192, 141)!important;
+  }
+  .ajax_container .error_input textarea {
+    color: #ed4014!important;
+  }
+  .ajax_container .ivu-tabs-card > .ivu-tabs-nav {
+    /*max-width: 200px;*/
+  }
+  .ajax_container .ivu-tabs.ivu-tabs-card>.ivu-tabs-bar .ivu-tabs-tab {
+    border: none;
+  }
+  .ajax_container .ivu-tabs-card > .ivu-tabs-nav-scroll {
+    overflow-x: auto!important;
+  }
+  .ajax_container .ivu-tabs-card > .ivu-tabs-nav-scroll::-webkit-scrollbar {
+      display: none;
+  }
+  .ajax_container .ivu-tabs-card > .ivu-tabs-nav {
+    display: flex;
+    /*align-items: center;*/
+    transition: none!important;
+    transform: none!important;
+  }
+
+  .ajax_container .ivu-tabs-mini .ivu-tabs-content {
+    height: calc(100% - 33px)!important;
+    margin-top: -16px;
+    font-weight: bolder;
+  }
+
+  .no_border_input .ivu-input {
+    border: none;
+  }
+  .no_border_input .ivu-input:focus, .no_border_input .ivu-input:hover, .no_border_input .ivu-input:active {
+    border: none;
+    box-shadow: none;
+  }
 </style>

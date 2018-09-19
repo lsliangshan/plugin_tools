@@ -19,5 +19,14 @@ export default {
 			ContentRouter: () =>
 				import ('../components/pages/Settings.vue')
 		}
+	}, {
+		path: '/ajax',
+		name: 'ajax',
+		meta: {
+			title: 'Ajax请求'
+		},
+		components: {
+			ContentRouter: () => import('../components/pages/Ajax.vue')
+		}
 	}]
 }
