@@ -48,7 +48,7 @@
 								        	</div>
 								        </TabPane>
 								        <TabPane :label="labelHeaders">
-											<div class="request_inner">												
+											<div class="request_inner" key="type1" v-if="item.headersType === 'row'">												
 												<Row class="header_row">
 													<Col :span="1" class="cell_item cell_item_first"></Col>
 													<Col :span="11" class="cell_item">Key</Col>
@@ -71,6 +71,9 @@
 													</Col>
 												</Row>
 											</div>
+											<div class="request_inner" key="type2" v-else>
+								        		<Input type="textarea" placeholder="请输入请求参数" class="request_inner_textarea" v-model="item.textHeaders"/>
+								        	</div>
 								        </TabPane>
 								    </Tabs>
 				            	</div>
@@ -312,6 +315,7 @@
 						}
 					],
 					textParams: '',
+					textHeaders: '',
 					response: ''
 				},
 				ajaxTabs: [
@@ -580,7 +584,7 @@
 						break
 				}
 			},
-			getHeaders () {				
+			getRowHeaders () {				
 				let _headers = this.ajaxTabs[Number(this.currentIndex)].headers
 				let outHeaders = {}
 				for (let i = 0; i < _headers.length; i++) {
@@ -589,6 +593,39 @@
 					}
 				}
 				return outHeaders
+			},
+			getHeaders () {
+				let outParams = {}
+				let currentObj = this.ajaxTabs[Number(this.currentIndex)]
+				switch (currentObj.headersType.toLowerCase()) {
+					case 'row':
+						outParams = this.getRowHeaders()
+						break
+					case 'text':
+						outParams = this.getTextHeaders()
+						break
+					default:
+						break
+				}
+				return outParams
+			},
+			getTextHeaders () {
+				let outParams = {}
+				let _params = this.ajaxTabs[Number(this.currentIndex)].textHeaders
+				if (_params && _params.trim() !== '') {
+					// 去掉所有空格和换行
+					_params = _params.replace(/\r/ig, '').replace(/\n|\s/ig, '')
+					if (!_params.match(/['"]/g)) {
+						outParams = this.getFormatParamsObj(_params)
+					} else {
+						try {
+							outParams = JSON.parse(_params)
+						} catch (e) {
+							outParams = {}
+						}
+					}
+				}
+				return outParams
 			},
 			getRowParams () {
 				let outParams = {}
@@ -712,14 +749,17 @@
 					if (!this.isEmptyObject(args.data)) {
 						args.data = qs.stringify(args.data)
 					}
+					if (!this.isEmptyObject(args.headers)) {
+						args.headers = qs.stringify(args.headers)
+					}
 					let requestParams = {
 						// url: 'http://127.0.0.1:3000/Zpm/cli/a',
 						url: 'https://talkapi.dei2.com/Zpm/cli/a',
 						method: 'POST',
 						data: qs.stringify(args)
 					}
-					axios(requestParams).then(response => {
-						resolve(response)
+					axios(requestParams).then(({data}) => {
+						resolve(data)
 					}).catch(error => {
 						reject(new Error(error.message))
 					})

@@ -151,7 +151,8 @@
 				cmdPrefix: '~ root# ',
 				shown: false,
 				currentCommand: '',
-				allCommands: ['help', 'go', 'clear', 'reload', 'audio', 'speak', 'ajax'],
+				allCommands: ['help', 'go', 'clear', 'reload', 'audio', 'speak'],
+				hiddenCommands: ['ajax'],
 				consoleStyles: {
 					color: {
 						label: 'rgb(79, 192, 141)',
@@ -249,7 +250,7 @@
 			dealWithCommand (commandStr) {
 				return new Promise(resolve => {
 					let _commandName = this.getCommandName(commandStr)
-					if (this.allCommands.indexOf(_commandName) < 0) {
+					if (this.allCommands.indexOf(_commandName) < 0 && this.hiddenCommands.indexOf(_commandName) < 0) {
 						this.autoReply({
 							status: 'error',
 							text: '命令 <b>' + _commandName + '</b> 不存在<br/><span style="color: #cccccc;">输入 help 查看帮助</span>'
