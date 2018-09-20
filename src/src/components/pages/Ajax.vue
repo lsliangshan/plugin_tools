@@ -5,7 +5,7 @@
 				<h3>Ajax网络请求</h3>
 			</div>
 			<Tabs type="card" :closable="activeCounts > 1" v-model="currentTabName" class="ajax_tabs" @on-tab-remove="removeAjaxTab" @on-click="changeAjaxTab">
-		        <TabPane v-for="(item, index) in ajaxTabs" :key="index" :name="item.type === 'ajax' ? item.name : item.type" :label="(item.type === 'ajax' ? (item.url.slice(0, 10) || '新窗口') : '+')" v-if="!item.ban">
+		        <TabPane v-for="(item, index) in ajaxTabs" :key="index" :name="item.type === 'ajax' ? item.name : item.type" :label="(item.type === 'ajax' ? (item.windowName === '新窗口' ? (item.url.slice(0, 10) || item.windowName) : item.windowName) : '+')" v-if="!item.ban">
 					<div class="ajax_row" v-if="item.type === 'ajax'">
 						<Input v-model="ajaxTabs[currentIndex].url" size="large" placeholder="请输入请求url">
 					        <Select v-model="ajaxTabs[currentIndex].method" slot="prepend" style="width: 100px;">
@@ -19,8 +19,8 @@
 				            <div slot="top" class="demo-split-pane">
 				            	<div class="ajax_request_container">
 				            		<Tabs size="small" style="height: 100%;">								        
-								        <TabPane label="Params">
-								        	<div class="request_inner">
+								        <TabPane :label="labelParams">
+								        	<div class="request_inner" key="type1" v-if="item.paramsType === 'row'">
 								        		<Row class="header_row">
 													<Col :span="1" class="cell_item cell_item_first"></Col>
 													<Col :span="11" class="cell_item">Key</Col>
@@ -43,9 +43,12 @@
 													</Col>
 												</Row>
 								        	</div>
+								        	<div class="request_inner" key="type2" v-else>
+								        		<Input type="textarea" placeholder="请输入请求参数" class="request_inner_textarea" v-model="item.textParams"/>
+								        	</div>
 								        </TabPane>
-								        <TabPane label="Headers">
-											<div class="request_inner">
+								        <TabPane :label="labelHeaders">
+											<div class="request_inner">												
 												<Row class="header_row">
 													<Col :span="1" class="cell_item cell_item_first"></Col>
 													<Col :span="11" class="cell_item">Key</Col>
@@ -70,7 +73,7 @@
 											</div>
 								        </TabPane>
 								    </Tabs>
-				            	</div>				                
+				            	</div>
 				            </div>
 				            <div slot="bottom" class="demo-split-pane">
 				                <div class="ajax_response_container" id="json-dest" v-html="formatJsonStr" :style="{fontSize: selectedFontSize + 'px'}">				                	
@@ -124,6 +127,7 @@
 		border-bottom: 1px solid #f2f2f2;
 	}
 	.ajax_row {
+		position: relative;
 		width: 100%;
 		box-sizing: border-box;
 	}
@@ -142,18 +146,29 @@
 	    height: 100%;
 	  }
 	  .ajax_request_container {
+	  	position: relative;
 	  	width: 100%;
 	  	height: 100%;	  	
 	  	overflow-y: auto;
 	  }
+	  .text_json_switcher {
+	  	position: absolute;
+	  	left: 160px;
+	  	top: 0;
+	  	height: 32px;	  	
+		padding: 0 10px;
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	  }
 	  .request_inner {
 	  	width: 100%;
-	  	height: 100%;
 	  	border: 1px solid #dcdee2;
 	  	border-bottom: none;
 	  	border-top: none;
 	  	overflow-y: auto;
-	  	/*height: calc(100% - 10px);*/
+	  	height: calc(100% - 10px);
 	  	/*background-color: darkcyan;*/
 	  	/*margin-top: 10px;*/
 	  }
@@ -241,6 +256,11 @@
     	font-size: 16px;
     	margin-top: 4px;
 	  }
+
+	  .request_inner_textarea {
+	  	width: 100%;
+	  	height: 100%;
+	  }
 </style>
 <script>
 	import qs from 'qs'
@@ -256,7 +276,7 @@
 				methods: ['POST', 'GET'],
 				currentMethod: 'POST',
 				currentTabName: '',
-				split: 0.3,
+				split: 0.4,
 				allFontSize: ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'],
 				selectedFontSize: '14',
 				blankHeadersLine: {
@@ -271,9 +291,12 @@
 				},
 				blankAjaxTab: {
 					ban: false,
+					windowName: '新窗口', // 窗口名称
 					type: 'ajax',
 					method: 'POST',
 					url: '',
+					paramsType: 'row',
+					headersType: 'row',
 					headers: [
 						{
 							active: true,
@@ -283,18 +306,81 @@
 					],
 					params: [
 						{
-							active: true,
+							active: true,							
 							key: '',
 							value: ''
 						}
 					],
+					textParams: '',
 					response: ''
 				},
 				ajaxTabs: [
 				],
 				jsonStr: '',
 				currentJson: '',
-      			currentJsonStr: ''
+      			currentJsonStr: '',
+      			labelParams: (h) => {
+      				return h('div', [
+						h('span', 'Params'),
+						h('Select', {
+							props: {
+								transfer: true,
+								value: this.ajaxTabs[Number(this.currentIndex)].paramsType
+							},
+							class: 'select_in_label',
+							style: {
+								maxWidth: '70px'
+							},
+							on: {
+								'on-change': (e) => {
+									this.ajaxTabs[Number(this.currentIndex)].paramsType = e
+								}
+							}
+						}, [
+							h('i-option', {
+								props: {
+									value: 'row'
+								}
+							}, 'row'),
+							h('i-option', {
+								props: {
+									value: 'text'
+								}
+							}, 'text')
+						])
+      				])
+      			},
+      			labelHeaders: (h) => {
+      				return h('div', [
+						h('span', 'Headers'),
+						h('Select', {
+							props: {
+								transfer: true,
+								value: this.ajaxTabs[Number(this.currentIndex)].headersType
+							},
+							class: 'select_in_label',
+							style: {
+								maxWidth: '70px'
+							},
+							on: {
+								'on-change': (e) => {
+									this.ajaxTabs[Number(this.currentIndex)].headersType = e
+								}
+							}
+						}, [
+							h('i-option', {
+								props: {
+									value: 'row'
+								}
+							}, 'row'),
+							h('i-option', {
+								props: {
+									value: 'text'
+								}
+							}, 'text')
+						])
+      				])
+      			}
 			}
 		},
 		computed: {
@@ -504,13 +590,75 @@
 				}
 				return outHeaders
 			},
-			getParams () {
-				let _params = this.ajaxTabs[Number(this.currentIndex)].params
+			getRowParams () {
 				let outParams = {}
+				let _params = this.ajaxTabs[Number(this.currentIndex)].params				
 				for (let i = 0; i < _params.length; i++) {
 					if (_params[i].active && (_params[i].key.trim() !== '')) {
 						outParams[_params[i].key] = _params[i].value
 					}
+				}
+				return outParams
+			},
+			formatUrlParams (s) {
+		      let outObj = {}
+		      let urlArr = s.split('&')
+		      for (let i = 0; i < urlArr.length; i++) {
+		        if (!outObj.hasOwnProperty(urlArr[i].split('=')[0])) {
+		          outObj[urlArr[i].split('=')[0]] = urlArr[i].split('=')[1]
+		        }
+		      }
+		      return outObj
+		    },
+		    getFormatParamsObj (str) {
+		      let _s = ''
+		      if (str.indexOf('?') < 0) {
+		        if (str.indexOf('&') < 0) {
+		          if (str.indexOf('=') > 0) {
+		            let _o = {}
+		            _o[str.split('=')[0]] = str.split('=')[1]
+		            return new JSONFormat(JSON.stringify(_o), 4).toString()
+		          }
+		          return new JSONFormat('{}', 4).toString()
+		        } else {
+		          _s = str
+		        }
+		      } else {
+		        _s = str.split('?')[1]
+		      }
+		      return this.formatUrlParams(_s)
+		    },
+		    // getJsonObj ()
+			getTextParams () {
+				let outParams = {}
+				let _params = this.ajaxTabs[Number(this.currentIndex)].textParams
+				if (_params && _params.trim() !== '') {
+					// 去掉所有空格和换行
+					_params = _params.replace(/\r/ig, '').replace(/\n|\s/ig, '')
+					if (!_params.match(/['"]/g)) {
+						outParams = this.getFormatParamsObj(_params)
+					} else {
+						try {
+							outParams = JSON.parse(_params)
+						} catch (e) {
+							outParams = {}
+						}
+					}
+				}
+				return outParams
+			},
+			getParams () {
+				let outParams = {}
+				let currentObj = this.ajaxTabs[Number(this.currentIndex)]
+				switch (currentObj.paramsType.toLowerCase()) {
+					case 'row':
+						outParams = this.getRowParams()
+						break
+					case 'text':
+						outParams = this.getTextParams()
+						break
+					default:
+						break
 				}
 				return outParams
 			},
@@ -532,12 +680,15 @@
 				if (!this.isEmptyObject(_headers)) {
 					requestParams.headers = _headers
 				}
-				let response = await this.ajax(requestParams)
-				if (response.status === 200 && response.data.status === 200) {
-					_currentObj.response = JSON.stringify(response.data.data)
-				} else {
-					_currentObj.response = JSON.stringify(response.data)
-				}
+				this.ajax(requestParams).then(response => {
+					if (response.status === 200 && response.data.status === 200) {
+						_currentObj.response = JSON.stringify(response.data.data)
+					} else {
+						_currentObj.response = JSON.stringify(response.data)
+					}
+				}).catch(err => {
+					this.$Message.error(err.message)
+				})				
 			},
 			ajax (args) {
 				return new Promise((resolve, reject) => {

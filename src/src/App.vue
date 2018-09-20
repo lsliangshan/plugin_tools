@@ -271,7 +271,7 @@ export default {
     overflow: hidden;
     font-size: 18px;
   }
-  .ajax_container .ivu-tabs-card .ivu-tabs-nav .ivu-tabs-tab:last-child i {
+  .ajax_container .ivu-tabs-card > .ivu-tabs-nav .ivu-tabs-tab:last-child i {
     display: none;
   }
   .ajax_container .ivu-tabs-card > .ivu-tabs-nav .ivu-tabs-tab:hover {
@@ -311,5 +311,24 @@ export default {
   .no_border_input .ivu-input:focus, .no_border_input .ivu-input:hover, .no_border_input .ivu-input:active {
     border: none;
     box-shadow: none;
+  }
+  .select_in_label .ivu-select-selection {
+    border: none;
+  }
+  .select_in_label .ivu-select-single .ivu-select-selection .ivu-select-placeholder, .ivu-select-single .ivu-select-selection .ivu-select-selected-value {
+    padding-right: 8px!important;
+  }
+  .select_in_label .ivu-select-placeholder {
+    padding-right: 8px!important;
+  }
+  .select_in_label .ivu-select-selection {
+    box-shadow: none;
+  }
+
+  .request_inner_textarea textarea {
+    resize: none;
+    width: 100%;
+    height: 100%;
+    border: none;
   }
 </style>
