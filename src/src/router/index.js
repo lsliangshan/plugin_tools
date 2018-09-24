@@ -20,7 +20,8 @@ export const blankRouter = {
   name: 'blank',
   meta: {},
   components: {
-    HomeRouter: () => import('../components/pages/Blank.vue')
+    HomeRouter: () =>
+      import ('../components/pages/Blank.vue')
   }
 }
 

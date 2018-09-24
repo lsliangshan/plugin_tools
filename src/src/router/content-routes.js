@@ -39,7 +39,8 @@ export default {
       title: 'base64转换'
     },
     components: {
-      ContentRouter: () => import('../components/tool/Base64.vue')
+      ContentRouter: () =>
+        import ('../components/tool/Base64.vue')
     }
   }, {
     path: '/time',
@@ -62,6 +63,17 @@ export default {
     components: {
       ContentRouter: () =>
         import ('../components/tool/Qrcode.vue')
+    }
+  }, {
+    path: '/color',
+    name: 'color',
+    meta: {
+      label: 'COLOR',
+      title: '颜色工具'
+    },
+    components: {
+      ContentRouter: () =>
+        import ('../components/tool/Color.vue')
     }
   }, {
     path: '/code',

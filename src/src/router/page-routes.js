@@ -26,7 +26,18 @@ export default {
 			title: 'Ajax请求'
 		},
 		components: {
-			ContentRouter: () => import('../components/pages/Ajax.vue')
+			ContentRouter: () =>
+				import ('../components/pages/Ajax.vue')
+		}
+	}, {
+		path: '/audio',
+		name: 'audio',
+		meta: {
+			title: '音乐'
+		},
+		components: {
+			ContentRouter: () =>
+				import ('../components/pages/Audio.vue')
 		}
 	}]
 }
