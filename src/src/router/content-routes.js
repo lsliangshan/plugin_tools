@@ -86,6 +86,16 @@ export default {
       ContentRouter: () => import('../components/tool/Diff.vue')
     }
   }, {
+    path: '/ip',
+    name: 'ip',
+    meta: {
+      label: 'IP',
+      title: 'ip地址查询'
+    },
+    components: {
+      ContentRouter: () => import('../components/tool/Ip.vue')
+    }
+  }, {
     path: '/code',
     name: 'code',
     meta: {
