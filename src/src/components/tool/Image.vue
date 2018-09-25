@@ -26,10 +26,12 @@
 						<h3>主色调</h3>
 					</div>
 					<div class="color_result_content">
-						<div class="color_item">
-							<div class="color_item_bg" :style="{backgroundColor: `rgb(${dominantColor[0]},${dominantColor[1]},${dominantColor[2]})`}"></div>
-							<div class="color_item_text" ref="colorRef">{{rgbToHex(`rgb(${dominantColor[0]},${dominantColor[1]},${dominantColor[2]})`)}}</div>
-						</div>
+						<Tooltip content="点击复制颜色" placement="top">
+				            <div class="color_item">
+								<div class="color_item_bg" :style="{backgroundColor: `rgb(${dominantColor[0]},${dominantColor[1]},${dominantColor[2]})`}"></div>
+								<div class="color_item_text" ref="colorRef">{{rgbToHex(`rgb(${dominantColor[0]},${dominantColor[1]},${dominantColor[2]})`)}}</div>
+							</div>
+				        </Tooltip>
 					</div>
 				</div>
 				<div class="color_result">
@@ -37,10 +39,12 @@
 						<h4>其它颜色</h4>
 					</div>
 					<div class="color_result_content">
-						<div class="color_item" v-for="(item, index) in colors" :key="index">
-							<div class="color_item_bg" :style="{backgroundColor: `rgb(${item[0]},${item[1]},${item[2]})`}"></div>
-							<div class="color_item_text" ref="colorRef">{{rgbToHex(`rgb(${item[0]},${item[1]},${item[2]})`)}}</div>
-						</div>
+						<Tooltip content="点击复制颜色" placement="top" v-for="(item, index) in colors" :key="index">
+							<div class="color_item">
+								<div class="color_item_bg" :style="{backgroundColor: `rgb(${item[0]},${item[1]},${item[2]})`}"></div>
+								<div class="color_item_text" ref="colorRef">{{rgbToHex(`rgb(${item[0]},${item[1]},${item[2]})`)}}</div>
+							</div>
+						</Tooltip>
 					</div>
 				</div>
 			</div>			
@@ -75,7 +79,7 @@
 	}
 	.image_preview {
 		height: 100%;
-		background-color: #fff;
+		background-color: transparent;
 		display: flex;
 		align-items: center;
 		justify-content: center;
