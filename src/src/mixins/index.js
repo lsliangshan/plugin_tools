@@ -54,6 +54,23 @@ export default {
         script.src = url
         document.getElementsByTagName('head')[0].appendChild(script)
       })
+    },
+    loadStyle (url) {
+      return new Promise(resolve => {
+        let links = document.getElementsByTagName('link')
+        for (let i = 0; i < links.length; i++) {
+          if (links[i].href.indexOf(url) > -1) {
+            resolve(true)
+          }
+        }
+        let link = document.createElement('link')
+        link.type = "text/css"
+        link.rel = "stylesheet"
+        link.href = url
+        let head = document.getElementsByTagName('head')[0]
+        head.insertBefore(link,head.getElementsByTagName('link')[0] || null )
+        resolve(true)
+      })      
     }
   }
 }

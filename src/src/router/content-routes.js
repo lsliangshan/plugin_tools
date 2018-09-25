@@ -76,6 +76,16 @@ export default {
         import ('../components/tool/Image.vue')
     }
   }, {
+    path: '/diff',
+    name: 'diff',
+    meta: {
+      label: '文件对比',
+      title: '文件对比'
+    },
+    components: {
+      ContentRouter: () => import('../components/tool/Diff.vue')
+    }
+  }, {
     path: '/code',
     name: 'code',
     meta: {

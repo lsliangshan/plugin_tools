@@ -338,4 +338,24 @@ export default {
   .color_container .ivu-upload-drag {
     background-color: transparent;
   }
+
+  .diff_container .diff_input input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+  }
+  .diff_container .diff_input input:hover, .diff_container .diff_input input:focus {
+    box-shadow: none;
+    border-color: #dcdee2;
+  }
+  .diff_container .diff_upload button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .diff_container .diff_upload button:hover {
+    border: 1px solid #dcdee2;
+  }
+  .diff_container .diff_upload button:focus {
+    box-shadow: none;
+  }
 </style>
