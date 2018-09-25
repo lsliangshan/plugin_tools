@@ -32,6 +32,7 @@
 		        		<div class="decode_image_chooser">
 		        			<Upload
 						        type="drag"
+						        accept="image/*"
 						        :before-upload="beforeUploadImage"
 						        action="/">
 						        <div class="upload_inner">

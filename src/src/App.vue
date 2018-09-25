@@ -331,4 +331,11 @@ export default {
     height: 100%;
     border: none;
   }
+
+  .color_container .ivu-upload {
+    height: 100%;
+  }
+  .color_container .ivu-upload-drag {
+    background-color: transparent;
+  }
 </style>

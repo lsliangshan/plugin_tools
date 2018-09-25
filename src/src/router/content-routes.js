@@ -65,15 +65,15 @@ export default {
         import ('../components/tool/Qrcode.vue')
     }
   }, {
-    path: '/color',
-    name: 'color',
+    path: '/img',
+    name: 'img',
     meta: {
-      label: 'COLOR',
-      title: '颜色工具'
+      label: '传图识色',
+      title: '传图识色'
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Color.vue')
+        import ('../components/tool/Image.vue')
     }
   }, {
     path: '/code',
