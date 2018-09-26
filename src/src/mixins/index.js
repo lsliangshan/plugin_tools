@@ -25,16 +25,16 @@ export default {
     isEmptyObject(obj) {
       return !!obj && Object.keys(obj).length === 0 && obj.constructor === Object
     },
-    rgbToHex (color) {
+    rgbToHex(color) {
       let rgb = color.split(',')
       let r = parseInt(rgb[0].split('(')[1])
       let g = parseInt(rgb[1])
       let b = parseInt(rgb[2].split(')')[0])
-   
+
       let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
       return hex
     },
-    loadScript (url) {
+    loadScript(url) {
       return new Promise((resolve) => {
         let script = document.createElement('script')
         script.type = 'text/javascript'
@@ -55,7 +55,7 @@ export default {
         document.getElementsByTagName('head')[0].appendChild(script)
       })
     },
-    loadStyle (url) {
+    loadStyle(url) {
       return new Promise(resolve => {
         let links = document.getElementsByTagName('link')
         for (let i = 0; i < links.length; i++) {
@@ -68,9 +68,24 @@ export default {
         link.rel = "stylesheet"
         link.href = url
         let head = document.getElementsByTagName('head')[0]
-        head.insertBefore(link,head.getElementsByTagName('link')[0] || null )
+        head.insertBefore(link, head.getElementsByTagName('link')[0] || null)
         resolve(true)
-      })      
+      })
+    },
+    $getImageDominantColor(img) {
+      // 获取图片主题色
+      const that = this
+      let $colorThief = new ColorThief()
+      return new Promise((resolve) => {
+        let _img = new Image()
+        // let _img = document.createElement('img')
+        _img.crossOrigin = ''
+        _img.onload = function () {
+          let dominantColor = $colorThief.getColor(_img)
+          resolve(dominantColor)
+        }
+        _img.src = img
+      })
     }
   }
 }

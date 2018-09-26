@@ -1,6 +1,6 @@
 <template>
-	<div class="ip_container" :style="ipContainerStyles">
-		<div class="ip_inner">
+	<div class="ip_container">
+		<div class="ip_inner" :style="ipInnerStyles">
 			<div class="ip_result_card">
 				<p class="my_ip">
 					<span v-if="myIp">我的IP: {{myIp}}</span>
@@ -38,15 +38,17 @@
 		justify-content: center;
 	}
 	.ip_inner {
-		width: 1000px;
+		/*width: 1000px;*/
 		height: 100%;
 		padding: 15px;
 		box-sizing: border-box;
 		border-radius: 4px;
-		background-color: rgba(255, 255, 255, .9);
+		/*background-color: rgba(255, 255, 255, .9);*/
+		background-color: rgba(79, 192, 141, 0.3);
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		transition: background-color .3s ease-in-out;
 	}
 	.ip_result_card {
 		width: 300px;
@@ -55,6 +57,8 @@
 		font-size: 15px;
 		line-height: 2;
 		height: 30px;
+		color: #FFF;
+		text-shadow: 0 0 1px #000;
 	}
 	.ip_result_card_top {
 		width: 100%;
@@ -107,7 +111,8 @@
 				ip: '',
 				address: '',
 				geoIp: '',
-				isSearching: false
+				isSearching: false,
+				themeColor: 'rgba(255, 255, 255, .9)'
 			}
 		},
 		computed: {
@@ -118,6 +123,17 @@
 				return {
 					height: (this.bodyStyles.height - 65) + 'px'
 				}
+			},
+			ipInnerStyles () {
+				return {
+					backgroundColor: this.themeColor
+				}
+			},
+			themeImages () {
+				return this.$store.state.themeImages
+			},
+			activeThemeIndex () {
+				return this.$store.state.activeThemeIndex
 			}
 		},
 		created () {
@@ -125,8 +141,11 @@
 				this.doSearch()
 			})
 		},
-		mounted () {
-			
+		async mounted () {
+			if (this.activeThemeIndex[0] > -1 && this.activeThemeIndex[1] > -1) {
+				let themeColor = await this.$getImageDominantColor(this.themeImages[this.activeThemeIndex[0]].sublist[this.activeThemeIndex[1]].img)
+				this.themeColor = `rgba(${themeColor[0]}, ${themeColor[1]}, ${themeColor[2]}, .3)`
+			}
 		},
 		methods: {
 			getUserInfo () {
@@ -138,9 +157,9 @@
 						that.isSearching = true
 						setTimeout(() => {
 							this.$Enkel.Loading.ipRef.show()
-						}, 50)
+						}, 100)
 						this.$axios({
-							url: 'http://10.2.4.229:3000/enkel/index/index',
+							url: 'http://127.0.0.1:3000/enkel/index/index',
 							method: 'post',
 							data: qs.stringify({
 								ip: this.query
