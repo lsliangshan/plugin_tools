@@ -136,7 +136,8 @@
 				return this.$store.state.activeThemeIndex
 			}
 		},
-		created () {
+		async created () {
+			await this.loadScript('/html/static/js/ls_encode.js')
 			this.$nextTick(async () => {
 				this.doSearch()
 			})
