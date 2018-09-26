@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <router-view name="HomeRouter"/>
-  </div>
+    <all-svg></all-svg>
+  </div>  
 </template>
 
 <script>
@@ -10,6 +11,9 @@ import router from './router/content-routes.js'
 import { StorageUtil } from './utils/index.js'
 export default {
   name: 'App',
+  components: {
+    AllSvg: () => import('./components/common/svgs.vue')
+  },
   data () {
     return {
       events: this.$store.state.events
@@ -37,7 +41,7 @@ export default {
       this.$eventHub.$emit(this.events.bodyClick, e)
     }
     window.onresize = this.windowResize
-    this.$nextTick(() => {
+    this.$nextTick(() => {      
       this.cacheBodyStyles()
       this.$Message.config({
         top: 50,

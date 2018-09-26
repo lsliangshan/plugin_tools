@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
+import axios from 'axios'
 import { sync } from 'vuex-router-sync'
 import router from './router/index'
 import store from './store'
@@ -44,6 +45,13 @@ Vue.prototype.errorHandler = (err, vm) => {
 }
 
 Vue.prototype.$eventHub = (Vue.prototype.$eventHub || new Vue())
+document.cookie = 'enkel=9d935f95a1630e1282ae9861f16fcf0b'
+Vue.prototype.$axios = axios.create({
+  headers: {
+    'cookies': document.cookie
+  }
+})
+
 
 /* eslint-disable no-new */
 new Vue({
