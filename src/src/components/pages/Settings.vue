@@ -11,7 +11,7 @@
 				<div class="settings_tag_bg"></div>
 				<div class="settings_tag_label">设置</div>
 			</div>
-			<div class="settings_item">
+			<!-- <div class="settings_item">
 				<label class="settings_item_label">最多显示几项工具</label>
 				<div class="settings_item_value">
 					<Input type="text" :value="maxToolCount" @on-change="changeMaxToolCount" />
@@ -22,7 +22,7 @@
 				<div class="settings_item_value" @click="openToolTagsModal">
 					<div class="router_item_tag" v-for="(item, index) in activeTools" :key="index" :class="{fade: (index >= maxToolCount)}">{{item.label}}</div>
 				</div>
-			</div>
+			</div> -->
 			<div class="settings_item">
 				<label class="settings_item_label">主题</label>
 				<div class="settings_item_value h100">

@@ -8,6 +8,10 @@
 <script>
 import * as types from './store/mutation-types'
 import router from './router/content-routes.js'
+import CodeRoutes from './router/code-routes.js'
+import ConvenienceRoutes from './router/convenience-routes.js'
+import MultiMediaRoutes from './router/multi-media-routes.js'
+import StationMasterRoutes from './router/station-master-routes.js'
 import { StorageUtil } from './utils/index.js'
 export default {
   name: 'App',
@@ -82,7 +86,7 @@ export default {
         }
       })
     },
-    getAllTools () {
+    getAllTools_bak () {
       let outPath = []
       // let homeObj = {}
       // if (router.hasOwnProperty('name')) {
@@ -105,6 +109,32 @@ export default {
         }
         outPath.push(tempObj)
       }
+      return outPath
+    },
+    getTools (routes) {
+      let outObj = {}
+      if (routes.hasOwnProperty('meta') && routes.meta.name) {
+        outObj.name = routes.meta.name
+      } else {
+        outObj.name = routes.name || '工具集'
+      }
+      outObj.sublist = []
+      for (let i = 0; i < routes.children.length; i++) {
+        let tempObj = {}
+        if (routes.children[i].hasOwnProperty('name')) {
+          tempObj.pathName = routes.children[i].name
+        }
+        tempObj = Object.assign({}, tempObj, routes.children[i].meta)
+        outObj.sublist.push(tempObj)
+      }
+      return outObj
+    },
+    getAllTools () {
+      let outPath = []
+      outPath.push(this.getTools(CodeRoutes))
+      outPath.push(this.getTools(StationMasterRoutes))
+      outPath.push(this.getTools(MultiMediaRoutes))
+      outPath.push(this.getTools(ConvenienceRoutes))
       return outPath
     },
     getActiveTools () {
@@ -149,7 +179,7 @@ export default {
     -webkit-tap-highlight-color: transparent;
     -webkit-appearance: none;
     /*-webkit-user-select: none;*/
-    font-family: Menlo,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
+    /*font-family: Menlo,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;*/
     /*font: 12px/16px Menlo,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;*/
   }
   #app {
@@ -361,5 +391,9 @@ export default {
   }
   .diff_container .diff_upload button:focus {
     box-shadow: none;
+  }
+
+  .qrcode_input_wrapper textarea {
+    background-color: rgba(255, 255, 255, .9);
   }
 </style>

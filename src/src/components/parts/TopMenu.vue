@@ -1,14 +1,14 @@
 <template>
   <div class="top_menu_container">
     <Menu mode="horizontal" theme="light" :active-name="activeTool" @on-select="useTool">
-      <MenuItem v-for="(t, index) in activeTools.slice(0, maxCount)" :key="index" :name="t.name" v-if="activeTools" :style="topMenuItemStyle">
+      <!-- <MenuItem v-for="(t, index) in activeTools.slice(0, maxCount)" :key="index" :name="t.name" v-if="activeTools" :style="topMenuItemStyle">
         {{t.label}}
-      </MenuItem>
-      <Submenu v-if="activeTools.length > maxCount" name="more" :style="topMenuItemStyle">
+      </MenuItem> -->
+      <Submenu v-for="(item, index) in tools" :key="item.name" v-if="item.sublist.length > 0" :name="item.name" :style="topMenuItemStyle">
         <template slot="title">
-          <Icon type="ios-more" size="20" />
+          {{item.name}}
         </template>
-        <MenuItem v-for="(t, index) in activeTools.slice(maxCount)" :key="index" :name="t.name" class="no_border_bottom" v-if="activeTools">
+        <MenuItem v-for="(t, idx) in item.sublist" :key="idx" :name="t.pathName" class="no_border_bottom">
           {{t.label}}
         </MenuItem>
       </Submenu>

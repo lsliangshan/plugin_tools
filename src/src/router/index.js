@@ -1,7 +1,15 @@
 import Vue from 'vue'
 
 import Router from 'vue-router'
-import ContentRoutes from './content-routes.js'
+// import ContentRoutes from './content-routes.js'
+// 代码处理工具
+import CodeRoutes from './code-routes.js'
+// 便民工具
+import ConvenienceRoutes from './convenience-routes.js'
+// 多媒体工具
+import MultiMediaRoutes from './multi-media-routes.js'
+// 站长工具
+import StationMasterRoutes from './station-master-routes.js'
 import PageRoutes from './page-routes.js'
 Vue.use(Router)
 
@@ -74,7 +82,11 @@ export default new Router({
   routes: [
     popupRouter,
     blankRouter,
-    ContentRoutes,
+    // ContentRoutes,
+    CodeRoutes,
+    ConvenienceRoutes,
+    MultiMediaRoutes,
+    StationMasterRoutes,
     PageRoutes
   ]
 })

@@ -10,6 +10,15 @@ export default {
 			import ('../components/Home.vue')
 	},
 	children: [{
+		path: '/index',
+		name: 'index',
+		meta: {
+			title: '在线工具'
+		},
+		components: {
+			ContentRouter: () => import('../components/pages/Index.vue')
+		}
+	}, {
 		path: '/settings',
 		name: 'settings',
 		meta: {

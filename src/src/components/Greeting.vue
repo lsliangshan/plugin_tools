@@ -117,7 +117,7 @@
 								easing: 'linear',
 								complete () {
 									that.$router.replace({
-										name: 'json'
+										name: 'index'
 									})
 								}
 							}
