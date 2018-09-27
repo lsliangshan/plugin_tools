@@ -34,7 +34,6 @@
 		-webkit-user-select: none;
 	}
 	.index_inner {
-		/*width: 100%;*/
 		width: 900px;
 		height: 100%;
 		margin: 0 auto;
@@ -46,12 +45,11 @@
 	}
 	.index_tool_item {
 		width: 100%;
-		/*width: 900px;*/
-		/*margin: 0 auto;*/
 	}
 	.index_tool_item_header {
 		font-size: 20px;
 		line-height: 40px;
+		font-weight: bold;
 	}
 	.index_tool_item_body {
 		width: 100%;
@@ -121,7 +119,6 @@
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 		-webkit-line-clamp: 2;
-		/*text-align: justify;*/
 		word-break: break-all;
 		transition: color .2s ease-in-out;
 	}
