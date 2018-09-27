@@ -3,12 +3,12 @@
 		<div class="crypto_inner">
 			<Split v-model="split" min="100" mode="vertical">
 		        <div slot="top" class="demo-split-pane">
-		            <Input type="textarea" autofocus class="unformat_wrapper no_bg" v-model="originalText" placeholder="明文" />
+		            <Input type="textarea" autofocus class="unformat_wrapper no_bg" v-model="originalText" :class="{'error_input': errorText}" placeholder="明文" @on-change="changeOriginalText" />
 		        </div>
 		        <div slot="trigger" class="trigger_container">
 		        	<div class="tips_left">
 		        		<RadioGroup v-model="currentCryptoType" @on-change="changeRadio">
-		        			<Radio v-for="(item, index) in cryptoTypes.slice(0, Math.floor(cryptoTypes.length / 2))" :key="item.value" :label="item.value">
+		        			<Radio v-for="(item, index) in cryptoTypes.slice(0, Math.ceil(cryptoTypes.length / 2))" :key="item.value" :label="item.value">
 							    <div class="multi_sublist" v-if="item.sublist && item.sublist.length > 0">
 							    	<select class="custom_native_select" :data-parent-index="index" @change="changeCrypto" :value="item.active || currentCryptoType || item.sublist[0].value">
 			        					<option v-for="(o, idx) in item.sublist" :value="o.value" :key="o.value">{{ o.value }}</option>
@@ -24,11 +24,11 @@
 		            	<Icon type="ios-code" size="14" />		            
 		          	</div>
 		          	<div class="tips_right">
-		          		<Button type="primary" @click="decrypto">解密</Button>
+		          		<Button type="primary" @click="decrypto" :disabled="!currentCryptoType || (canBeDecrypto.indexOf(currentCryptoType) < 0)">解密</Button>
 		          		<RadioGroup v-model="currentCryptoType" @on-change="changeRadio" style="margin-left: 8px;">
-		        			<Radio v-for="(item, index) in cryptoTypes.slice(Math.floor(cryptoTypes.length / 2), cryptoTypes.length)" :key="item.value" :label="item.value">
+		        			<Radio v-for="(item, index) in cryptoTypes.slice(Math.ceil(cryptoTypes.length / 2), cryptoTypes.length)" :key="item.value" :label="item.value">
 							    <div class="multi_sublist" v-if="item.sublist && item.sublist.length > 0">
-							    	<select class="custom_native_select" :data-parent-index="index + Math.floor(cryptoTypes.length / 2)" @change="changeCrypto" :value="item.active || currentCryptoType || item.sublist[0].value">
+							    	<select class="custom_native_select" :data-parent-index="index + Math.ceil(cryptoTypes.length / 2)" @change="changeCrypto" :value="item.active || currentCryptoType || item.sublist[0].value">
 			        					<option v-for="(o, idx) in item.sublist" :value="o.value" :key="o.value">{{ o.value }}</option>
 			        				</select>
 			        				<span class="custom_native_select_placeholder" v-if="JSON.stringify(item.sublist).indexOf(currentCryptoType) < 0">{{item.active || item.value}}</span>
@@ -36,6 +36,7 @@
 							    </div>
 		        			</Radio>
 		        		</RadioGroup>
+		        		<Input class="private_key_input" type="text" v-if="withPrivateKey.indexOf(currentCryptoType) > -1" placeholder="加密密钥, 选填" v-model="privateKey" />
 		          	</div>
 		        </div>
 		        <div slot="bottom" class="demo-split-pane">
@@ -133,6 +134,11 @@
 		top: 0;
 		pointer-events: none;
 	}
+	.private_key_input {
+		position: absolute;
+		right: 15px;
+		width: 150px;
+	}
 </style>
 <script>
 	/*
@@ -178,6 +184,9 @@
 						value: 'pbkdf2'
 					},
 					{
+						value: 'evpkdf'
+					},
+					{
 						value: 'aes'
 					},
 					{
@@ -196,13 +205,13 @@
 								value: 'rabbit-legacy'
 							}
 						]
-					},
-					{
-						value: 'evpkdf'
 					}
 				],
-				currentCryptoType: '',
-				defaultErrorText: '不合法的base64编码',
+				canBeDecrypto: ['aes', 'tripledes', 'rc4', 'rabbit', 'rabbit-legacy'],
+				withPrivateKey: ['aes', 'rc4', 'rabbit', 'rabbit-legacy', 'tripledes'],
+				privateKey: '',
+				currentCryptoType: 'md5',
+				errorText: '',
 				originalText: '', // 明文
 				cryptoText: '', // 密文
 				unencodedText: '', // 待加密的字符
@@ -246,6 +255,9 @@
 			changeRadio (e) {
 				// console.log('changeRadio', e)
 			},
+			changeOriginalText () {
+				this.errorText = ''
+			},
 			encrypto () {
 				if (this.originalText.trim() === '') {
 					return
@@ -255,16 +267,16 @@
 						this.cryptoText = CryptoJS.MD5(this.originalText).toString()
 						break
 					case 'aes':
-						this.cryptoText = CryptoJS.AES.encrypt(this.originalText, '12').toString()
+						this.cryptoText = CryptoJS.AES.encrypt(this.originalText, this.privateKey).toString()
 						break
 					case 'rc4':
-						this.cryptoText = CryptoJS.RC4.encrypt(this.originalText, '12').toString()
+						this.cryptoText = CryptoJS.RC4.encrypt(this.originalText, this.privateKey).toString()
 						break
 					case 'rabbit':
-						this.cryptoText = CryptoJS.Rabbit.encrypt(this.originalText, '12').toString()
+						this.cryptoText = CryptoJS.Rabbit.encrypt(this.originalText, this.privateKey).toString()
 						break
 					case 'rabbit-legacy':
-						this.cryptoText = CryptoJS.RabbitLegacy.encrypt(this.originalText, '12').toString()
+						this.cryptoText = CryptoJS.RabbitLegacy.encrypt(this.originalText, this.privateKey).toString()
 						break
 					case 'sha1':
 						this.cryptoText = CryptoJS.SHA1(this.originalText).toString()
@@ -291,7 +303,7 @@
 						this.cryptoText = CryptoJS.PBKDF2(this.originalText).toString()
 						break
 					case 'tripledes':
-						this.cryptoText = CryptoJS.TripleDES.encrypt(this.originalText, '12').toString()
+						this.cryptoText = CryptoJS.TripleDES.encrypt(this.originalText, this.privateKey).toString()
 						break
 					case 'evpkdf':
 						this.cryptoText = CryptoJS.EvpKDF(this.originalText).toString()
@@ -300,29 +312,36 @@
 						break
 				}
 			},
-			decrypto () {
-				if (this.cryptoText.trim() === '') {
+			dealWithResult () {
+				let _map = {
+					aes: 'AES',
+					rc4: 'RC4',
+					rabbit: 'Rabbit',
+					'rabbit-legacy': 'RabbitLegacy',
+					tripledes: 'TripleDES'
+				}
+				let type = this.currentCryptoType.toLowerCase()
+				let defaultErrorText = `不是合法的${_map[type]}密文`
+				let originalText = ''
+				try {
+					originalText = CryptoJS[_map[type]].decrypt(this.cryptoText, this.privateKey).toString(CryptoJS.enc.Utf8)
+				} catch (err) {
+					this.errorText = defaultErrorText
+					this.originalText = defaultErrorText
+				}
+				if (originalText === '') {
+					this.errorText = '解密失败'
+					this.originalText = '解密失败'
+				} else {
+					this.errorText = ''
+					this.originalText = originalText
+				}
+			},
+			async decrypto () {
+				if (this.cryptoText.trim() === '' || this.canBeDecrypto.indexOf(this.currentCryptoType.toLowerCase()) < 0) {
 					return
 				}
-				switch (this.currentCryptoType.toLowerCase()) {
-					case 'aes':
-						this.originalText = CryptoJS.AES.decrypt(this.cryptoText, '12').toString(CryptoJS.enc.Utf8)
-						break
-					case 'rc4':
-						this.originalText = CryptoJS.RC4.decrypt(this.cryptoText, '12').toString(CryptoJS.enc.Utf8)
-						break
-					case 'rabbit':
-						this.originalText = CryptoJS.Rabbit.decrypt(this.cryptoText, '12').toString(CryptoJS.enc.Utf8)
-						break
-					case 'rabbit-legacy':
-						this.originalText = CryptoJS.RabbitLegacy.decrypt(this.cryptoText, '12').toString(CryptoJS.enc.Utf8)
-						break
-					case 'tripledes':
-						this.originalText = CryptoJS.TripleDES.decrypt(this.cryptoText, '12').toString(CryptoJS.enc.Utf8)
-						break
-					default:
-						break
-				}
+				this.dealWithResult()
 			}
 		}
 	}

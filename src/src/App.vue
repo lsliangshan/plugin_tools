@@ -256,7 +256,7 @@ export default {
   .no_bg textarea {
     background-color: transparent!important;
   }
-  .base64_container .error_input textarea {
+  .error_input textarea {
     color: #ed4014!important;
   }
   .base64_container .ivu-upload {

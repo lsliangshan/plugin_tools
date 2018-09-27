@@ -137,7 +137,7 @@
 			}
 		},
 		async created () {
-			await this.loadScript('/html/static/js/ls_encode.js')
+			// await this.loadScript('/html/static/js/ls_encode.js')
 			this.$nextTick(async () => {
 				this.doSearch()
 			})
