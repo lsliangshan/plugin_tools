@@ -37,5 +37,18 @@ export default {
     components: {
       ContentRouter: () => import('../components/tool/Ip.vue')
     }
+  }, {
+    path: '/crypto',
+    name: 'crypto',
+    meta: {
+      label: '文字加密解密',
+      title: '文字加密解密',
+      icon: '#route-crypto',
+      name: '文字加密解密',
+      desc: '支持MD5、AES、DES、RC4、Rabbit等多种加密算法'
+    },
+    components: {
+      ContentRouter: () => import('../components/tool/Crypto.vue')
+    }
   }]
 }
