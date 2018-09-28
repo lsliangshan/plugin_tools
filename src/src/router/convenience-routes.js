@@ -10,5 +10,21 @@ export default {
     HomeRouter: () =>
       import ('../components/Home.vue')
   },
-  children: []
+  children: [
+    {
+      path: '/pinyin',
+      name: 'pinyin',
+      meta: {
+        label: '汉字转拼音',
+        title: '汉字转拼音',
+        icon: '#route-pinyin',
+        name: '汉字转拼音',
+        desc: '将汉字转成拼音，可带音调'
+      },
+      components: {
+        ContentRouter: () =>
+          import ('../components/tool/Pinyin.vue')
+      }
+    }
+  ]
 }
