@@ -160,7 +160,7 @@
 							this.$Enkel.Loading.ipRef.show()
 						}, 100)
 						this.$axios({
-							url: 'http://127.0.0.1:3000/enkel/index/index',
+							url: 'https://talkapi.dei2.com/enkel/index/index',
 							method: 'post',
 							data: qs.stringify({
 								ip: this.query
