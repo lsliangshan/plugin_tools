@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "dei2.tools",
+  "name": "enkel",
   "description": "实用插件",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "permissions": [
     "activeTab",
     "tabs",
