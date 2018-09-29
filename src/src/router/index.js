@@ -33,6 +33,32 @@ export const blankRouter = {
   }
 }
 
+export const scriptsRouter = {
+  path: '/',
+  name: 'home',
+  meta: {
+    label: 'Home',
+    title: 'Enkel Tools',
+    name: '代码处理工具'
+  },
+  components: {
+    HomeRouter: () =>
+      import ('../components/Home.vue')
+  },
+  children: [
+    {
+      path: '/scripts',
+      name: 'scripts',
+      meta: {
+        title: 'User Scripts'
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Scripts.vue')
+      }
+    }
+  ]
+}
+
 // export const contentRouter = ContentRoutes
 
 // export const contentRouter = {
@@ -83,6 +109,7 @@ export default new Router({
     popupRouter,
     blankRouter,
     // ContentRoutes,
+    scriptsRouter,
     CodeRoutes,
     ConvenienceRoutes,
     MultiMediaRoutes,
