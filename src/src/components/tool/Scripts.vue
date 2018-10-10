@@ -4,9 +4,12 @@
 			<Card :bordered="false" class="user_script_item" v-for="(item, index) in userScripts" :key="index">
 	            <div class="user_script_card_inner" :data-index="index" @click="openModal">
 	            	<img class="site_favicon_img pen" :src="'http://' + getHost(item.match) + '/favicon.ico'" @error="imgLoadError">
-	            	<Tooltip :content="item.desc" :class="{pen: !item.desc}" placement="bottom" :transfer="true" :max-width="250">
-			            <div class="user_script_card_desc" :data-index="index" @click="openModal">{{item.desc || '暂无描述'}}</div>
-			        </Tooltip>	            	
+	            	<Tooltip class="pen" :content="item.desc" :class="{pen: !item.desc}" placement="bottom" :transfer="true" :max-width="250">
+			            <div class="user_script_card_desc pea" :data-index="index" @click="openModal">{{item.desc || '暂无描述'}}</div>
+			        </Tooltip>
+			        <Tooltip content="删除脚本" placement="bottom" :transfer="true" class="delete_script_card">
+			        	<Icon type="md-trash" color="#ed4014" size="18" :data-index="index" @click="removeUserScriptCard" />
+			        </Tooltip>
 	            </div>
 	            <div class="user_script_card_item_status pen" :class="{active: item.active}">
 	            	<div class="status_text">{{item.active ? 'ON' : 'OFF'}}</div>
@@ -25,7 +28,6 @@
 	        @on-ok="confirmModify"
 	        @on-cancel="resetCardModal"
 	        >
-	        <div style="word-break: break-all;">{{JSON.stringify(cardModal.data)}}</div>
 	        <Form :label-width="80" :model="cardModal.data">
 	        	<FormItem label="状态">
 	        		<i-switch v-model="cardModal.data.active" size="large">
@@ -57,6 +59,9 @@
 <style scoped>
 	.pen {
 		pointer-events: none;
+	}
+	.pea {
+		pointer-events: auto;
 	}
 	.scripts_container {
 		width: 100%;		
@@ -101,6 +106,16 @@
 		align-items: center;
 		justify-content: center;
 		text-align: center;
+	}
+	.delete_script_card {
+		position: absolute;
+		left: 10px;
+		top: 10px;
+		transition: opacity .2s ease-in-out;
+		opacity: 0;
+	}
+	.user_script_item:hover .delete_script_card {
+		opacity: 1;
 	}
 	.user_script_card_item_status {
 		position: absolute;
@@ -208,7 +223,7 @@
 					match: '',
 					desc: '',
 					scripts: [''],
-					active: true
+					active: false
 				},
 				userScripts: [
 					{
@@ -248,9 +263,50 @@
 		},
 		async created () {
 			const that = this
+			this.saveData(function () {
+				window.webkitRequestFileSystem(window.PERSISTENT, 5*1024*1024, function (fs) {
+				  fs.root.getFile('userScripts.txt', {}, function (fileEntry) {
+				    fileEntry.file(function (file) {
+				      let reader = new FileReader()
+
+				      reader.onloadend = function (e) {
+				        console.log('reader onloadend: ', e.target.result)
+				      }
+				      reader.readAsText(file)
+				    }, function (e) {
+				      console.log('reader file error: ', e.toString())
+				    })
+				  }, function (e) {
+				    console.log('getFile error: ', e.toString())
+				  })
+				}, function (e) {
+				  console.log('webkitRequestFileSystem error: ', e.toString())
+				})
+			})
+			// window.webkitRequestFileSystem(window.PERSISTENT, 1024 * 1024, function (fs) {
+			// 	fs.root.getFile('test.txt', {create: true}, function (fileEntry) {
+			// 		console.log('in getFile')
+			// 		fileEntry.createWriter(function (fileWriter) {
+			// 			console.log('in createWriter')
+			// 			fileWriter.onwriteend = function (e) {
+			// 				console.log('write completed.')
+			// 			}
+			// 			fileWriter.onerror = function (e) {
+			// 				console.log('write failed: ' + e.toString())
+			// 			}
+
+			// 			let bb = new Blob(['测试内容...'], {type: 'text/plain'})
+			// 			fileWriter.write(bb)
+			// 		}, function (e) {
+			// 			console.log('create wirter error: ', e.toString())
+			// 		})
+			// 	})
+			// }, function (e) {
+			// 	console.log('webkitRequestFileSystem error: ', e.toString())
+			// })
 			// await this.loadScript('/html/static/js/FileSaver.js')
 			// setTimeout(() => {
-			// 	let file = new File(['alert("Dynamic generation")'], '/html/static/js/scripts/main.js', {type: 'text/plain;charset=utf-8'})
+			// 	let file = new File(['alert("Dynamic generation 222")'], 'userScript.js', {type: 'text/plain;charset=utf-8'})
 			// 	saveAs(file)
 			// })
 			// await this.initFiler()
@@ -283,6 +339,60 @@
 			// })
 		},
 		methods: {
+			saveData (callback) {
+				const that = this
+				navigator.webkitPersistentStorage.requestQuota(5*1024*1024, 
+			        function(grantedBytes) {
+			            window.webkitRequestFileSystem(window.PERSISTENT, 5*1024*1024, function (fs) {
+							fs.root.getFile('userScripts.txt', {create: true}, function (fileEntry) {
+								fileEntry.createWriter(function (fileWriter) {
+									fileWriter.onwriteend = function (e) {
+										console.log('write completed.', e)
+										callback && callback()
+									}
+									fileWriter.onerror = function (e) {
+										console.log('write failed: ' + e.toString())
+									}
+
+									let bb = new Blob([JSON.stringify(that.userScripts)], {type: 'text/plain'})
+									fileWriter.write(bb)
+								}, function (e) {
+									console.log('create wirter error: ', e.toString())
+								})
+							}, function (e) {
+								console.log('error: ', e.toString())
+							})
+						}, function (e) {
+							console.log('webkitRequestFileSystem error: ', e.toString())
+						})
+			        }, 
+			        function(errorCode) {
+			            alert("Storage not granted.");
+			        }
+			    )
+			},
+			getCurrentTabId (callback) {
+				chrome.tabs.query({
+					active: true,
+					currentWindow: true
+				}, function (tabs) {
+					if (callback) {
+						callback(tabs.length ? tabs[0].id : null)
+					}
+				})
+			},
+			sendMessageToContentScript (message, callback) {
+				console.log('in sendMessageToContentScript: ', message)
+				this.getCurrentTabId(tabId => {
+					console.log('in getCurrentTabId: ', tabId)
+					chrome.tabs.sendMessage(tabId, message, function (response) {
+						console.log('chrome tabs sendMessage: ', message)
+						if (callback) {
+							callback(response)
+						}
+					})
+				})
+			},
 			initFiler () {
 				return new Promise(resolve => {
 					if (this.filer) {
@@ -323,6 +433,19 @@
 			},
 			addScript (e) {
 				this.cardModal.data.scripts.push('')
+			},
+			removeUserScriptCard (e) {
+				e.stopPropagation()
+				this.$Modal.confirm({
+					title: '删除脚本',
+					content: '脚本删除后将不可恢复，是否确定删除',
+					okText: '确定',
+					cancelText: '再想想',
+					onOk: () => {
+						this.userScripts.splice(Number(e.target.dataset.index), 1)
+						this.$Message.success('删除成功')
+					}
+				})
 			},
 			createNewCard () {
 				this.userScripts.push(JSON.parse(JSON.stringify(this.blankScript)))

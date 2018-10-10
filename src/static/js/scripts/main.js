@@ -36,8 +36,26 @@ document.addEventListener('DOMContentLoaded', function() {
 	// })
 	// alert(localStorage.getItem('zpim'))
 	// eval(word)
-	localStorage.setItem('test', 'alert("Dynamic generation");')
-	eval(localStorage.getItem('test'))
-  $('#kw').val('ce shi 2')
+	// localStorage.setItem('test', 'alert("Dynamic generation");')
+	// eval(localStorage.getItem('test'))
+ //  $('#kw').val('ce shi 2')
+ window.webkitRequestFileSystem(window.PERSISTENT, 5*1024*1024, function (fs) {
+  fs.root.getFile(chrome.extension.getURL('userScripts.txt'), {}, function (fileEntry) {
+    fileEntry.file(function (file) {
+      let reader = new FileReader()
+
+      reader.onloadend = function (e) {
+        console.log('reader onloadend: ', e.target.result)
+      }
+      reader.readAsText(file)
+    }, function (e) {
+      console.log('reader file error: ', e.toString())
+    })
+  }, function (e) {
+    console.log('getFile error: ', e.toString())
+  })
+}, function (e) {
+  console.log('webkitRequestFileSystem error: ', e.toString())
+})
   // $('#su').trigger('click')
 })

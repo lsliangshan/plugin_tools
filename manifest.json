@@ -25,6 +25,9 @@
       "run_at": "document_start"
     }
   ],
+  "background": {
+       "page": "html/index.html"
+   },
   "chrome_url_overrides" : {
     "newtab": "html/index.html#/blank"
   },
