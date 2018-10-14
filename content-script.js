@@ -1,4 +1,10 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+  chrome.extension.sendMessage({
+    location: location.href,
+    action: 'userscript'
+  }, function (response) {
+    loadScriptString(response.script)
+  })
   // document.body.innerHTML = '<p style="color: darkcyan; font-size: 40px;">测试</p>'
   let content = document.body.innerText
   let result = ''
@@ -22,8 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.innerHTML = result;
 
     addJsonOperation();
-  } else {
-  }
+  } else {}
 })
 
 const insertCssAndJs = function () {
@@ -50,4 +55,17 @@ const expandAll = function (currentJsonStr) {
 
 const compressAll = function (currentJsonStr) {
   currentJsonStr.trim() !== '' && (new JSONFormat(currentJsonStr, 4).hideAll())
+}
+
+function loadScriptString(code) {
+  var script = document.createElement("script");
+  script.type = "text/javascript";
+  try {
+    // firefox、safari、chrome和Opera
+    script.appendChild(document.createTextNode(code));
+  } catch (ex) {
+    // IE早期的浏览器 ,需要使用script的text属性来指定javascript代码。
+    script.text = code;
+  }
+  document.getElementsByTagName("head")[0].appendChild(script);
 }

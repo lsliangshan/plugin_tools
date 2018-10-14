@@ -396,4 +396,8 @@ export default {
   .qrcode_input_wrapper textarea {
     background-color: rgba(255, 255, 255, .9);
   }
+
+  .CodeMirror {
+    height: 100% !important;
+  }
 </style>

@@ -3,7 +3,9 @@
 import Vue from 'vue'
 import App from './App'
 import axios from 'axios'
-import { sync } from 'vuex-router-sync'
+import {
+  sync
+} from 'vuex-router-sync'
 import router from './router/index'
 import store from './store'
 import * as filters from './filters'
@@ -11,6 +13,10 @@ import mixins from './mixins'
 import iView from 'iview'
 import '../static/css/font-awesome/css/font-awesome.min.css'
 import 'iview/dist/styles/iview.css'
+import "codemirror/lib/codemirror.css"
+import "codemirror/addon/fold/foldgutter.css"
+import "codemirror/theme/zenburn.css"
+import "codemirror/theme/dracula.css"
 
 sync(store, router)
 
@@ -32,7 +38,7 @@ router.beforeEach((to, from, next) => {
   iView.LoadingBar.start()
   if (to.meta && to.meta.title) {
     document.title = to.meta.title
-  }  
+  }
   next()
 })
 

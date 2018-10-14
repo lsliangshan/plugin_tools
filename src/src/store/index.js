@@ -117,7 +117,8 @@ const store = new Vuex.Store({
       inactiveTools: 'local-inactive-tools',
       maxToolCount: 'local-max-tool-count',
       activeThemeIndex: 'local-active-theme-index',
-      blankHomePage: 'local-blank-home-page'
+      blankHomePage: 'local-blank-home-page',
+      userScripts: 'local-user-scripts'
     },
     blankHomePage: 'default',
     tools: [],
