@@ -253,6 +253,7 @@
 				blankScript: {
 					match: '',
 					desc: '',
+					author: '',
 					scripts: `/**
 * @author	{{{AUTHOR}}}
 * @match	{{{MATCH}}}
@@ -297,6 +298,29 @@
 			const that = this
 
 			this.userScripts = await StorageUtil.getItem(this.localStorageKeys.userScripts) || []
+
+			let isMac = (navigator.platform === 'Mac68K') || (navigator.platform === 'MacPPC') || (navigator.platform === 'Macintosh') || (navigator.platform === 'MacIntel')
+
+			this.$nextTick(() => {
+				window.onkeydown = function (ev) {
+					if (that.$route.name === 'scripts') {
+						if (isMac) {
+							if (ev.metaKey && ev.keyCode === 83) {
+								// 保存
+								that.confirmModify()
+								that.closeModal()
+								ev.preventDefault()
+							}
+						} else {
+							if (ev.ctrlKey && ev.keyCode === 83) {
+								that.confirmModify()
+								that.closeModal()
+								ev.preventDefault()
+							}
+						}
+					}
+				}
+			})
 			// chrome.extension.sendMessage({message: 'Hello'})
 		},
 		mounted () {
@@ -318,6 +342,7 @@
 			getScriptsConfig () {
 				let scripts = this.cardModal.data.scripts
 				let _s = scripts.replace(/[\r\n]/g, '###')
+				this.cardModal.data.author = _s.replace(/(.*@author\s+)([^(###)]*)(###.*)/, '$2')
 				this.cardModal.data.match = _s.replace(/(.*@match\s+)([^(###)]*)(###.*)/, '$2')
 				this.cardModal.data.desc = _s.replace(/(.*@desc\s+)([^(###)]*)(###.*)/, '$2')
 			},
@@ -448,6 +473,9 @@
 				this.cardModal.shown = true
 				this.cardModal.data = JSON.parse(JSON.stringify(this.userScripts[this.activeIndex]))
 				this.beautifyCode()
+			},
+			closeModal () {
+				this.cardModal.shown = false
 			},
 			confirmModify (e) {
 				this.userScripts.splice(this.activeIndex, 1, this.cardModal.data)
