@@ -106,6 +106,15 @@ const store = new Vuex.Store({
         img: 'http://static.dei2.com/extensions/img/cartoon/cartoon05.jpeg'
       }]
     }],
+    audio: {
+      ele: null, // audio对象
+      playing: false,
+      list: ['http://111.202.85.152/amobile.music.tc.qq.com/C400003X1czK36p18l.m4a?guid=4679788780&vkey=981DA8A6FACF9BEB25B1C8D2CD45B1AE22E54A9F589DF86E59CFEDF8B81C4BE5630285614DE116EBA673958DCC0F680349F3AD2C6377C23A&uin=0&fromtag=66'], // 音频列表
+      current: -1, // 当前音频索引
+      duration: 0, // 音频总时长
+      mode: 'loop', // 播放模式, loop: 单曲重复；list: 列表重复；random: 随机播放
+      volume: 1 // 音量
+    },
     activeThemeIndex: [0, 1],
     bodyStyles: {},
     events: {

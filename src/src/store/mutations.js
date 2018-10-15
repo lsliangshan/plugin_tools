@@ -39,7 +39,7 @@ import {
   StorageUtil
 } from '../utils/index'
 
-const findTemplateByUUID = function(uuid, arr, deep, sub) {
+const findTemplateByUUID = function (uuid, arr, deep, sub) {
   let _deep = deep // deep为1或2
   let _sub = sub || 0
   let outIndex = [-1, -1]
@@ -61,6 +61,35 @@ const findTemplateByUUID = function(uuid, arr, deep, sub) {
 }
 
 export const mutations = {
+  [types.SET_AUDIO_ELE](state, data) {
+    state.audio.ele = data.ele
+  },
+  [types.PLAY_AUDIO](state, data) {
+    state.audio.current = Number(data.current)
+    state.audio.playing = true
+  },
+  [types.PAUSE_AUDIO](state) {
+    state.audio.playing = false
+  },
+  [types.RESET_AUDIO](state) {
+    state.audio = Object.assign({}, state.audio, {
+      current: 0,
+      playing: false,
+      volume: 1
+    })
+  },
+  [types.SET_AUDIO_VOLUME](state, data) {
+    state.audio.volume = ((parseFloat(data.volume) / 100).toFixed(2) > 1 ? 1 : (parseFloat(data.volume) / 100).toFixed(2))
+  },
+  [types.SET_AUDIO_MODE](state, data) {
+    state.audio.mode = data.mode
+  },
+  [types.SET_AUDIO_LIST](state, data) {
+    state.audio.list = data.list
+  },
+  [types.SET_AUDIO_DURATION](state, data) {
+    state.audio.duration = data.duration
+  },
   [types.INIT_TOOLS](state, data) {
     state.tools = data.tools
   },
@@ -78,7 +107,7 @@ export const mutations = {
     state.activeThemeIndex = data.activeThemeIndex
     await StorageUtil.setItem(state.localStorageKeys.activeThemeIndex, data.activeThemeIndex)
   },
-  async [types.SET_BLANK_HOME_PAGE] (state, data) {
+  async [types.SET_BLANK_HOME_PAGE](state, data) {
     if (!data.blankHomePage || data.blankHomePage.trim() === 'default') {
       state.blankHomePage = 'default'
     } else if (data.blankHomePage.match(/^\/\//)) {

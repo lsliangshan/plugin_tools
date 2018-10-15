@@ -21,7 +21,6 @@
 				</div>
 			</div>
 		</div>
-		<audio style="width: 0; height: 0;" id="cmd_audio" :src="audio.src"></audio>
 	</div>
 </template>
 
@@ -350,10 +349,13 @@
 				 * audio相关操作
 				 */
 				if (!args.args || args.args.length < 1) {
-					this.autoReply({
-						status: 'error',
-						text: '请输入操作名，可用的操作名包括：play、stop、volume、set'
+					this.$router.replace({
+						name: 'audio'
 					})
+					// this.autoReply({
+					// 	status: 'error',
+					// 	text: '请输入操作名，可用的操作名包括：play、stop、volume、set'
+					// })
 				} else {
 					let _op = args.args.shift()
 					switch (_op) {						

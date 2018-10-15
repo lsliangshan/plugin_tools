@@ -132,6 +132,30 @@ export const SET_ACTIVE_THEME_INDEX = 'SET_ACTIVE_THEME_INDEX'
 // 设置空白页面 地址
 export const SET_BLANK_HOME_PAGE = 'SET_BLANK_HOME_PAGE'
 
+// 播放音乐
+export const PLAY_AUDIO = 'PLAY_AUDIO'
+
+// 暂停播放音乐
+export const PAUSE_AUDIO = 'PAUSE_AUDIO'
+
+// 重置音乐设置
+export const RESET_AUDIO = 'RESET_AUDIO'
+
+// 设置音频音量
+export const SET_AUDIO_VOLUME = 'SET_AUDIO_VOLUME'
+
+// 设置音频播放模式
+export const SET_AUDIO_MODE = 'SET_AUDIO_MODE'
+
+// 修改播放列表
+export const SET_AUDIO_LIST = 'SET_AUDIO_LIST'
+
+// 缓存当前音乐时长
+export const SET_AUDIO_DURATION = 'SET_AUDIO_DURATION'
+
+// 设置audio DOM对象
+export const SET_AUDIO_ELE = 'SET_AUDIO_ELE'
+
 // >>>> actions:
 
 // 登录1

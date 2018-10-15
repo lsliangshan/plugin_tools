@@ -2,10 +2,12 @@
   <div id="app">
     <router-view name="HomeRouter"/>
     <all-svg></all-svg>
+    <audio style="width: 0; height: 0;" id="globalAudio" autoplay :src="audio.list[audio.current]"></audio>
   </div>  
 </template>
 
 <script>
+// https://developers.google.com/web/updates/2017/06/play-request-was-interrupted !!!!!!
 import * as types from './store/mutation-types'
 import router from './router/content-routes.js'
 import CodeRoutes from './router/code-routes.js'
@@ -20,7 +22,7 @@ export default {
   },
   data () {
     return {
-      events: this.$store.state.events
+      audioEle: null
     }
   },
   computed: {
@@ -38,6 +40,12 @@ export default {
     },
     blankHomePage () {
       return this.$store.state.blankHomePage
+    },
+    audio () {
+      return this.$store.state.audio
+    },
+    events () {
+      return this.$store.state.events
     }
   },
   created () {
@@ -71,6 +79,11 @@ export default {
     })
     this.$store.commit(types.SET_BLANK_HOME_PAGE, {
       blankHomePage: await this.getBlankHomePage()
+    })
+
+    this.audioEle = document.getElementById('globalAudio')
+    this.$store.commit(types.SET_AUDIO_ELE, {
+      ele: this.audioEle
     })
   },
   methods: {
@@ -166,6 +179,34 @@ export default {
         let blankHomePage = await StorageUtil.getItem(this.localStorageKeys.blankHomePage)
         resolve(blankHomePage || this.blankHomePage)
       })
+    }
+  },
+  watch: {
+    'audio.playing' (val) {
+      if (val) {
+        // this.audioEle.load()
+        console.log('......', this.audioEle.ended)
+        if (this.audioEle.paused) {
+          this.audioEle.play()
+        } else {
+          // this.audioEle.addEventListener('canplay', () => {
+          //   this.audioEle.play()
+          // }, false)
+        }
+      } else {
+        console.log('pause: ', this.audioEle.currentTime.toFixed(1))
+        this.audioEle.pause()
+      }
+    },
+    'audio.current' (val) {
+      if (val !== -1) {
+        this.audioEle.oncanplay = () => {
+          console.log(this.audioEle.duration)
+          this.$store.commit(types.SET_AUDIO_DURATION, {
+            duration: this.audioEle.duration
+          })
+        }
+      }
     }
   }
 }
