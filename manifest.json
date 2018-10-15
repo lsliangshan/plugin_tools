@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "enkel",
   "description": "提供JSON格式化、Base64加密解密、传图识色、文字加密等开发工具",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "permissions": [
     "activeTab",
     "tabs",
@@ -19,7 +19,7 @@
   },
   "content_scripts": [{
     "matches": ["<all_urls>"],
-    "js": ["js/jquery-1.11.1.min.js", "js/jquery.json.js", "js/json2.js", "js/jsonlint.js", "content-script.js", "html/static/js/scripts/main.js"],
+    "js": ["js/jquery-1.11.1.min.js", "js/jquery.json.js", "js/json2.js", "js/jsonlint.js", "content-script.js"],
     "css": [],
     "run_at": "document_start"
   }],

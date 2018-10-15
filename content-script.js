@@ -3,7 +3,11 @@ document.addEventListener('DOMContentLoaded', function () {
     location: location.href,
     action: 'userscript'
   }, function (response) {
-    loadScriptString(response.script)
+    if (response && Object.prototype.toString.call(response) === '[object Array]') {
+      for (let i = 0; i < response.length; i++) {
+        loadScriptString(response[i].scripts)
+      }
+    }
   })
   // document.body.innerHTML = '<p style="color: darkcyan; font-size: 40px;">测试</p>'
   let content = document.body.innerText

@@ -320,20 +320,36 @@
 						}
 					}
 				}
+				chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+					if (request.action === 'userscript') {
+						let _s = that.getScritps({
+							location: request.location
+						})
+						if (_s.length > 0) {
+							sendResponse(_s)
+						}
+					}
+				})
 			})
 			// chrome.extension.sendMessage({message: 'Hello'})
 		},
 		mounted () {
 			const that = this
-			chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-				if (request.action === 'userscript') {
-					sendResponse({
-						script: that.userScripts[0].scripts
-					})
-				}
-			})
 		},
 		methods: {
+			getScritps (data) {
+				let _userScripts = this.userScripts
+				let outScript = []
+				let i = 0
+				for (i; i < _userScripts.length; i++) {
+					if (_userScripts[i].match && _userScripts[i].match.trim() !== '') {
+						if (_userScripts[i].active && _userScripts[i].match.split(';').some(item => data.location.match(item.replace(/\*/g, '.*')))) {
+							outScript.push(_userScripts[i])
+						}
+					}
+				}
+				return outScript
+			},
 			formatScripts (scripts) {
 				return scripts.replace(/{{{AUTHOR}}}/, 'YOU')
 				.replace(/{{{MATCH}}}/, this.cardModal.data.match)
@@ -487,8 +503,9 @@
 				this.cardModal.data = {}
 				this.saveUserScripts()
 			},
-			removeScript (e) {
+			async removeScript (e) {
 				this.cardModal.data.scripts.splice(Number(e.target.dataset.index), 1)
+				await this.saveUserScripts()
 			},
 			addScript (e) {
 				this.cardModal.data.scripts.push('')
