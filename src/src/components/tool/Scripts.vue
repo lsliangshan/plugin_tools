@@ -242,7 +242,7 @@
 	//     document.querySelector('.c-container').querySelector('a').click()
 	//   }
 	//  })()
-	import CodeMirror from 'CodeMirror'
+	// import CodeMirror from 'CodeMirror'
 	import { StorageUtil } from '../../utils/index.js'
 	export default {
 		name: 'scripts',
