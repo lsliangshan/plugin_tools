@@ -16,7 +16,8 @@ export default {
 			title: '在线工具'
 		},
 		components: {
-			ContentRouter: () => import('../components/pages/Index.vue')
+			ContentRouter: () =>
+				import ('../components/pages/Index.vue')
 		}
 	}, {
 		path: '/settings',
@@ -47,6 +48,16 @@ export default {
 		components: {
 			ContentRouter: () =>
 				import ('../components/pages/Audio.vue')
+		}
+	}, {
+		path: '/audio/discover/recommend/taste',
+		name: 'discover.recommend.taste',
+		meta: {
+			title: '每日推荐歌曲'
+		},
+		components: {
+			ContentRouter: () =>
+				import ('../components/pages/audio/pages/discover.recommend.taste.vue')
 		}
 	}]
 }

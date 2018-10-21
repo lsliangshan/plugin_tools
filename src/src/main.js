@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import axios from 'axios'
+import qs from 'qs'
 import {
   sync
 } from 'vuex-router-sync'
@@ -51,16 +52,31 @@ Vue.prototype.errorHandler = (err, vm) => {
 }
 
 Vue.prototype.$eventHub = (Vue.prototype.$eventHub || new Vue())
+
 document.cookie = 'enkel=9d935f95a1630e1282ae9861f16fcf0b'
+
 Vue.prototype.$axios = axios.create({
   headers: {
     'cookies': document.cookie
   }
 })
 
+Vue.prototype.$axios.interceptors.request.use(config => {
+  if (config.data.data) {
+    config.data.data = qs.stringify(config.data.data)
+  }
+  if (config.data.headers) {
+    config.data.headers = qs.stringify(config.data.headers)
+  }
+  config.data = qs.stringify(config.data)
+  console.log('interceptors: ', config)
+  return config
+}, error => {
+  return Promise.reject(error)
+})
 
 /* eslint-disable no-new */
-new Vue({
+global.vue = new Vue({
   el: '#app',
   router,
   store,

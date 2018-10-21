@@ -38,6 +38,7 @@ import Vuex from 'vuex'
 import * as actions from './actions'
 import * as mutations from './mutations'
 import * as getters from './getters'
+import moduleNem from './modules/moduleNem'
 
 Vue.use(Vuex)
 
@@ -48,6 +49,9 @@ const store = new Vuex.Store({
   actions: actions.actions,
   mutations: mutations.mutations,
   getters: getters.getters,
+  modules: {
+    moduleNem
+  },
   state: {
     theme: 'dark',
     logo: '/html/static/images/new_logo.png',

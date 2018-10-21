@@ -441,4 +441,8 @@ export default {
   .CodeMirror {
     height: 100% !important;
   }
+
+  .nem_login_form .ivu-modal-body {
+    padding-bottom: 0;
+  }
 </style>

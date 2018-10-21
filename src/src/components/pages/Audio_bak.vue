@@ -233,7 +233,6 @@
 	import crypto from 'crypto'
 	import PlayList from './audio/components/PlayList.vue'
 	import DailyRecommend from './audio/components/DailyRecommend.vue'
-	import { mapState } from 'vuex'
 	export default {
 		name: 'audio',
 		components: {
@@ -249,7 +248,7 @@
 					password: 'liangshan001'
 				},
 				isLogin: false,
-				// loginInfo: {"profile":{"detailDescription":"","djStatus":0,"followed":false,"userId":107163072,"vipType":0,"gender":1,"accountStatus":0,"avatarImgId":1365593467601826,"birthday":1420041600000,"nickname":"netease_Keith","city":110101,"province":110000,"defaultAvatar":false,"avatarUrl":"http://p1.music.126.net/4md55uk14pGYj9eq_HfjWA==/1365593467601826.jpg","userType":0,"mutual":false,"remarkName":null,"expertTags":null,"authStatus":0,"experts":{},"backgroundImgId":3240260770885192,"backgroundUrl":"http://p1.music.126.net/4b1YkvUf91RjZMbgnUhAXA==/3240260770885192.jpg","avatarImgIdStr":"1365593467601826","backgroundImgIdStr":"3240260770885192","description":"","signature":"","authority":0,"artistIdentity":[],"followeds":2,"follows":7,"blacklist":false,"eventCount":1,"artistName":null,"playlistCount":15,"playlistBeSubscribedCount":0},"level":8,"listenSongs":3217,"userPoint":{"userId":107163072,"balance":89,"updateTime":1515040132422,"version":20,"status":0,"blockBalance":0},"mobileSign":false,"pcSign":false,"peopleCanSeeMyPlayRecord":true,"bindings":[{"refreshTime":0,"userId":107163072,"tokenJsonStr":"{\"email\":\"loveliangshan@126.com\"}","url":"","expiresIn":2147483647,"expired":false,"id":49929572,"type":0}],"adValid":true,"code":200,"createTime":1448177780419,"createDays":1065},
+				loginInfo: {"profile":{"detailDescription":"","djStatus":0,"followed":false,"userId":107163072,"vipType":0,"gender":1,"accountStatus":0,"avatarImgId":1365593467601826,"birthday":1420041600000,"nickname":"netease_Keith","city":110101,"province":110000,"defaultAvatar":false,"avatarUrl":"http://p1.music.126.net/4md55uk14pGYj9eq_HfjWA==/1365593467601826.jpg","userType":0,"mutual":false,"remarkName":null,"expertTags":null,"authStatus":0,"experts":{},"backgroundImgId":3240260770885192,"backgroundUrl":"http://p1.music.126.net/4b1YkvUf91RjZMbgnUhAXA==/3240260770885192.jpg","avatarImgIdStr":"1365593467601826","backgroundImgIdStr":"3240260770885192","description":"","signature":"","authority":0,"artistIdentity":[],"followeds":2,"follows":7,"blacklist":false,"eventCount":1,"artistName":null,"playlistCount":15,"playlistBeSubscribedCount":0},"level":8,"listenSongs":3217,"userPoint":{"userId":107163072,"balance":89,"updateTime":1515040132422,"version":20,"status":0,"blockBalance":0},"mobileSign":false,"pcSign":false,"peopleCanSeeMyPlayRecord":true,"bindings":[{"refreshTime":0,"userId":107163072,"tokenJsonStr":"{\"email\":\"loveliangshan@126.com\"}","url":"","expiresIn":2147483647,"expired":false,"id":49929572,"type":0}],"adValid":true,"code":200,"createTime":1448177780419,"createDays":1065},
 				md5sum: {},
 				nemApiUrl: 'http://127.0.0.1:3000/nem/index/v1',
 				nemApi: {
@@ -269,15 +268,12 @@
 					newSongs: '/weapi/v1/discovery/new/songs', // 新歌
 					newAlbum: '/weapi/album/new', // 新碟
 				},
+				playList: [], // 热门推荐列表
 				recommendRadioList: [],
+				dailyRecommendList: [], // 个性化推荐
 			}
 		},
 		computed: {
-			...mapState({
-				loginInfo: state => state.moduleNem.loginInfo, // 登录信息
-				playList: state => state.moduleNem.playList, // 热门推荐列表
-				dailyRecommendList: state => state.moduleNem.dailyRecommendList, // 个性化推荐
-			}),
 			bodyStyles () {
 				return this.$store.state.bodyStyles
 			},
@@ -308,11 +304,9 @@
 			// 		// }
 			// 	}
 			// })
-			// this.playList = await this.getPersonalizedPlayList()
+			this.playList = await this.getPersonalizedPlayList()
 			// this.recommendRadioList = await this.getRecommendRadio()
-			let playList = this.$store.dispatch('moduleNem/getPersonalizedPlayList')
-			Promise.all([playList])
-			// this.dailyRecommendList = await this.getRecommendResource()
+			this.dailyRecommendList = await this.getRecommendResource()
 		},
 		methods: {
 			togglePlay () {
@@ -331,6 +325,23 @@
 						this.getAudioProgress()
 					}
 				}, 100)
+			},
+			getUserDetail (userId) {
+				return new Promise(async (resolve) => {
+					let userDetailData = await this.$axios({
+						url: this.nemApiUrl,
+						method: 'post',
+						data: {
+							baseURL: this.nemApi.baseURL,
+							url: this.nemApi.userDetail + '/' + userId,
+							method: 'get'
+						}
+					})
+					if (userDetailData.data.status === 200) {
+						this.loginInfo = userDetailData.data.data
+					}
+					resolve(true)
+				})
 			},
 			getPersonalizedNewSong () {
 				return new Promise(async (resolve) => {
@@ -366,6 +377,48 @@
 					})
 					console.log('getHotTags: ', hotTagsData.data.data)
 					resolve(hotTagsData.data.data)
+				})
+			},
+			getPersonalizedPlayList () {
+				/**
+				 * 热门推荐
+				 */
+				return new Promise(async (resolve) => {
+					let personalizedPlayListData = await this.$axios({
+						url: this.nemApiUrl,
+						method: 'post',
+						data: {
+							baseURL: this.nemApi.baseURL,
+							url: this.nemApi.personalizedPlayList,
+							method: 'post'
+						}
+					})
+					console.log('personalizedPlayListData: ', personalizedPlayListData.data.data.result)
+					resolve(personalizedPlayListData.data.data.result)
+				})
+			},
+			getRecommendResource () {
+				/**
+				 * 热门推荐, 日推后的
+				 */
+				return new Promise(async (resolve) => {
+					let recommendResourceData = await this.$axios({
+						url: this.nemApiUrl,
+						method: 'post',
+						data: {
+							baseURL: this.nemApi.baseURL,
+							url: this.nemApi.recommendResource,
+							method: 'post',
+							data: {
+								'offset': 0,
+								'limit': 20,
+								'total': 'True',
+								"csrf_token": ""
+							}
+						}
+					})
+					console.log('recommendResourceData: ', recommendResourceData.data.data.recommend)
+					resolve(recommendResourceData.data.data.recommend)
 				})
 			},
 			getNewSongs () {
@@ -458,22 +511,39 @@
 			},
 			async login () {
 				this.isLogin = true
-				await this.$store.dispatch('moduleNem/login', {
-					username: this.loginModal.username,
-					password: this.loginModal.password
-				}).then(async (res) => {
-					// await this.$store.dispatch('moduleNem/getRecommendResource')
-					this.isLogin = false
-					this.$Message.success('登录成功')
-					this.loginModal.shown = false
-				}).catch(err => {
-					this.isLogin = false
-					this.$Message.error(err.message)
-					this.loginModal.shown = false
+				this.md5sum.update(this.loginModal.password)
+				let loginInfo = await this.$axios({
+					url: 'http://127.0.0.1:3000/nem/index/v1',
+					method: 'post',
+					data: {
+						baseURL: 'http://music.163.com',
+						url: this.nemApi.login,
+						method: 'post',
+						data: {
+							username: this.loginModal.username,
+							password: this.md5sum.digest('hex'),
+							rememberLogin: true
+						}
+					}
 				})
+				if (loginInfo.data.status === 200) {
+					// 登录成功
+					if (loginInfo.data.headers && loginInfo.data.headers['set-cookie']) {
+						// 设置cookie
+						loginInfo.data.headers['set-cookie'].forEach(item => {
+							document.cookie = item.replace(/(domain=[^;]*;?\s?)/i, '').replace(/(path=[^;]*;?\s?)/i, '').replace(/httponly/i, '')
+						})
+					}
+					await this.getUserDetail(loginInfo.data.data.account.id)
+					setTimeout(() => {
+						this.$Message.success('登录成功')
+						this.loginModal.shown = false
+					}, 800)
+				}
+				this.isLogin = false
 			},
 			logout () {
-				this.$store.dispatch('moduleNem/logout')
+				this.loginInfo = {}
 			},
 			showLoginModal () {
 				this.loginModal.shown = true

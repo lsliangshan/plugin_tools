@@ -1,0 +1,182 @@
+/*
+ * 网易云音乐 模块
+ */
+import crypto from 'crypto'
+const moduleNem = {
+	namespaced: true,
+	state: {
+		md5sum: {},
+		loginInfo: {}, // 用户登录信息
+		nemApiUrl: 'http://127.0.0.1:3000/nem/index/v1',
+		nemApi: {
+			baseURL: 'http://music.163.com',
+			login: '/weapi/login', // 登录 网易云音乐
+			userDetail: '/api/v1/user/detail', // 用户详情
+			hotTags: '/api/playlist/hottags', // 歌单类型列表 热门类型
+			personalizedNewSong: '/api/personalized/newsong', // 新音乐推荐
+			personalizedPlayList: '/api/personalized/playlist', // 推荐歌单
+			personalizedMv: '/api/personalized/mv', // 推荐MV,
+			personalizedPrivateContent: '/api/personalized/privatecontent', // 独家放送
+			personalizedDjProgram: '/api/personalized/djprogram', // 推荐dj
+			search: '/weapi/cloudsearch/get/web', // 搜索
+			recommendSongs: '/weapi/v1/discovery/recommend/songs', // 每日推荐歌曲
+			recommendResource: '/weapi/v1/discovery/recommend/resource', // 每日推荐歌单
+			recommendRadio: '/weapi/djradio/recommend/v1', // 精选电台
+			newSongs: '/weapi/v1/discovery/new/songs', // 新歌
+			newAlbum: '/weapi/album/new', // 新碟
+		},
+		playList: [], // 热门推荐列表
+		recommendRadioList: [],
+		dailyRecommendList: [], // 个性化推荐
+		recommendSongsList: [], // 每日推荐歌曲列表
+	},
+	actions: {
+		getUserDetail({
+			state
+		}, data) {
+			return new Promise(async (resolve) => {
+				let userDetailData = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.userDetail + '/' + data.userId,
+						method: 'get'
+					}
+				})
+				if (userDetailData.data.status === 200) {
+					console.log('...login: ', userDetailData)
+					state.loginInfo = userDetailData.data.data
+				}
+				resolve(true)
+			})
+		},
+		login({
+			state,
+			dispatch
+		}, data) {
+			return new Promise(async (resolve, reject) => {
+				state.md5sum = crypto.createHash('md5')
+				state.md5sum.update(data.password)
+				let loginInfo = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.login,
+						method: 'post',
+						data: {
+							username: data.username,
+							password: state.md5sum.digest('hex'),
+							rememberLogin: true
+						}
+					}
+				})
+				if (loginInfo.data.status === 200 && loginInfo.data.data.code === 200) {
+					// 登录成功
+					if (loginInfo.data.headers && loginInfo.data.headers['set-cookie']) {
+						// 设置cookie
+						loginInfo.data.headers['set-cookie'].forEach(item => {
+							document.cookie = item.replace(/(domain=[^;]*;?\s?)/i, '').replace(/(path=[^;]*;?\s?)/i, '').replace(/httponly/i, '')
+						})
+					}
+					console.log('@@@@@', loginInfo.data)
+					let userDetail = dispatch('getUserDetail', {
+						userId: loginInfo.data.data.account.id
+					})
+					let recommendResource = dispatch('getRecommendResource')
+					Promise.all([userDetail, recommendResource]).then(() => {
+						resolve(true)
+					})
+				} else {
+					reject(new Error('登录失败，请稍后再试'))
+				}
+			})
+		},
+		logout({
+			state
+		}) {
+			state.loginInfo = {}
+		},
+		getPersonalizedPlayList({
+			state
+		}) {
+			/**
+			 * 热门推荐
+			 */
+			return new Promise(async (resolve) => {
+				let personalizedPlayListData = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.personalizedPlayList,
+						method: 'post'
+					}
+				})
+				if (personalizedPlayListData.data.data.code === 200) {
+					state.playList = personalizedPlayListData.data.data.result
+				}
+				resolve(true)
+			})
+		},
+		getRecommendResource({
+			state
+		}) {
+			/**
+			 * 热门推荐, 日推后的
+			 */
+			return new Promise(async (resolve) => {
+				let recommendResourceData = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.recommendResource,
+						method: 'post',
+						data: {
+							'offset': 0,
+							'limit': 20,
+							'total': 'True',
+							"csrf_token": ''
+						}
+					}
+				})
+				if (recommendResourceData.data.data.code === 200) {
+					state.dailyRecommendList = recommendResourceData.data.data.recommend
+				}
+				resolve(true)
+			})
+		},
+		getRecommendSongs({
+			state
+		}) {
+			/**
+			 *	每日推荐 歌曲列表
+			 */
+			return new Promise(async (resolve) => {
+				let recommendSongsData = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.recommendSongs,
+						method: 'post',
+						data: {
+							offset: 0,
+							total: true,
+							limit: 20,
+							csrf_token: ''
+						}
+					}
+				})
+				if (recommendSongsData.data.data.code === 200) {
+					state.recommendSongsList = recommendSongsData.data.data.recommend
+				}
+				resolve(true)
+			})
+		}
+	}
+}
+
+export default moduleNem
