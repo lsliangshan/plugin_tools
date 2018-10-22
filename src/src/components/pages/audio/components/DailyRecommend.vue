@@ -7,8 +7,8 @@
 			<div class="item">
 				<div class="item_image_container no_border">
 					<a class="item_image_a" href="javascript:void(0)" @click="goDiscoverRecommendTaste">
-						<span class="head">星期日</span>
-						<span class="bd">21</span>
+						<span class="head">{{weekDay}}</span>
+						<span class="bd">{{date}}</span>
 						<span class="mask"></span>
 					</a>
 				</div>
@@ -172,7 +172,16 @@
 			}
 		},
 		data () {
-			return {}
+			return {
+				weekDay: '',
+				date: ''
+			}
+		},
+		created () {
+			let _date = new Date()
+			this.date = _date.getDate()
+			let _week_day = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+			this.weekDay = _week_day[_date.getDay()]
 		},
 		methods: {
 			goDiscoverRecommendTaste () {

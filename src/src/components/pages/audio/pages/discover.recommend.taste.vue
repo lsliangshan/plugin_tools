@@ -5,10 +5,18 @@
 				<div class="top">
 					<img src="/html/static/images/recmd_daily.jpg" alt="">
 					<div class="date_container">
-						<span class="head">星期日</span>
-						<span class="bd">21</span>
+						<span class="head">{{weekDay}}</span>
+						<span class="bd">{{date}}</span>
 						<span class="mask"></span>
 					</div>
+				</div>
+				<div class="middle">
+					<ButtonGroup>
+				        <Button type="primary" icon="ios-play">播放全部</Button>
+				        <Button type="primary">
+				        	<Icon type="md-add"/>
+				        </Button>
+				    </ButtonGroup>
 				</div>
 			</div>
 			<div class="side_content">
@@ -84,13 +92,24 @@
 	    top: 26px;
     	background-position: 0 -400px;
 	}
+	.middle {
+		width: 640px;
+		margin-top: 30px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
+	}
 </style>
 <script>
 	import { mapState } from 'vuex'
 	export default {
 		name: 'discover-recommend-taste',
 		data () {
-			return {}
+			return {
+				weekDay: '',
+				date: ''
+			}
 		},
 		computed: {
 			...mapState({
@@ -106,8 +125,12 @@
 			}
 		},
 		async created () {
+			let _date = new Date()
+			this.date = _date.getDate()
+			let _week_day = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+			this.weekDay = _week_day[_date.getDay()]
 			await this.$store.dispatch('moduleNem/getRecommendSongs')
-			console.log('===========', this.recommendSongsList)
+			console.log('===========', JSON.stringify(this.recommendSongsList[0]))
 		}
 	}
 </script>

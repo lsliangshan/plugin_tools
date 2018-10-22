@@ -126,6 +126,9 @@ const store = new Vuex.Store({
       windowResize: 'window-resize'
     },
     localStorageKeys: {
+      nemMusic: {
+        loginInfo: 'local-nem-music-login-info'
+      },
       activeTools: 'local-active-tools',
       inactiveTools: 'local-inactive-tools',
       maxToolCount: 'local-max-tool-count',

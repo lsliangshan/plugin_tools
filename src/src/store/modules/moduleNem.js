@@ -1,6 +1,7 @@
 /*
  * 网易云音乐 模块
  */
+import { StorageUtil } from '../../utils/index'
 import crypto from 'crypto'
 const moduleNem = {
 	namespaced: true,
@@ -31,8 +32,19 @@ const moduleNem = {
 		recommendSongsList: [], // 每日推荐歌曲列表
 	},
 	actions: {
+		async init ({
+			state,
+			dispatch,
+			rootState
+		}) {
+			state.loginInfo = await StorageUtil.getItem(rootState.localStorageKeys.nemMusic.loginInfo)
+			if (state.loginInfo.userPoint) {
+				dispatch('getRecommendResource')
+			}
+		},
 		getUserDetail({
-			state
+			state,
+			rootState
 		}, data) {
 			return new Promise(async (resolve) => {
 				let userDetailData = await global.vue.$axios({
@@ -45,8 +57,8 @@ const moduleNem = {
 					}
 				})
 				if (userDetailData.data.status === 200) {
-					console.log('...login: ', userDetailData)
 					state.loginInfo = userDetailData.data.data
+					await StorageUtil.setItem(rootState.localStorageKeys.nemMusic.loginInfo, state.loginInfo)
 				}
 				resolve(true)
 			})
@@ -79,8 +91,7 @@ const moduleNem = {
 						loginInfo.data.headers['set-cookie'].forEach(item => {
 							document.cookie = item.replace(/(domain=[^;]*;?\s?)/i, '').replace(/(path=[^;]*;?\s?)/i, '').replace(/httponly/i, '')
 						})
-					}
-					console.log('@@@@@', loginInfo.data)
+					}					
 					let userDetail = dispatch('getUserDetail', {
 						userId: loginInfo.data.data.account.id
 					})
@@ -94,9 +105,11 @@ const moduleNem = {
 			})
 		},
 		logout({
-			state
+			state,
+			rootState
 		}) {
 			state.loginInfo = {}
+			StorageUtil.removeItem(rootState.localStorageKeys.nemMusic.loginInfo)
 		},
 		getPersonalizedPlayList({
 			state

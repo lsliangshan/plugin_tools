@@ -230,6 +230,7 @@
 </style>
 <script>
 	import * as types from '../../store/mutation-types'
+	import { StorageUtil } from '../../utils/index'
 	import crypto from 'crypto'
 	import PlayList from './audio/components/PlayList.vue'
 	import DailyRecommend from './audio/components/DailyRecommend.vue'
@@ -278,6 +279,9 @@
 				playList: state => state.moduleNem.playList, // 热门推荐列表
 				dailyRecommendList: state => state.moduleNem.dailyRecommendList, // 个性化推荐
 			}),
+			localStorageKeys () {
+				return this.$store.state.localStorageKeys
+			},
 			bodyStyles () {
 				return this.$store.state.bodyStyles
 			},
@@ -310,8 +314,9 @@
 			// })
 			// this.playList = await this.getPersonalizedPlayList()
 			// this.recommendRadioList = await this.getRecommendRadio()
+			let moduleNemInit = this.$store.dispatch('moduleNem/init')
 			let playList = this.$store.dispatch('moduleNem/getPersonalizedPlayList')
-			Promise.all([playList])
+			Promise.all([moduleNemInit, playList])
 			// this.dailyRecommendList = await this.getRecommendResource()
 		},
 		methods: {
