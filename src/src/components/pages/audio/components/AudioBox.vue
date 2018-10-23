@@ -14,6 +14,16 @@
         <a href="javascript:;" :style="btnStyles" class="ply j-flag" :class="'ply-' + isPlaying" title="播放/暂停(p)" @click="togglePlay">播放/暂停</a>
         <a href="javascript:;" :style="btnStyles" class="nxt" title="下一首(ctrl+→)">下一首</a>
       </div>
+      <div class="head">
+        <img src="http://p1.music.126.net/1vo4Ici5gYAmFLbRvmJWfQ==/551954837154994.jpg?param=34y34">
+        <div class="mask"></div>
+      </div>
+      <div class="play">
+        <div class="words"></div>
+        <div class="m-pbar">
+          <Slider></Slider>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -23,8 +33,6 @@
     left: 0;    
     width: 100%;
     transition: all .3s ease-in-out;
-    /*height: 60px;*/
-    /*background-color: #333333;*/
   }
   .bg {
     height: 53px;
@@ -89,11 +97,15 @@
     bottom: 0;
     margin: 0 auto;
     margin-left: -490px;
+    padding: 6px 0 0 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
   }
   .audio_box_container .wrap .btns {
     width: 137px;
-    height: 42px;
-    padding: 6px 0 0 0;
+    height: 42px;    
   }
   .audio_box_container .wrap .btns a {
     display: block;
@@ -132,6 +144,36 @@
   }
   .audio_box_container .wrap .btns .nxt:hover {
     background-position: -110px -130px;
+  }
+  .audio_box_container .wrap .head {
+    position: relative;
+    margin: 0 15px 0 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;    
+  }
+  .audio_box_container .wrap .head img {
+    width: 34px;
+    height: 34px;    
+  }
+  .audio_box_container .wrap .head .mask {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    display: block;
+    width: 34px;
+    height: 35px;
+    background-position: 0 -80px;
+  }
+  .audio_box_container .wrap .play {
+    width: 604px;
+    height: 34px;
   }
 </style>
 <script>
