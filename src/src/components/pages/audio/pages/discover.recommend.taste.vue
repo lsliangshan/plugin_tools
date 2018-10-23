@@ -280,7 +280,7 @@
 		},
 		computed: {
 			...mapState({
-				loginInfo: state => state.moduleNem.loginInfo, // 登录信息
+				// loginInfo: state => state.moduleNem.loginInfo, // 登录信息
 				recommendSongsList: state => state.moduleNem.recommendSongsList
 			}),
 			bodyStyles () {
@@ -290,6 +290,9 @@
 				return {
 					height: (this.bodyStyles.height - 65) + 'px'
 				}
+			},
+			loginInfo () {
+				return this.$store.state.nemLoginInfo
 			}
 		},
 		async created () {

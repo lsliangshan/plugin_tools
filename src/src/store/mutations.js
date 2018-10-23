@@ -61,6 +61,9 @@ const findTemplateByUUID = function (uuid, arr, deep, sub) {
 }
 
 export const mutations = {
+  [types.CACHE_NEM_LOGIN_INFO] (state, data) {
+    state.nemLoginInfo = data.loginInfo
+  },
   [types.SET_AUDIO_ELE](state, data) {
     state.audio.ele = data.ele
   },

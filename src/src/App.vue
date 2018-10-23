@@ -3,6 +3,7 @@
     <router-view name="HomeRouter"/>
     <all-svg></all-svg>
     <audio style="width: 0; height: 0;" id="globalAudio" autoplay :src="audio.list[audio.current]"></audio>
+    <audio-box></audio-box>
   </div>  
 </template>
 
@@ -18,7 +19,8 @@ import { StorageUtil } from './utils/index.js'
 export default {
   name: 'App',
   components: {
-    AllSvg: () => import('./components/common/svgs.vue')
+    AllSvg: () => import('./components/common/svgs.vue'),
+    AudioBox: () => import('./components/pages/audio/components/AudioBox.vue')
   },
   data () {
     return {

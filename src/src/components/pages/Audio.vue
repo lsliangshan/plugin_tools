@@ -275,7 +275,7 @@
 		},
 		computed: {
 			...mapState({
-				loginInfo: state => state.moduleNem.loginInfo, // 登录信息
+				// loginInfo: state => state.moduleNem.loginInfo, // 登录信息
 				playList: state => state.moduleNem.playList, // 热门推荐列表
 				dailyRecommendList: state => state.moduleNem.dailyRecommendList, // 个性化推荐
 			}),
@@ -292,6 +292,9 @@
 			},
 			audio () {
 				return this.$store.state.audio
+			},
+			loginInfo () {
+				return this.$store.state.nemLoginInfo
 			}
 		},
 		async created () {

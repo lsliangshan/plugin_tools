@@ -2,6 +2,7 @@
  * 网易云音乐 模块
  */
 import { StorageUtil } from '../../utils/index'
+import * as types from '../mutation-types'
 import crypto from 'crypto'
 const moduleNem = {
 	namespaced: true,
@@ -44,6 +45,7 @@ const moduleNem = {
 		},
 		getUserDetail({
 			state,
+			commit,
 			rootState
 		}, data) {
 			return new Promise(async (resolve) => {
@@ -58,6 +60,11 @@ const moduleNem = {
 				})
 				if (userDetailData.data.status === 200) {
 					state.loginInfo = userDetailData.data.data
+					commit(types.CACHE_NEM_LOGIN_INFO, {
+						loginInfo: state.loginInfo
+					}, {
+						root: true
+					})
 					await StorageUtil.setItem(rootState.localStorageKeys.nemMusic.loginInfo, state.loginInfo)
 				}
 				resolve(true)
@@ -91,7 +98,7 @@ const moduleNem = {
 						loginInfo.data.headers['set-cookie'].forEach(item => {
 							document.cookie = item.replace(/(domain=[^;]*;?\s?)/i, '').replace(/(path=[^;]*;?\s?)/i, '').replace(/httponly/i, '')
 						})
-					}					
+					}
 					let userDetail = dispatch('getUserDetail', {
 						userId: loginInfo.data.data.account.id
 					})

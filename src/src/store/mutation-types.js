@@ -156,6 +156,9 @@ export const SET_AUDIO_DURATION = 'SET_AUDIO_DURATION'
 // 设置audio DOM对象
 export const SET_AUDIO_ELE = 'SET_AUDIO_ELE'
 
+// 缓存网易云音乐登录信息
+export const CACHE_NEM_LOGIN_INFO = 'CACHE_NEM_LOGIN_INFO'
+
 // >>>> actions:
 
 // 登录1

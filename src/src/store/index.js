@@ -141,9 +141,14 @@ const store = new Vuex.Store({
     activeTools: [],
     inactiveTools: [],
     maxToolCount: 4,
-    assets: {},
+    assets: {
+      nemMusic: {
+        playBar: '/html/static/images/audiobox/playbar.png'
+      }
+    },
     requestInfo: {},
     loginInfo: {},
+    nemLoginInfo: {}, // 网易云音乐登录信息
     allRoles: [{
       value: 1,
       name: '超级管理员'

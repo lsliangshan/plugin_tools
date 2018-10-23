@@ -12,6 +12,7 @@ import store from './store'
 import * as filters from './filters'
 import mixins from './mixins'
 import iView from 'iview'
+import { StorageUtil } from './utils/index'
 import '../static/css/font-awesome/css/font-awesome.min.css'
 import 'iview/dist/styles/iview.css'
 import "codemirror/lib/codemirror.css"
@@ -35,7 +36,9 @@ Vue.use(iView)
 
 Vue.config.productionTip = false
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  let _localNemLoginInfo = await StorageUtil.getItem(store.state.localStorageKeys.nemMusic.loginInfo)
+  store.state.nemLoginInfo = _localNemLoginInfo || {}
   iView.LoadingBar.start()
   if (to.meta && to.meta.title) {
     document.title = to.meta.title
