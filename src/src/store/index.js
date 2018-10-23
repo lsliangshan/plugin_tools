@@ -123,7 +123,11 @@ const store = new Vuex.Store({
     bodyStyles: {},
     events: {
       bodyClick: 'body-click',
-      windowResize: 'window-resize'
+      windowResize: 'window-resize',
+      nemMusic: {
+        play: 'nem-music-play', // 播放音乐
+        add: 'nem-music-add', // 添加到播放列表,不立即播放
+      }
     },
     localStorageKeys: {
       nemMusic: {

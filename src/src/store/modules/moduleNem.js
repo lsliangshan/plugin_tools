@@ -1,7 +1,9 @@
 /*
  * 网易云音乐 模块
  */
-import { StorageUtil } from '../../utils/index'
+import {
+	StorageUtil
+} from '../../utils/index'
 import * as types from '../mutation-types'
 import crypto from 'crypto'
 const moduleNem = {
@@ -26,6 +28,8 @@ const moduleNem = {
 			recommendRadio: '/weapi/djradio/recommend/v1', // 精选电台
 			newSongs: '/weapi/v1/discovery/new/songs', // 新歌
 			newAlbum: '/weapi/album/new', // 新碟
+			musicDetail: '/weapi/v3/song/detail', // 单曲详情
+			musicUrl: '/weapi/song/enhance/player/url', // 歌曲播放地址
 		},
 		playList: [], // 热门推荐列表
 		recommendRadioList: [],
@@ -33,7 +37,7 @@ const moduleNem = {
 		recommendSongsList: [], // 每日推荐歌曲列表
 	},
 	actions: {
-		async init ({
+		async init({
 			state,
 			dispatch,
 			rootState
@@ -192,6 +196,38 @@ const moduleNem = {
 				})
 				if (recommendSongsData.data.data.code === 200) {
 					state.recommendSongsList = recommendSongsData.data.data.recommend
+				}
+				resolve(true)
+			})
+		},
+		getMusicDetail({
+			state
+		}, data) {
+			/**
+			 * 单曲详情
+			 * @params:
+			 * 	- id
+			 */
+			return new Promise(async (resolve) => {
+				let musicDetailData = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.musicDetail,
+						method: 'post',
+						data: {
+							id: data.id,
+							c: JSON.stringify([{
+								id: data.id
+							}]),
+							ids: '[' + data.id + ']',
+							csrf_token: ''
+						}
+					}
+				})
+				if (musicDetailData.data.data.code === 200) {
+					// state.musicDetail = musicDetailData.data.data.recommend
 				}
 				resolve(true)
 			})

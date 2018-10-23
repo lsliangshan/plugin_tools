@@ -234,7 +234,9 @@
 											},
 											click (e) {
 												that.playingIndex = Number(params.index)
-												console.log(e)
+												that.$eventHub.$emit(that.events.nemMusic.play, {
+													music: [that.recommendSongsList[that.playingIndex]]
+												})
 											}
 										}
 									}, [
@@ -293,6 +295,9 @@
 			},
 			loginInfo () {
 				return this.$store.state.nemLoginInfo
+			},
+			events () {
+				return this.$store.state.events
 			}
 		},
 		async created () {

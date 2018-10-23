@@ -15,14 +15,30 @@
         <a href="javascript:;" :style="btnStyles" class="nxt" title="下一首(ctrl+→)">下一首</a>
       </div>
       <div class="head">
-        <img src="http://p1.music.126.net/1vo4Ici5gYAmFLbRvmJWfQ==/551954837154994.jpg?param=34y34">
+        <img :src="playingMusic.album && playingMusic.album.picUrl">
         <div class="mask"></div>
       </div>
       <div class="play">
-        <div class="words"></div>
-        <div class="m-pbar">
-          <Slider></Slider>
+        <div class="words">
+          <div class="name">{{playingMusic.name}}</div>
+          <div class="by" v-if="playingMusic.artists">{{playingMusic.artists[0].name}}</div>
         </div>
+        <div class="m-pbar">
+          <Slider class="duration_slider"></Slider>
+          <div class="time">00:00 / {{(playingMusic.duration || 0) | formatDuration}}</div>
+        </div>
+      </div>
+      <div class="oper">
+        <a href="javascript:;" :style="btnStyles" class="icn icn-add j-flag" title="收藏">收藏</a>
+      </div>
+      <div class="ctrl f-fl f-pr j-flag">
+        <div class="sep" :style="btnStyles"></div>
+        <a href="javascript:;" :style="btnStyles" class="icn icn-vol"></a>
+        <a href="javascript:;" :style="btnStyles" class="icn icn-loop" title="循环"></a>
+        <span class="add f-pr">
+          <span class="tip" style="display:none;">已添加到播放列表</span>
+          <a href="javascript:;" :style="btnStyles" title="播放列表" class="icn icn-list s-fc3">290</a>
+        </span>
       </div>
     </div>
   </div>
@@ -174,6 +190,131 @@
   .audio_box_container .wrap .play {
     width: 604px;
     height: 34px;
+    /*display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;*/
+  }
+  .audio_box_container .wrap .play .words {
+    height: 20px;
+    overflow: hidden;
+    color: #e8e8e8;
+    text-shadow: 0 1px 0 #171717;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .audio_box_container .wrap .play .words .name {
+    color: #e8e8e8;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: normal;
+  }
+  .audio_box_container .wrap .play .words .by {
+    color: #9b9b9b;
+    max-width: 220px;
+    margin-left: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: normal;
+  }
+  .audio_box_container .wrap .play .m-pbar {
+    width: 100%;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .audio_box_container .wrap .play .m-pbar .duration_slider {
+    width: calc(100% - 90px);
+  }
+  .audio_box_container .wrap .play .m-pbar .time {
+    width: 90px;
+    color: #797979;
+    text-shadow: 0 1px 0 #121212;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .audio_box_container .wrap .oper {
+    width: 60px;
+    height: 36px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .audio_box_container .wrap .oper .icn-add {
+    width: 25px;
+    height: 25px;
+    /*margin: 11px 2px 0 0;*/
+    text-indent: -9999px;
+    background-position: -88px -163px;
+  }
+  .audio_box_container .wrap .oper .icn-add:hover {
+    background-position: -88px -189px;
+  }
+  .audio_box_container .wrap .ctrl {
+    position: relative;
+    z-index: 10;
+    width: 120px;
+    margin-left: 4px;
+    margin-top: -5px;
+    display: flex;
+    flex-direction: row;
+  }
+  .audio_box_container .wrap .ctrl .sep {
+    width: 10px;
+    height: 36px;
+    background-position: -147px -238px;
+  }
+  .audio_box_container .wrap .ctrl .icn {
+    width: 25px;
+    height: 25px;
+    margin: 11px 5px 0 0;
+    text-indent: -9999px;
+    /*display: flex;*/
+  }
+  .audio_box_container .wrap .ctrl .icn-vol {
+    background-position: -2px -248px;
+  }
+  .audio_box_container .wrap .ctrl .icn-vol:hover {
+    background-position: -31px -248px;
+  }
+  .audio_box_container .wrap .ctrl .icn-loop {
+    background-position: -3px -344px;
+  }
+  .audio_box_container .wrap .ctrl .icn-loop:hover {
+    background-position: -33px -344px;
+  }
+  .audio_box_container .wrap .ctrl .add {
+    width: 59px;
+    height: 36px;
+  }
+  .audio_box_container .wrap .ctrl .add .icn-list {
+    display: block;
+    float: none;
+    width: 38px;
+    padding-left: 21px;
+    background-position: -42px -68px;
+    line-height: 27px;
+    text-align: center;
+    color: #666;
+    text-shadow: 0 1px 0 #080707;
+    text-indent: 0;
+    text-decoration: none;
+    box-sizing: content-box;
+  }
+  .audio_box_container .wrap .ctrl .add .icn-list:hover {
+    background-position: -42px -98px;
+    text-decoration: none;
   }
 </style>
 <script>
@@ -183,7 +324,8 @@
 			return {
         shown: true,
         lock: true,
-        isPlaying: false
+        isPlaying: false,
+        playingMusic: {}
       }
 		},
     computed: {
@@ -194,7 +336,13 @@
         return {
           backgroundImage: 'url(' + this.assets.nemMusic.playBar + ')'
         }
+      },
+      events () {
+        return this.$store.state.events
       }
+    },
+    mounted () {
+      this.$eventHub.$on(this.events.nemMusic.play, this.playHandle)
     },
     methods: {
       toggleLock () {
@@ -212,6 +360,32 @@
       },
       togglePlay () {
         this.isPlaying = !this.isPlaying
+      },
+      async playHandle (data) {
+        this.playingMusic = data.music[0]
+        console.log('....', JSON.stringify(this.playingMusic))
+        await this.$store.dispatch('moduleNem/getMusicDetail', {
+          id: this.playingMusic.id,
+          br: 128000
+        })
+      }
+    },
+    filters: {
+      formatDuration (text) {
+        let _d = Number(text)
+        let _h = Math.floor(_d / (60 * 60 * 1000))
+        if (_h < 10) {
+          _h = '0' + _h
+        }
+        let _m = Math.floor(_d % (60 * 60 * 1000) / (60 * 1000))
+        if (_m < 10) {
+          _m = '0' + _m
+        }
+        let _s = Math.floor((_d % (60 * 1000)) / 1000)
+        if (_s < 10) {
+          _s = '0' + _s
+        }
+        return (_h === '00' ? '' : (_h + ':')) + _m + ':' + _s
       }
     }
 	}

@@ -447,4 +447,15 @@ export default {
   .nem_login_form .ivu-modal-body {
     padding-bottom: 0;
   }
+
+  .duration_slider .ivu-slider-wrap {
+    background-color: rgb(25, 25, 25);
+  }
+  .duration_slider .ivu-slider-bar {
+    background: linear-gradient(to right, rgba(79, 192, 141, 0.8), rgb(79, 192, 141));
+  }
+  .duration_slider .ivu-slider-button {
+    border: 3px solid rgb(79, 192, 141);
+    /*background-color: #c8c8c8;*/
+  }
 </style>
