@@ -201,6 +201,7 @@ const moduleNem = {
 			})
 		},
 		getMusicDetail({
+			dispatch,
 			state
 		}, data) {
 			/**
@@ -226,15 +227,16 @@ const moduleNem = {
 						}
 					}
 				})
-				console.log('=======', JSON.stringify(musicDetailData.data.data.songs))
 				if (musicDetailData.data.data.code === 200) {
 					state.musicDetail = musicDetailData.data.data.songs
-					let msuicUrl = await dispatch('getMusicUrl', {
+					let musicUrl = await dispatch('getMusicUrl', {
 						id: state.musicDetail[0].id,
-						br: state.musicDetail[0].h.br
+						br: state.musicDetail[0].h.br || state.musicDetail[0].m.br
 					})
+					resolve(musicUrl)
+				} else {
+					resolve([])
 				}
-				resolve(true)
 			})
 		},
 		getMusicUrl({
@@ -254,17 +256,17 @@ const moduleNem = {
 						url: state.nemApi.musicUrl,
 						method: 'post',
 						data: {
-							id: [data.id],
+							ids: '[' + data.id + ']',
 							br: data.br,
 							csrf_token: ''
 						}
 					}
 				})
-				console.log('=======', musicUrlData)
 				if (musicUrlData.data.data.code === 200) {
-					// state.musicDetail = musicUrlData.data.data.songs
+					resolve(musicUrlData.data.data.data)
+				} else {
+					resolve([])
 				}
-				resolve(true)
 			})
 		}
 	}

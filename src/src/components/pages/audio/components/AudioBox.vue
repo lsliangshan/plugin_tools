@@ -22,10 +22,11 @@
         <div class="words">
           <div class="name">{{playingMusic.name}}</div>
           <div class="by" v-if="playingMusic.artists">{{playingMusic.artists[0].name}}</div>
+          <Spin size="small" v-if="playingInfo.isLoading" style="margin-left: 8px;"></Spin>
         </div>
         <div class="m-pbar">
-          <Slider class="duration_slider"></Slider>
-          <div class="time">00:00 / {{(playingMusic.duration || 0) | formatDuration}}</div>
+          <vue-slider class="duration_slider" :min="0" :max="Math.floor(playingMusic.duration / 1000)" :value="playingInfo.seek / 1000" :clickable="true" :tooltip="false" :bg-style="sliderStyles.bgStyle" :process-style="sliderStyles.processStyle" @drag-end="seekMusic"></vue-slider>
+          <div class="time">{{playingInfo.seek | formatDuration}} / {{(playingMusic.duration || 0) | formatDuration}}</div>
         </div>
       </div>
       <div class="oper">
@@ -230,7 +231,7 @@
     justify-content: flex-start;
   }
   .audio_box_container .wrap .play .m-pbar .duration_slider {
-    width: calc(100% - 90px);
+    width: calc(100% - 90px)!important;
   }
   .audio_box_container .wrap .play .m-pbar .time {
     width: 90px;
@@ -318,14 +319,35 @@
   }
 </style>
 <script>
+  import * as types from '../../../../store/mutation-types.js'
+  import vueSlider from 'vue-slider-component'
 	export default {
 		name: 'AudioBox',
+    components: {
+      vueSlider
+    },
 		data () {
 			return {
         shown: true,
         lock: true,
         isPlaying: false,
-        playingMusic: {}
+        playingMusic: {},
+        audioEle: null,
+        playingInfo: {
+          seek: 0,
+          interval: 0,
+          isSeeking: false,
+          isLoading: false
+        },
+        sliderStyles: {
+          bgStyle: {
+            backgroundColor: '#fff',
+            boxShadow: 'inset 0.5px 0.5px 3px 1px rgba(0,0,0,.36)'
+          },
+          processStyle: {
+            backgroundImage: '-webkit-linear-gradient(left, rgba(79, 192, 141, 1), rgba(79, 192, 141, .4))'
+          }
+        }
       }
 		},
     computed: {
@@ -343,6 +365,9 @@
     },
     mounted () {
       this.$eventHub.$on(this.events.nemMusic.play, this.playHandle)
+
+      this.audioEle = document.createElement('audio')
+      this.audioEle.setAttribute('autoplay', 'autoplay')
     },
     methods: {
       toggleLock () {
@@ -361,13 +386,47 @@
       togglePlay () {
         this.isPlaying = !this.isPlaying
       },
+      playMusic (url) {
+        this.audioEle.src = url
+        this.playingInfo.seek = 0
+        this.audioEle.oncanplay = () => {
+          if (this.playingInfo.interval) {
+            clearInterval(this.playingInfo.interval)
+          }
+          this.playingInfo.interval = setInterval(() => {
+            if (Math.floor(this.playingInfo.seek / 1000) >= Math.floor(this.playingMusic.duration / 1000)) {
+              clearInterval(this.playingInfo.interval)
+              this.playingInfo.seek = 0
+            } else {
+              this.playingInfo.seek += 100
+            }
+          }, 100)
+          setTimeout(() => {
+            this.playingInfo.isLoading = false
+          }, 300)
+          this.audioEle.play()
+        }        
+      },
       async playHandle (data) {
+        this.playingInfo.isLoading = true
         this.playingMusic = data.music[0]
-        console.log('....', JSON.stringify(this.playingMusic))
-        await this.$store.dispatch('moduleNem/getMusicDetail', {
-          id: this.playingMusic.id,
-          br: 128000
+        let audioListData = await this.$store.dispatch('moduleNem/getMusicDetail', {
+          id: this.playingMusic.id
         })
+        if (audioListData.length > 0) {
+          this.playingMusic.musicInfo = audioListData[0]
+          this.playMusic(audioListData[0].url)
+        } else {
+          this.playingMusic.musicInfo = {}
+        }
+      },
+      seekMusic (e) {
+        this.playingInfo.seek = Math.min(e.getValue() * 1000, this.playingMusic.duration)
+        this.audioEle.currentTime = e.getValue()
+      },
+      cb (e) {
+        // this.playingInfo.seek = Math.min(e * 1000, this.playingMusic.duration)
+        // this.audioEle.currentTime = e
       }
     },
     filters: {
@@ -386,6 +445,34 @@
           _s = '0' + _s
         }
         return (_h === '00' ? '' : (_h + ':')) + _m + ':' + _s
+      }
+    },
+    watch: {
+      'audio.playing' (val) {
+        if (val) {
+          // this.audioEle.load()
+          console.log('......', this.audioEle.ended)
+          if (this.audioEle.paused) {
+            this.audioEle.play()
+          } else {
+            // this.audioEle.addEventListener('canplay', () => {
+            //   this.audioEle.play()
+            // }, false)
+          }
+        } else {
+          console.log('pause: ', this.audioEle.currentTime.toFixed(1))
+          this.audioEle.pause()
+        }
+      },
+      'audio.current' (val) {
+        if (val !== -1) {
+          this.audioEle.oncanplay = () => {
+            console.log(this.audioEle.duration)
+            this.$store.commit(types.SET_AUDIO_DURATION, {
+              duration: this.audioEle.duration
+            })
+          }
+        }
       }
     }
 	}

@@ -2,7 +2,6 @@
   <div id="app">
     <router-view name="HomeRouter"/>
     <all-svg></all-svg>
-    <audio style="width: 0; height: 0;" id="globalAudio" autoplay :src="audio.list[audio.current]"></audio>
     <audio-box></audio-box>
   </div>  
 </template>
@@ -43,9 +42,6 @@ export default {
     blankHomePage () {
       return this.$store.state.blankHomePage
     },
-    audio () {
-      return this.$store.state.audio
-    },
     events () {
       return this.$store.state.events
     }
@@ -81,11 +77,6 @@ export default {
     })
     this.$store.commit(types.SET_BLANK_HOME_PAGE, {
       blankHomePage: await this.getBlankHomePage()
-    })
-
-    this.audioEle = document.getElementById('globalAudio')
-    this.$store.commit(types.SET_AUDIO_ELE, {
-      ele: this.audioEle
     })
   },
   methods: {
@@ -181,34 +172,6 @@ export default {
         let blankHomePage = await StorageUtil.getItem(this.localStorageKeys.blankHomePage)
         resolve(blankHomePage || this.blankHomePage)
       })
-    }
-  },
-  watch: {
-    'audio.playing' (val) {
-      if (val) {
-        // this.audioEle.load()
-        console.log('......', this.audioEle.ended)
-        if (this.audioEle.paused) {
-          this.audioEle.play()
-        } else {
-          // this.audioEle.addEventListener('canplay', () => {
-          //   this.audioEle.play()
-          // }, false)
-        }
-      } else {
-        console.log('pause: ', this.audioEle.currentTime.toFixed(1))
-        this.audioEle.pause()
-      }
-    },
-    'audio.current' (val) {
-      if (val !== -1) {
-        this.audioEle.oncanplay = () => {
-          console.log(this.audioEle.duration)
-          this.$store.commit(types.SET_AUDIO_DURATION, {
-            duration: this.audioEle.duration
-          })
-        }
-      }
     }
   }
 }
