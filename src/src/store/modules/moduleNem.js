@@ -208,7 +208,7 @@ const moduleNem = {
 			 * @params:
 			 * 	- id
 			 */
-			return new Promise(async (resolve) => {
+			return new Promise(async (resolve, reject) => {
 				let musicDetailData = await global.vue.$axios({
 					url: state.nemApiUrl,
 					method: 'post',
@@ -226,8 +226,43 @@ const moduleNem = {
 						}
 					}
 				})
+				console.log('=======', JSON.stringify(musicDetailData.data.data.songs))
 				if (musicDetailData.data.data.code === 200) {
-					// state.musicDetail = musicDetailData.data.data.recommend
+					state.musicDetail = musicDetailData.data.data.songs
+					let msuicUrl = await dispatch('getMusicUrl', {
+						id: state.musicDetail[0].id,
+						br: state.musicDetail[0].h.br
+					})
+				}
+				resolve(true)
+			})
+		},
+		getMusicUrl({
+			state
+		}, data) {
+			/**
+			 * 获取歌曲url
+			 * @params:
+			 * 	- id
+			 */
+			return new Promise(async (resolve) => {
+				let musicUrlData = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.musicUrl,
+						method: 'post',
+						data: {
+							id: [data.id],
+							br: data.br,
+							csrf_token: ''
+						}
+					}
+				})
+				console.log('=======', musicUrlData)
+				if (musicUrlData.data.data.code === 200) {
+					// state.musicDetail = musicUrlData.data.data.songs
 				}
 				resolve(true)
 			})
