@@ -34,7 +34,17 @@
       </div>
       <div class="ctrl f-fl f-pr j-flag">
         <div class="sep" :style="btnStyles"></div>
-        <a href="javascript:;" :style="btnStyles" class="icn icn-vol"></a>
+        <div class="barbg" v-if="playingCtrl.volumeShown">
+          <vue-slider class="vol_slider" :dot-size="12" :width="4" direction="vertical" :height="100" :min="0" :max="100" :value="playingInfo.volume" :clickable="true" :bg-style="volumeSlierStyles.bgStyle" :process-style="volumeSlierStyles.processStyle" :tooltip-style="volumeSlierStyles.tooltipStyle" @input="setValume">
+            <template slot="tooltip" scope="{ value }">
+              <div class="diy-tooltip">
+                {{ value }}
+                <div class="diy-tooltip-angle"></div>
+              </div>
+            </template>
+          </vue-slider>
+        </div>
+        <a href="javascript:;" :style="btnStyles" class="icn icn-vol" @click="toggleVolumeContainer"></a>
         <a href="javascript:;" :style="btnStyles" class="icn icn-loop" title="循环"></a>
         <span class="add f-pr">
           <span class="tip" style="display:none;">已添加到播放列表</span>
@@ -289,11 +299,23 @@
   .audio_box_container .wrap .ctrl .icn-vol:hover {
     background-position: -31px -248px;
   }
-  .audio_box_container .wrap .ctrl .icn-loop {
+  .audio_box_container .wrap .ctrl .icn-loop.mode-list {
     background-position: -3px -344px;
   }
-  .audio_box_container .wrap .ctrl .icn-loop:hover {
+  .audio_box_container .wrap .ctrl .icn-loop.mode-list:hover {
     background-position: -33px -344px;
+  }
+  .audio_box_container .wrap .ctrl .icn-loop.mode-random {
+    background-position: -66px -248px;
+  }
+  .audio_box_container .wrap .ctrl .icn-loop.mode-random:hover {
+    background-position: -93px -248px;
+  }
+  .audio_box_container .wrap .ctrl .icn-loop.mode-loop {
+    background-position: -66px -344px;
+  }
+  .audio_box_container .wrap .ctrl .icn-loop.mode-loop:hover {
+    background-position: -93px -344px; 
   }
   .audio_box_container .wrap .ctrl .add {
     width: 59px;
@@ -317,6 +339,39 @@
     background-position: -42px -98px;
     text-decoration: none;
   }
+  .audio_box_container .wrap .ctrl .barbg {
+    position: absolute;
+    bottom: 37px;
+    left: 3px;
+    width: 32px;
+    height: 113px;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .audio_box_container .wrap .ctrl .barbg .diy-tooltip {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 4px;
+    margin-right: 6px;
+    width: 30px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .audio_box_container .wrap .ctrl .barbg .diy-tooltip .diy-tooltip-angle {
+    position: absolute;
+    width: 0;
+    height: 0;
+    right: -6px;
+    top: 6px;
+    border-left: 6px solid rgba(0, 0, 0, 0.8);
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent
+  }
 </style>
 <script>
   import * as types from '../../../../store/mutation-types.js'
@@ -334,14 +389,32 @@
         playingMusic: {},
         audioEle: null,
         playingInfo: {
-          seek: 0,
+          seek: 0, // 播放进度
           interval: 0,
-          isSeeking: false,
-          isLoading: false
+          isLoading: false,
+          volume: 100, // 音量
+          mode: 'list' // 循环模式 list:列表循环; loop:单曲重复; random:随机播放
+        },
+        playingCtrl: {
+          volumeShown: false // 是否显示音乐控制条
         },
         sliderStyles: {
           bgStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: 'rgba(22, 22, 22, 1)',
+            boxShadow: 'inset 0.5px 0.5px 3px 1px rgba(0,0,0,.36)'
+          },
+          processStyle: {
+            backgroundImage: '-webkit-linear-gradient(left, rgba(79, 192, 141, 1), rgba(79, 192, 141, .4))'
+          }
+        },
+        volumeSlierStyles: {
+          tooltipStyle: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            border: '1px solid rgba(0, 0, 0, 0.8)',
+            left: '-15px'
+          },
+          bgStyle: {
+            backgroundColor: 'rgba(22, 22, 22, 1)',
             boxShadow: 'inset 0.5px 0.5px 3px 1px rgba(0,0,0,.36)'
           },
           processStyle: {
@@ -404,6 +477,7 @@
           setTimeout(() => {
             this.playingInfo.isLoading = false
           }, 300)
+          this.playingInfo.volume = (this.audioEle.volume * 100)
           this.audioEle.play()
         }        
       },
@@ -424,9 +498,12 @@
         this.playingInfo.seek = Math.min(e.getValue() * 1000, this.playingMusic.duration)
         this.audioEle.currentTime = e.getValue()
       },
-      cb (e) {
-        // this.playingInfo.seek = Math.min(e * 1000, this.playingMusic.duration)
-        // this.audioEle.currentTime = e
+      setValume (e) {
+        this.playingInfo.volume = e
+        this.audioEle.volume = (this.playingInfo.volume / 100).toFixed(2)
+      },
+      toggleVolumeContainer () {
+        this.playingCtrl.volumeShown = !this.playingCtrl.volumeShown
       }
     },
     filters: {
