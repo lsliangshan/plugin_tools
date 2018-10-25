@@ -15,18 +15,18 @@
         <a href="javascript:;" :style="btnStyles" class="nxt" title="下一首(ctrl+→)">下一首</a>
       </div>
       <div class="head">
-        <img :src="playingMusic.album && playingMusic.album.picUrl">
+        <img :src="(playingInfo.currentIndex > -1) && playingList[playingInfo.currentIndex].album && playingList[playingInfo.currentIndex].album.picUrl">
         <div class="mask"></div>
       </div>
       <div class="play">
         <div class="words">
-          <div class="name">{{playingMusic.name}}</div>
-          <div class="by" v-if="playingMusic.artists">{{playingMusic.artists[0].name}}</div>
+          <div class="name">{{(playingInfo.currentIndex > -1) ? playingList[playingInfo.currentIndex].name : '暂未播放音乐'}}</div>
+          <div class="by" v-if="(playingInfo.currentIndex > -1) && playingList[playingInfo.currentIndex].artists">{{playingList[playingInfo.currentIndex].artists[0].name}}</div>
           <Spin size="small" v-if="playingInfo.isLoading" style="margin-left: 8px;"></Spin>
         </div>
         <div class="m-pbar">
-          <vue-slider class="duration_slider" :min="0" :max="Math.floor(playingMusic.duration / 1000)" :value="playingInfo.seek / 1000" :clickable="true" :tooltip="false" :bg-style="sliderStyles.bgStyle" :process-style="sliderStyles.processStyle" @drag-end="seekMusic"></vue-slider>
-          <div class="time">{{playingInfo.seek | formatDuration}} / {{(playingMusic.duration || 0) | formatDuration}}</div>
+          <vue-slider class="duration_slider" :min="0" :max="Math.floor((playingInfo.currentIndex > -1) ? playingList[playingInfo.currentIndex].duration / 1000 : 0)" :value="(playingInfo.currentIndex > -1) ? playingInfo.seek / 1000 : 0" :clickable="true" :tooltip="false" :bg-style="sliderStyles.bgStyle" :process-style="sliderStyles.processStyle" @drag-end="seekMusic"></vue-slider>
+          <div class="time">{{playingInfo.seek | formatDuration}} / {{(playingInfo.currentIndex > -1 && playingList[playingInfo.currentIndex].duration || 0) | formatDuration}}</div>
         </div>
       </div>
       <div class="oper">
@@ -34,21 +34,53 @@
       </div>
       <div class="ctrl f-fl f-pr j-flag">
         <div class="sep" :style="btnStyles"></div>
-        <div class="barbg" v-if="playingCtrl.volumeShown">
-          <vue-slider class="vol_slider" :dot-size="12" :width="4" direction="vertical" :height="100" :min="0" :max="100" :value="playingInfo.volume" :clickable="true" :bg-style="volumeSlierStyles.bgStyle" :process-style="volumeSlierStyles.processStyle" :tooltip-style="volumeSlierStyles.tooltipStyle" @input="setValume">
-            <template slot="tooltip" scope="{ value }">
-              <div class="diy-tooltip">
-                {{ value }}
-                <div class="diy-tooltip-angle"></div>
-              </div>
-            </template>
-          </vue-slider>
-        </div>
+        <transition name="volume-container-transition" enter-active-class="animated fadeIn faster" leave-active-class="animated fadeOut faster">
+          <div class="barbg" v-if="playingCtrl.volumeShown">
+            <vue-slider class="vol_slider" :dot-size="12" :width="4" direction="vertical" :height="100" :min="0" :max="100" :value="playingInfo.volume" :clickable="true" :bg-style="volumeSlierStyles.bgStyle" :process-style="volumeSlierStyles.processStyle" :tooltip-style="volumeSlierStyles.tooltipStyle" @input="setValume">
+              <template slot="tooltip" scope="{ value }">
+                <div class="diy-tooltip">
+                  {{ value }}
+                  <div class="diy-tooltip-angle"></div>
+                </div>
+              </template>
+            </vue-slider>
+          </div>
+        </transition>        
         <a href="javascript:;" :style="btnStyles" class="icn icn-vol" @click="toggleVolumeContainer"></a>
-        <a href="javascript:;" :style="btnStyles" class="icn icn-loop" title="循环"></a>
+        <a href="javascript:;" :style="btnStyles" class="icn icn-loop" :class="'mode-' + playingInfo.mode" title="循环" @click="changeMode"></a>
         <span class="add f-pr">
           <span class="tip" style="display:none;">已添加到播放列表</span>
-          <a href="javascript:;" :style="btnStyles" title="播放列表" class="icn icn-list s-fc3">290</a>
+          <transition name="list-container-transition" enter-active-class="animated fadeIn faster" leave-active-class="animated fadeOut faster">
+            <div class="playing_list_container" v-if="playingCtrl.listShown">
+              <div class="hd">
+                <div class="left">
+                  <div>
+                    播放列表 ( <span style="color: rgb(79, 192, 141);">{{playingList.length}}</span> )
+                  </div>
+                </div>
+                <div class="right">
+                  <div class="close" @click="closeListContainer">
+                    <Icon type="ios-close" size="30" />
+                  </div>
+                </div>
+              </div>
+              <div class="bd">
+                <div class="left">
+                  <div class="list_item" v-for="(item, index) in playingList" :key="item.id" :class="{active: index == playingInfo.currentIndex}" :data-index="index" @click="playByIndex">
+                    <div class="ply">
+                      <Icon type="ios-play" size="18" color="rgb(79, 192, 141)" v-if="index == playingInfo.currentIndex" />
+                    </div>
+                    <div class="name">{{item.name}}</div>
+                    <div class="opr"></div>
+                    <div class="by">{{item.artists[0].name}}</div>
+                    <div class="duration">{{item.duration | formatDuration}}</div>
+                  </div>
+                </div>
+                <div class="right"></div>
+              </div>
+            </div>
+          </transition>          
+          <a href="javascript:;" :style="btnStyles" title="播放列表" class="icn icn-list s-fc3" @click="toggleListContainer">{{playingList.length}}</a>
         </span>
       </div>
     </div>
@@ -60,6 +92,7 @@
     left: 0;    
     width: 100%;
     transition: all .3s ease-in-out;
+    z-index: 9999;
   }
   .bg {
     height: 53px;
@@ -154,16 +187,16 @@
     height: 36px;
     margin-top: 0;
   }
-  .audio_box_container .wrap .btns .ply-true {
+  .audio_box_container .wrap .btns .ply-false {
     background-position: 0 -204px;
   }
-  .audio_box_container .wrap .btns .ply-true:hover {
+  .audio_box_container .wrap .btns .ply-false:hover {
     background-position: -40px -204px;
   }
-  .audio_box_container .wrap .btns .ply-false {
+  .audio_box_container .wrap .btns .ply-true {
     background-position: 0 -165px;
   }
-  .audio_box_container .wrap .btns .ply-false:hover {
+  .audio_box_container .wrap .btns .ply-true:hover {
     background-position: -40px -165px;
   }
   .audio_box_container .wrap .btns .nxt {
@@ -318,6 +351,7 @@
     background-position: -93px -344px; 
   }
   .audio_box_container .wrap .ctrl .add {
+    position: relative;
     width: 59px;
     height: 36px;
   }
@@ -339,12 +373,150 @@
     background-position: -42px -98px;
     text-decoration: none;
   }
+  .audio_box_container .wrap .ctrl .add .playing_list_container {
+    position: absolute;
+    left: -925px;
+    top: -301px;
+    width: 980px;
+    height: 300px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .hd {
+    width: 100%;
+    height: 40px;
+    background-color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    box-sizing: border-box;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .hd .left {
+    width: 550px;
+    height: 40px;
+    padding: 0 30px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #e2e2e2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .hd .right {
+    position: relative;
+    width: 430px;
+    height: 40px;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .hd .right .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #c8c8c8;
+    font-weight: bolder;
+    transition: all .3s ease-in-out;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .hd .right .close:hover {
+    color: #fff;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd {
+    width: 100%;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left {
+    width: 550px;
+    height: 260px;
+    border-right: 1px solid rgba(0, 0, 0, 0.8);
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .right {
+    width: 430px;
+    height: 260px;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item {
+    width: 550px;
+    height: 30px;
+    cursor: pointer;
+    color: #ccc;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item.active, .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item:hover, .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item:active {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item .ply {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item .name {
+    width: 256px;
+    height: 30px;
+    line-height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    pointer-events: none;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item .opr {
+    width: 90px;
+    height: 30px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    pointer-events: none;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item .by {
+    width: 80px;
+    height: 30px;
+    margin-left: 10px;
+    line-height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    pointer-events: none;
+  }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item .duration {
+    width: 50px;
+    height: 30px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    pointer-events: none;
+  }
   .audio_box_container .wrap .ctrl .barbg {
     position: absolute;
     bottom: 37px;
     left: 3px;
     width: 32px;
     height: 113px;
+    z-index: 9;
     background-color: rgba(0, 0, 0, 0.8);
     display: flex;
     align-items: center;
@@ -385,18 +557,21 @@
 			return {
         shown: true,
         lock: true,
-        isPlaying: false,
+        isPlaying: false, // 音乐是否正在播放中
         playingMusic: {},
+        playingList: [], // 正在使用中的播放列表
         audioEle: null,
         playingInfo: {
           seek: 0, // 播放进度
           interval: 0,
           isLoading: false,
           volume: 100, // 音量
-          mode: 'list' // 循环模式 list:列表循环; loop:单曲重复; random:随机播放
+          mode: 'list', // 循环模式 list:列表循环; loop:单曲重复; random:随机播放
+          currentIndex: -1 // 正在播放的音乐的索引值
         },
         playingCtrl: {
-          volumeShown: false // 是否显示音乐控制条
+          volumeShown: false, // 是否显示音乐控制条
+          listShown: false, // 是否显示播放列表
         },
         sliderStyles: {
           bgStyle: {
@@ -456,8 +631,15 @@
           this.shown = false
         }
       },
-      togglePlay () {
-        this.isPlaying = !this.isPlaying
+      seekingMusic () {
+        this.playingInfo.interval = setInterval(() => {
+          if (Math.floor(this.playingInfo.seek / 1000) >= Math.floor(this.playingMusic.duration / 1000)) {
+            clearInterval(this.playingInfo.interval)
+            this.playingInfo.seek = 0
+          } else {
+            this.playingInfo.seek += 100
+          }
+        }, 100)
       },
       playMusic (url) {
         this.audioEle.src = url
@@ -466,32 +648,57 @@
           if (this.playingInfo.interval) {
             clearInterval(this.playingInfo.interval)
           }
-          this.playingInfo.interval = setInterval(() => {
-            if (Math.floor(this.playingInfo.seek / 1000) >= Math.floor(this.playingMusic.duration / 1000)) {
-              clearInterval(this.playingInfo.interval)
-              this.playingInfo.seek = 0
-            } else {
-              this.playingInfo.seek += 100
-            }
-          }, 100)
+          this.seekingMusic()
           setTimeout(() => {
             this.playingInfo.isLoading = false
           }, 300)
           this.playingInfo.volume = (this.audioEle.volume * 100)
+          this.isPlaying = true
           this.audioEle.play()
-        }        
+        }
+        this.audioEle.onended = () => {
+          console.log('........ ended')
+          switch (this.playingInfo.mode) {
+            case 'list':
+              break
+            case 'loop':
+              this.playMusic(this.playingMusic.musicInfo.url)
+              break
+            case 'random':
+              break
+            default:
+              break
+          }
+        }
+      },
+      togglePlay () {        
+        if (this.isPlaying) {
+          if (!this.audioEle.paused && !this.audioEle.ended) {
+            this.audioEle.pause()
+            this.isPlaying = false
+            clearInterval(this.playingInfo.interval)
+          }
+        } else {
+          if (this.audioEle.paused || this.audioEle.ended) {
+            this.audioEle.play()
+            this.isPlaying = true
+            this.seekingMusic()
+          }
+        }
       },
       async playHandle (data) {
         this.playingInfo.isLoading = true
-        this.playingMusic = data.music[0]
+        let _oldLen = this.playingList.length
+        this.playingList = this.playingList.concat(data.music)
+        this.playingInfo.currentIndex = _oldLen
         let audioListData = await this.$store.dispatch('moduleNem/getMusicDetail', {
-          id: this.playingMusic.id
+          id: this.playingList[this.playingInfo.currentIndex].id
         })
         if (audioListData.length > 0) {
-          this.playingMusic.musicInfo = audioListData[0]
-          this.playMusic(audioListData[0].url)
+          this.playingList[this.playingInfo.currentIndex].musicInfo = audioListData[0]
+          this.playMusic(this.playingList[this.playingInfo.currentIndex].musicInfo.url)
         } else {
-          this.playingMusic.musicInfo = {}
+          this.playingList[this.playingInfo.currentIndex].musicInfo = {}
         }
       },
       seekMusic (e) {
@@ -504,6 +711,23 @@
       },
       toggleVolumeContainer () {
         this.playingCtrl.volumeShown = !this.playingCtrl.volumeShown
+      },
+      toggleListContainer () {
+        this.playingCtrl.listShown = !this.playingCtrl.listShown
+      },
+      closeListContainer () {
+        this.playingCtrl.listShown = false
+      },
+      changeMode () {
+        let allModes = ['list', 'loop', 'random']
+        this.playingInfo.mode = allModes[(allModes.indexOf(this.playingInfo.mode) + 1) % allModes.length]
+      },
+      playByIndex (e) {
+        let _index = Number(e.target.dataset.index)
+        if (_index !== this.playingInfo.currentIndex) {
+          this.playingInfo.currentIndex = Number(e.target.dataset.index)
+          this.playMusic(this.playingList[this.playingInfo.currentIndex].musicInfo.url)
+        } 
       }
     },
     filters: {
