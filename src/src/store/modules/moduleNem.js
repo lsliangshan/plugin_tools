@@ -30,6 +30,7 @@ const moduleNem = {
 			newAlbum: '/weapi/album/new', // 新碟
 			musicDetail: '/weapi/v3/song/detail', // 单曲详情
 			musicUrl: '/weapi/song/enhance/player/url', // 歌曲播放地址
+			lyric: '/api/song/lyric', // 获取歌词
 		},
 		playList: [], // 热门推荐列表
 		recommendRadioList: [],
@@ -267,6 +268,26 @@ const moduleNem = {
 				} else {
 					resolve([])
 				}
+			})
+		},
+		getLyric ({ state }, data) {
+			/**
+			 * 获取歌词
+			 * @params:
+			 *  - id
+			 */
+			return new Promise(async (resolve) => {
+				let lyricData = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.lyric + '?os=osx&id=' + data.id + '&lv=-1&kv=-1&tv=-1',
+						method: 'get'
+					}
+				})
+				console.log('歌词: ', lyricData)
+				resolve(true)
 			})
 		}
 	}

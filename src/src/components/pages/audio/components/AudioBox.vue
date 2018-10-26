@@ -37,7 +37,7 @@
         <transition name="volume-container-transition" enter-active-class="animated fadeIn faster" leave-active-class="animated fadeOut faster">
           <div class="barbg" v-if="playingCtrl.volumeShown">
             <vue-slider class="vol_slider" :dot-size="12" :width="4" direction="vertical" :height="100" :min="0" :max="100" :value="playingInfo.volume" :clickable="true" :bg-style="volumeSlierStyles.bgStyle" :process-style="volumeSlierStyles.processStyle" :tooltip-style="volumeSlierStyles.tooltipStyle" @input="setValume">
-              <template slot="tooltip" scope="{ value }">
+              <template slot="tooltip" slot-scope="{ value }">
                 <div class="diy-tooltip">
                   {{ value }}
                   <div class="diy-tooltip-angle"></div>
@@ -555,8 +555,8 @@
     },
 		data () {
 			return {
-        shown: true,
-        lock: true,
+        shown: false,
+        lock: false,
         isPlaying: false, // 音乐是否正在播放中
         playingMusic: {},
         playingList: [], // 正在使用中的播放列表
@@ -641,10 +641,18 @@
           }
         }, 100)
       },
-      playMusic (url) {
-        this.audioEle.src = url
+      getLyric (id) {
+        return new Promise(async (resolve) => {
+          let lyricData = await this.$store.dispatch('moduleNem/getLyric', {
+            id: id
+          })
+          resolve(lyricData)
+        })
+      },
+      playMusic (index) {
+        this.audioEle.src = this.playingList[Number(index)].musicInfo.url
         this.playingInfo.seek = 0
-        this.audioEle.oncanplay = () => {
+        this.audioEle.oncanplay = async () => {
           if (this.playingInfo.interval) {
             clearInterval(this.playingInfo.interval)
           }
@@ -655,6 +663,9 @@
           this.playingInfo.volume = (this.audioEle.volume * 100)
           this.isPlaying = true
           this.audioEle.play()
+          if (!this.playingList[Number(index)].hasOwnProperty('customLyric')) {
+            this.playingList[Number(index)].customLyric = await this.getLyric(this.playingList[Number(index)].id)
+          } else {}
         }
         this.audioEle.onended = () => {
           console.log('........ ended')
@@ -662,7 +673,7 @@
             case 'list':
               break
             case 'loop':
-              this.playMusic(this.playingMusic.musicInfo.url)
+              this.playMusic(index)
               break
             case 'random':
               break
@@ -696,7 +707,7 @@
         })
         if (audioListData.length > 0) {
           this.playingList[this.playingInfo.currentIndex].musicInfo = audioListData[0]
-          this.playMusic(this.playingList[this.playingInfo.currentIndex].musicInfo.url)
+          this.playMusic(this.playingInfo.currentIndex)
         } else {
           this.playingList[this.playingInfo.currentIndex].musicInfo = {}
         }
@@ -726,7 +737,7 @@
         let _index = Number(e.target.dataset.index)
         if (_index !== this.playingInfo.currentIndex) {
           this.playingInfo.currentIndex = Number(e.target.dataset.index)
-          this.playMusic(this.playingList[this.playingInfo.currentIndex].musicInfo.url)
+          this.playMusic(this.playingInfo.currentIndex)
         } 
       }
     },

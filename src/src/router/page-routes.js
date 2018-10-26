@@ -59,5 +59,14 @@ export default {
 			ContentRouter: () =>
 				import ('../components/pages/audio/pages/discover.recommend.taste.vue')
 		}
+	}, {
+		path: '/lyric',
+		name: 'lyric',
+		meta: {
+			title: '歌词'
+		},
+		components: {
+			ContentRouter: () => import('../components/pages/audio/components/Lyric.vue')
+		}
 	}]
 }
