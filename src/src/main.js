@@ -12,7 +12,9 @@ import store from './store'
 import * as filters from './filters'
 import mixins from './mixins'
 import iView from 'iview'
-import { StorageUtil } from './utils/index'
+import {
+  StorageUtil
+} from './utils/index'
 import '../static/css/font-awesome/css/font-awesome.min.css'
 import 'iview/dist/styles/iview.css'
 import "codemirror/lib/codemirror.css"
@@ -43,7 +45,17 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta && to.meta.title) {
     document.title = to.meta.title
   }
-  next()
+  if (to.meta && to.meta.needLogin) {
+    if (to.meta.needLogin === 'nem' && _localNemLoginInfo.userPoint && _localNemLoginInfo.userPoint.userId) {
+      next()
+    } else {
+      next({
+        name: 'index'
+      })
+    }
+  } else {
+    next()
+  }
 })
 
 router.afterEach(to => {

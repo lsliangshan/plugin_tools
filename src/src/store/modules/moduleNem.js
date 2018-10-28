@@ -118,9 +118,15 @@ const moduleNem = {
 		},
 		logout({
 			state,
+			commit,
 			rootState
 		}) {
 			state.loginInfo = {}
+			commit(types.CACHE_NEM_LOGIN_INFO, {
+				loginInfo: {}
+			}, {
+				root: true
+			})
 			StorageUtil.removeItem(rootState.localStorageKeys.nemMusic.loginInfo)
 		},
 		getPersonalizedPlayList({

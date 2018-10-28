@@ -53,7 +53,8 @@ export default {
 		path: '/audio/discover/recommend/taste',
 		name: 'discover.recommend.taste',
 		meta: {
-			title: '每日推荐歌曲'
+			title: '每日推荐歌曲',
+			needLogin: 'nem'
 		},
 		components: {
 			ContentRouter: () =>
@@ -66,7 +67,8 @@ export default {
 			title: '歌词'
 		},
 		components: {
-			ContentRouter: () => import('../components/pages/audio/components/Lyric.vue')
+			ContentRouter: () =>
+				import ('../components/pages/audio/components/Lyric.vue')
 		}
 	}]
 }

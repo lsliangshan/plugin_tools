@@ -300,6 +300,9 @@
 				return this.$store.state.events
 			}
 		},
+		beforeRouteEnter (to, from, next) {
+			next()
+		},
 		async created () {
 			let _date = new Date()
 			this.date = _date.getDate()
