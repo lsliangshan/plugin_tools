@@ -50,6 +50,16 @@ export default {
 				import ('../components/pages/Audio.vue')
 		}
 	}, {
+		path: '/audio/playlist',
+		name: 'playlist',
+		meta: {
+			title: '歌单'
+		},
+		components: {
+			ContentRouter: () =>
+				import ('../components/pages/audio/pages/playlist.vue')
+		}
+	}, {
 		path: '/audio/discover/recommend/taste',
 		name: 'discover.recommend.taste',
 		meta: {

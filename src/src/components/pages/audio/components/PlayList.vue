@@ -4,15 +4,15 @@
 			<p>热门推荐</p>
 		</div>
 		<div class="content">
-			<div class="item" v-for="(item, index) in data" :key="index">
-				<div class="item_image_container">
+			<div class="item" v-for="(item, index) in data" :key="index" :data-id="item.id" @click="goPlaylist">
+				<div class="item_image_container pen">
 					<img :src="item.picUrl" class="item_image" />
 					<div class="item_subtitle">
 						<Icon type="ios-headset" size="16" />
 						<span class="play_count">{{item.playCount | playCount}}</span>
 					</div>
 				</div>
-				<div class="item_title">
+				<div class="item_title pen">
 					<p>{{item.name}}</p>
 				</div>
 			</div>
@@ -20,6 +20,9 @@
 	</div>
 </template>
 <style scoped>
+	.pen {
+		pointer-events: none;
+	}
 	.container {
 		width: 100%;
 		margin-bottom: 30px;
@@ -105,6 +108,16 @@
 		},
 		data () {
 			return {}
+		},
+		methods: {
+			goPlaylist (e) {
+				this.$router.push({
+					name: 'playlist',
+					query: {
+						id: e.target.dataset.id
+					}
+				})
+			}
 		},
 		filters: {
 			playCount (text) {

@@ -443,6 +443,7 @@
     border-right: 1px solid rgba(0, 0, 0, 0.8);
     box-sizing: border-box;
     overflow-y: auto;
+    overflow-x: hidden;
   }
   .audio_box_container .wrap .ctrl .add .playing_list_container .bd .right {
     width: 430px;

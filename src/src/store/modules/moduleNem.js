@@ -31,6 +31,7 @@ const moduleNem = {
 			musicDetail: '/weapi/v3/song/detail', // 单曲详情
 			musicUrl: '/weapi/song/enhance/player/url', // 歌曲播放地址
 			lyric: '/api/song/lyric', // 获取歌词
+			albumDetail: '/weapi/v3/playlist/detail', // 专辑详情
 		},
 		playList: [], // 热门推荐列表
 		recommendRadioList: [],
@@ -298,6 +299,42 @@ const moduleNem = {
 					resolve(lyricData.data.data)
 				} else {
 					resolve({})
+				}
+			})
+		},
+		getAlbumDetail({
+			state
+		}, data) {
+			/**
+			 * 获取专辑详情
+			 * @params
+			 *  - id
+			 */
+			return new Promise(async (resolve) => {
+				let albumDetailData = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.albumDetail,
+						method: 'post',
+						data: {
+							id: data.id,
+							offset: 100,
+							total: false,
+							n: 100,
+							limit: 100,
+							csrf_token: ''
+						}
+					}
+				})
+				if (albumDetailData.data.data.code === 200) {
+					resolve(albumDetailData.data.data)
+				} else {
+					resolve({
+						playlist: {},
+						privileges: []
+					})
 				}
 			})
 		}
