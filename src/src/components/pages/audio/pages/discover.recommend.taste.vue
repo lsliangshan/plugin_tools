@@ -188,7 +188,7 @@
 				weekDay: '',
 				date: '',
 				loadingData: true,
-				playingIndex: 1, // 正在播放当前列表中第几首歌
+				playingIndex: -1, // 正在播放当前列表中第几首歌
 				columns: [
 					{
 						title: '',
@@ -308,6 +308,9 @@
 			await this.$store.dispatch('moduleNem/getRecommendSongs')
 			this.loadingData = false
 		},
+		mounted () {
+			this.$eventHub.$on(this.events.nemMusic.play, this.playHandle)
+		},
 		methods: {
 			formatDuration (text) {
 				let _d = Number(text)
@@ -324,6 +327,20 @@
 					_s = '0' + _s
 				}
 				return (_h === '00' ? '' : (_h + ':')) + _m + ':' + _s
+			},
+			getIndexById (id) {
+				let i = 0
+				let outIndex = -1
+				for (i; i < this.recommendSongsList.length; i++) {
+					if (String(id) === String(this.recommendSongsList[i].id)) {
+						outIndex = i
+						i = this.recommendSongsList[i].length
+					}
+				}
+				return outIndex
+			},
+			playHandle (data) {
+				this.playingIndex = this.getIndexById(data.music[0].id)
 			}
 		}
 	}

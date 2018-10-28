@@ -232,7 +232,7 @@ const moduleNem = {
 					state.musicDetail = musicDetailData.data.data.songs
 					let musicUrl = await dispatch('getMusicUrl', {
 						id: state.musicDetail[0].id,
-						br: state.musicDetail[0].h.br || state.musicDetail[0].m.br
+						br: state.musicDetail[0].h ? state.musicDetail[0].h.br : (state.musicDetail[0].m ? state.musicDetail[0].m.br : state.musicDetail[0].l.br)
 					})
 					resolve(musicUrl)
 				} else {
@@ -270,7 +270,9 @@ const moduleNem = {
 				}
 			})
 		},
-		getLyric ({ state }, data) {
+		getLyric({
+			state
+		}, data) {
 			/**
 			 * 获取歌词
 			 * @params:
@@ -286,8 +288,11 @@ const moduleNem = {
 						method: 'get'
 					}
 				})
-				console.log('歌词: ', lyricData)
-				resolve(true)
+				if (lyricData.data.data.code === 200) {
+					resolve(lyricData.data.data)
+				} else {
+					resolve({})
+				}
 			})
 		}
 	}

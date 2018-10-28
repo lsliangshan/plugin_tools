@@ -1,13 +1,26 @@
 <template>
   <div class="lyric_container">
-    <div ref="scrollerRef" class="lyric_wrapper">
-      <div class="lyric_inner">
-        <div class="lyric_item" v-for="(item, index) in formatLyric" :key="index" :class="{active: (index === currentIndex)}" :ref="'lyricItemRef-' + index">
-          {{item | getLyricText}}
+    <div class="lyric_wrapper">
+      <transition name="lyric-loading-transition" enter-active-class="animated fadeIn faster" leave-active-class="animated fadeOut faster">
+        <div class="lyric_loading_container" v-if="!lyricLoaded">
+          <Spin size="small"></Spin>
         </div>
-      </div>
+      </transition>
+      <transition name="no-lyric-transition" enter-active-class="animated fadeIn faster" leave-active-class="animated fadeOut faster">          
+        <div class="no_lyric_inner" v-if="lyricLoaded && (lyricType === 'absolute')">
+          纯音乐
+        </div>
+      </transition>
+      <transition name="lyric-transition" enter-active-class="animated fadeIn faster" leave-active-class="animated fadeOut faster">
+        <div class="lyric_inner" ref="scrollerRef" v-if="lyricLoaded && (lyricType === 'lyric')">
+          <div class="lyric_inner_scroller">
+            <div class="lyric_item" v-for="(item, index) in formatLyric" :key="index" :class="{active: (index === currentIndex)}" :ref="'lyricItemRef-' + index">
+              {{item | getLyricText}}
+            </div>
+          </div>          
+        </div>
+      </transition>
     </div>
-    <div style="position: absolute; cursor: pointer; left: 100px; top: 300px; padding: 5px 10px; background-color: darkcyan; color: #fff; font-size: 18px;" @click="testPlay">play</div>
   </div>
 </template>
 <style scoped>
@@ -23,7 +36,19 @@
     height: 100%;    
     overflow: hidden;
   }
+  .lyric_loading_container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
   .lyric_inner {
+    width: 100%;
+    height: 100%;
+  }
+  .lyric_inner_scroller {
     width: 100%;
     padding: 15px;
     box-sizing: border-box;
@@ -34,82 +59,137 @@
     color: #989898;
     word-wrap: break-word;
     text-align: center;
-    transition: all .7s linear;
-    font-size: 14px;
+    transition: all .3s linear;
+    font-size: 12px;
   }
   .lyric_item.active {
-    color: #fff;
-    font-size: 16px;
+    color: rgb(79, 192, 141);
+    font-size: 15px;
+  }
+  .no_lyric_inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 13px;
   }
 </style>
 <script>
   import IScroll from 'iscroll'
+  import { KitUtil } from '../../../../utils/index'
   export default {
     name: 'Lyric',
+    props: {
+      current: {
+        type: [String, Number],
+        default: 0
+      },
+      id: {
+        type: [String, Number],
+        default: ''
+      }
+    },
     data () {
       return {
         lyricScroller: null,
         formatLyric: [],
         formatLyricTs: [],
-        current: '00:00.00',
-        currentIndex: -1,
-        lyric: `[00:00.00] 作曲 : whziM/Kaarl
-[00:00.63] 作词 : whziM/Kaarl
-[00:00.191]这一天终于来了
-[00:02.293]我好害怕我真的不骗你我好害怕
-[00:09.795]这份姻缘是上天安排的
-[00:12.158]阿 你说上天安排就上天安排
-[00:16.368]就算他是妖怪我也会一生一世的跟着他
-[00:19.354]如果不能跟我喜欢的人在一起的话
-[00:22.191]就算让我做玉皇大帝我也不会开心
-[00:28.108]你的良心告诉我你最爱的不是我
-[00:33.742]我们不会有结果你走让我走吧
-[00:35.878]只怪相逢恨晚造物弄人
-[00:38.685]好 我让你走
-[00:40.807]不过临走前你要亲我一下
-[00:42.801]你叫我亲我就亲那我的形象不是全毁了
-[00:48.149]哎
-[00:48.946]我现在郑重宣布这个山头所有的东西都属于我的
-[00:52.813]包括你在内
-[00:54.028]我？
-[00:55.045]是阿
-[00:56.734]你现在是我的人了
-[00:58.033]如果有人欺负你呢
-[00:59.368]你就报我的名字
-[01:00.682]从今天起我叫盘丝大仙
-[01:16.478]有一天当你发觉你爱上一个你讨厌的人
-[01:18.871]这段感情才是最要命
-[01:21.818]哼 我怎么会爱上我讨厌的人呢
-[01:52.805]All I hear is a constant radio
-[01:59.763]Stars can shine so loud
-[02:04.068]But of what, I'll never know
-[02:08.873]The city sleeps and slumbers
-[02:14.078]While summer settles under
-[02:19.612]A blue sky till dark starry night
-`
+        lyric: {},
+        lyricType: '', // 'lyric': 有歌曲并已下载歌词；'nolyric': 有歌词未能下载歌词；'absolute': 纯音乐
+        lyricLoaded: false, // 歌词是否加载完毕
       }
     },
     computed: {
+      currentIndex () {
+        let _index = this.formatLyricTs.findIndex(item => (parseInt(item) >= parseInt(this.current)))
+        if (_index < 0) {
+          _index = this.formatLyricTs.length - 1
+        } else if (_index === 0) {
+          _index = 0
+        } else {
+          _index -= 1
+        }
+        return _index
+      }
     },
     created () {
-      this.formatLyric = this.lyric.split('\n')
-      let i = 0
-      let _ts = []
-      for (i; i < this.formatLyric.length; i++) {
-        _ts.push(this.formatLyric[i].replace(/^(\[)([^\]]*)(\])(.*)/, '$2'))
-      }
-      this.formatLyricTs = _ts
+      
     },
     mounted () {
-      this.lyricScroller = new IScroll(this.$refs.scrollerRef, {
-        mouseWheel: true,
-        scrollbars: true
-      })
+      // this.lyricScroller = new IScroll(this.$refs.scrollerRef, {
+      //   mouseWheel: true,
+      //   scrollbars: true
+      // })
+      this.init()
     },
     methods: {
-      testPlay () {
-        this.current = this.formatLyricTs[(this.currentIndex + 1) % this.formatLyricTs.length]
-        console.log('..', this.current)
+      async init () {
+        this.lyricLoaded = false
+        this.lyric = await this.getLyric(this.id)
+        this.initLyric()
+        this.lyricLoaded = true
+        setTimeout(() => {
+          this.initScroller()
+        }, 300)
+      },
+      initScroller () {
+        if (this.lyricType === 'lyric') {
+          this.lyricScroller = new IScroll(this.$refs.scrollerRef, {
+            mouseWheel: true,
+            scrollbars: true
+          })
+        } else {
+        }
+      },
+      initLyric () {
+        if (this.lyric && this.lyric.lrc && this.lyric.lrc.lyric) {
+          let _lrc = this.lyric.lrc.lyric
+          _lrc = _lrc.substring(_lrc.indexOf('[00:00.00]'))
+          this.formatLyric = _lrc.split('\n')
+          for (let j = 0; j < this.formatLyric.length; j++) {
+            if (this.formatLyric[j].replace(/^(\[[^\]]*\])(.*)/, '$2').replace(/[\r\n]/g, '').trim() === '') {
+              this.formatLyric.splice(j, 1)
+              j--
+            }
+          }
+          let i = 0
+          let _ts = []
+          for (i; i < this.formatLyric.length; i++) {
+            _ts.push(this.formatTs(this.formatLyric[i].replace(/^(\[)([^\]]*)(\])(.*)/, '$2')))
+          }
+          this.formatLyricTs = _ts
+        } else {
+          this.formatLyric = []
+          this.formatLyricTs = []
+        }
+      },
+      getLyric (id) {
+        return new Promise(async (resolve) => {
+          let lyricData = await this.$store.dispatch('moduleNem/getLyric', {
+            id: this.id
+          })
+          if (lyricData.lrc && !KitUtil.isEmptyObject(lyricData.lrc) && lyricData.lrc.lyric) {
+            this.lyricType = 'lyric'
+          } else if (lyricData.nolyric) {
+            this.lyricType = 'absolute'
+          }
+          resolve(lyricData)
+        })
+      },
+      formatTs (ts) {
+        let _ms = Number(ts.replace(/.*\.(\d*)$/, '$1'))
+        let _s = ts.substring(0, ts.indexOf('.')).split(':')
+        if (_s.length === 3) {
+          return (_s[0] * 60 * 60 * 1000 + _s[1] * 60 * 1000 + _s[2] * 1000 + _ms)
+        } else if (_s.length === 2) {
+          return (_s[0] * 60 * 1000 + _s[1] * 1000 + _ms)
+        } else if (_s.length === 1) {
+          return (_s[0] * 1000 + _ms)
+        } else {
+          return _ms
+        }
       }
     },
     filters: {
@@ -121,16 +201,26 @@
       }
     },
     watch: {
-      current: {
-        immediate: true,
+      currentIndex: {
         handler (val) {
-          this.currentIndex = this.formatLyricTs.findIndex(item => item >= this.current)
+          if (val > -1 && this.$refs['lyricItemRef-' + val] && this.$refs['lyricItemRef-' + val][0]) {
+            if (!this.lyricScroller) {
+              this.lyricScroller.refresh()
+            }
+            this.lyricScroller.scrollToElement(this.$refs['lyricItemRef-' + val][0], 800, 0, 130)
+          }
         }
       },
-      currentIndex: {
+      id: {
         // immediate: true,
-        handler (val) {
-          this.lyricScroller.scrollToElement(this.$refs['lyricItemRef-' + val][0], 300, 0, -114)
+        async handler (val) {
+          this.lyricLoaded = false
+          this.lyric = await this.getLyric(val)
+          this.initLyric()
+          this.lyricLoaded = true
+          setTimeout(() => {
+            this.initScroller()
+          }, 300)
         }
       }
     }

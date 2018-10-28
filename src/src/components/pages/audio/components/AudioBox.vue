@@ -76,10 +76,12 @@
                     <div class="duration">{{item.duration | formatDuration}}</div>
                   </div>
                 </div>
-                <div class="right"></div>
+                <div class="right">
+                  <lyric :current="playingInfo.seek" :id="playingInfo.currentIndex > -1 ? playingList[playingInfo.currentIndex].id : ''"></lyric>
+                </div>
               </div>
             </div>
-          </transition>          
+          </transition>
           <a href="javascript:;" :style="btnStyles" title="播放列表" class="icn icn-list s-fc3" @click="toggleListContainer">{{playingList.length}}</a>
         </span>
       </div>
@@ -548,15 +550,17 @@
 <script>
   import * as types from '../../../../store/mutation-types.js'
   import vueSlider from 'vue-slider-component'
+  import Lyric from './Lyric.vue'
 	export default {
 		name: 'AudioBox',
     components: {
-      vueSlider
+      vueSlider,
+      Lyric
     },
 		data () {
 			return {
-        shown: false,
-        lock: false,
+        shown: true,
+        lock: true,
         isPlaying: false, // 音乐是否正在播放中
         playingMusic: {},
         playingList: [], // 正在使用中的播放列表
@@ -565,7 +569,7 @@
           seek: 0, // 播放进度
           interval: 0,
           isLoading: false,
-          volume: 100, // 音量
+          volume: 7, // 音量
           mode: 'list', // 循环模式 list:列表循环; loop:单曲重复; random:随机播放
           currentIndex: -1 // 正在播放的音乐的索引值
         },
@@ -616,6 +620,7 @@
 
       this.audioEle = document.createElement('audio')
       this.audioEle.setAttribute('autoplay', 'autoplay')
+      this.audioEle.volume = (this.playingInfo.volume / 100).toFixed(2)
     },
     methods: {
       toggleLock () {
@@ -632,14 +637,17 @@
         }
       },
       seekingMusic () {
-        this.playingInfo.interval = setInterval(() => {
-          if (Math.floor(this.playingInfo.seek / 1000) >= Math.floor(this.playingMusic.duration / 1000)) {
-            clearInterval(this.playingInfo.interval)
-            this.playingInfo.seek = 0
-          } else {
-            this.playingInfo.seek += 100
-          }
-        }, 100)
+        // this.playingInfo.interval = setInterval(() => {
+        //   if (this.playingInfo.seek >= this.playingMusic.duration) {
+        //     clearInterval(this.playingInfo.interval)
+        //     this.playingInfo.seek = 0
+        //   } else {
+        //     this.playingInfo.seek += 100
+        //   }
+        // }, 100)
+        this.audioEle.ontimeupdate = () => {
+          this.playingInfo.seek = Math.floor(this.audioEle.currentTime * 1000)
+        }
       },
       getLyric (id) {
         return new Promise(async (resolve) => {
@@ -650,36 +658,37 @@
         })
       },
       playMusic (index) {
-        this.audioEle.src = this.playingList[Number(index)].musicInfo.url
+        this.audioEle.src = this.playingList[Number(this.playingInfo.currentIndex)].musicInfo.url
         this.playingInfo.seek = 0
         this.audioEle.oncanplay = async () => {
-          if (this.playingInfo.interval) {
-            clearInterval(this.playingInfo.interval)
-          }
+          // if (this.playingInfo.interval) {
+          //   clearInterval(this.playingInfo.interval)
+          // }
           this.seekingMusic()
           setTimeout(() => {
             this.playingInfo.isLoading = false
           }, 300)
-          this.playingInfo.volume = (this.audioEle.volume * 100)
+          // this.playingInfo.volume = (this.audioEle.volume * 100)
           this.isPlaying = true
           this.audioEle.play()
-          if (!this.playingList[Number(index)].hasOwnProperty('customLyric')) {
-            this.playingList[Number(index)].customLyric = await this.getLyric(this.playingList[Number(index)].id)
-          } else {}
+          // if (!this.playingList[Number(this.playingInfo.currentIndex)].hasOwnProperty('customLyric')) {
+          //   this.playingList[Number(this.playingInfo.currentIndex)].customLyric = await this.getLyric(this.playingList[Number(this.playingInfo.currentIndex)].id)
+          // } else {}
         }
         this.audioEle.onended = () => {
-          console.log('........ ended')
           switch (this.playingInfo.mode) {
             case 'list':
+              this.playingInfo.currentIndex = (this.playingInfo.currentIndex + 1) % this.playingList.length
               break
             case 'loop':
-              this.playMusic(index)
               break
             case 'random':
+              this.playingInfo.currentIndex = Math.floor(Math.random() * this.playingList.length)
               break
             default:
               break
           }
+          this.playMusic(this.playingInfo.currentIndex)
         }
       },
       togglePlay () {        
@@ -697,23 +706,49 @@
           }
         }
       },
+      concatList (nl) {
+        let _ids = this.playingList.map(item => item.id)
+        let i = 0
+        for (i; i < nl.length; i++) {
+          if (_ids.indexOf(nl[i].id) < 0) {
+            this.playingList.push(nl[i])
+          }
+        }
+      },
+      getIndexById (id) {
+        let i = 0
+        let outIndex = -1
+        for (i; i < this.playingList.length; i++) {
+          if (String(id) === String(this.playingList[i].id)) {
+            outIndex = i
+            i = this.playingList[i].length
+          }
+        }
+        return outIndex
+      },
       async playHandle (data) {
-        this.playingInfo.isLoading = true
         let _oldLen = this.playingList.length
-        this.playingList = this.playingList.concat(data.music)
-        this.playingInfo.currentIndex = _oldLen
-        let audioListData = await this.$store.dispatch('moduleNem/getMusicDetail', {
-          id: this.playingList[this.playingInfo.currentIndex].id
-        })
-        if (audioListData.length > 0) {
-          this.playingList[this.playingInfo.currentIndex].musicInfo = audioListData[0]
-          this.playMusic(this.playingInfo.currentIndex)
+        // this.playingList = this.playingList.concat(data.music)
+        this.concatList(data.music)
+        if (_oldLen !== this.playingList.length) {
+          this.playingInfo.isLoading = true
+          this.playingInfo.currentIndex = _oldLen
+          let audioListData = await this.$store.dispatch('moduleNem/getMusicDetail', {
+            id: this.playingList[this.playingInfo.currentIndex].id
+          })
+          if (audioListData.length > 0) {
+            this.playingList[this.playingInfo.currentIndex].musicInfo = audioListData[0]
+            this.playMusic(this.playingInfo.currentIndex)
+          } else {
+            this.playingList[this.playingInfo.currentIndex].musicInfo = {}
+          }
         } else {
-          this.playingList[this.playingInfo.currentIndex].musicInfo = {}
+          this.playingInfo.currentIndex = this.getIndexById(data.music[0].id)
+          this.playMusic(this.playingInfo.currentIndex)
         }
       },
       seekMusic (e) {
-        this.playingInfo.seek = Math.min(e.getValue() * 1000, this.playingMusic.duration)
+        this.playingInfo.seek = Math.min(e.getValue() * 1000, this.playingList[this.playingInfo.currentIndex].duration)
         this.audioEle.currentTime = e.getValue()
       },
       setValume (e) {
@@ -738,7 +773,10 @@
         if (_index !== this.playingInfo.currentIndex) {
           this.playingInfo.currentIndex = Number(e.target.dataset.index)
           this.playMusic(this.playingInfo.currentIndex)
-        } 
+        }
+        this.$eventHub.$emit(this.events.nemMusic.play, {
+          music: [this.playingList[this.playingInfo.currentIndex]]
+        })
       }
     },
     filters: {
