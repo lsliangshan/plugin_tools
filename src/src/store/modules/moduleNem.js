@@ -32,6 +32,7 @@ const moduleNem = {
 			musicUrl: '/weapi/song/enhance/player/url', // 歌曲播放地址
 			lyric: '/api/song/lyric', // 获取歌词
 			albumDetail: '/weapi/v3/playlist/detail', // 专辑详情
+			searchMusic: '/weapi/cloudsearch/get/web', // 搜索音乐
 		},
 		playList: [], // 热门推荐列表
 		recommendRadioList: [],
@@ -320,7 +321,7 @@ const moduleNem = {
 						method: 'post',
 						data: {
 							id: data.id,
-							offset: 100,
+							offset: 0,
 							total: false,
 							n: 100,
 							limit: 100,
@@ -335,6 +336,35 @@ const moduleNem = {
 						playlist: {},
 						privileges: []
 					})
+				}
+			})
+		},
+		searchMusic({
+			state
+		}, data) {
+			/**
+			 * 搜索音乐
+			 */
+			return new Promise(async (resolve) => {
+				let searchMusicData = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.searchMusic,
+						method: 'post',
+						data: {
+							s: data.s,
+							offset: data.offset || '0',
+							limit: data.limit || 30,
+							type: 1
+						}
+					}
+				})
+				if (searchMusicData.data.data.code === 200) {
+					resolve(searchMusicData.data.data)
+				} else {
+					resolve([])
 				}
 			})
 		}

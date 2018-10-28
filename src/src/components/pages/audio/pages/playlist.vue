@@ -33,7 +33,7 @@
 						<div class="desc">
 							<p v-for="(itm, idx) in description">{{itm}}<br/></p>
 						</div>
-						<div class="desc_toggle" @click="descriptionHide = !descriptionHide">
+						<div class="desc_toggle" v-if="albumDetail.playlist.description.length > 100" @click="descriptionHide = !descriptionHide">
 							<div v-if="descriptionHide">
 								展开
 								<Icon type="ios-arrow-down" />
@@ -82,8 +82,8 @@
 	.main_content {
 		width: 750px;
 		height: 100%;
-		padding: 20px;
-		box-sizing: border-box;
+		/*padding: 20px;
+		box-sizing: border-box;*/
 		background-color: #FFF;
 		overflow-y: auto;
 		padding: 40px 30px;
@@ -391,7 +391,7 @@
 		async created () {
 			this.albumDetail = await this.init()
 			this.loadingData = false
-			this.description = (this.albumDetail.playlist.description.substring(0, 100) + '...').split('\n')
+			this.description = (this.albumDetail.playlist.description.length > 100) ? (this.albumDetail.playlist.description.substring(0, 100) + '...').split('\n') : this.albumDetail.playlist.description.split('\n')
 		},
 		methods: {
 			init () {
@@ -441,7 +441,7 @@
 			'descriptionHide': {
 				handler (val) {
 					if (val) {
-						this.description = (this.albumDetail.playlist.description.substring(0, 100) + '...').split('\n')
+						this.description = (this.albumDetail.playlist.description.length > 100) ? (this.albumDetail.playlist.description.substring(0, 100) + '...').split('\n') : this.albumDetail.playlist.description.split('\n')
 					} else {
 						this.description = this.albumDetail.playlist.description.split('\n')
 					}

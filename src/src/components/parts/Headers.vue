@@ -3,6 +3,9 @@
     <div class="app_logo_container" @click="goHome">
       <img :src="logo">
     </div>
+    <div class="music_search_container">
+      <Input prefix="ios-search" placeholder="搜索音乐" style="width: auto" v-model="searchMusicKey" @on-enter="searchMusic" />
+    </div>
     <div class="headers_right">
       <top-menu></top-menu>
       <div class="settings_container">
@@ -40,6 +43,14 @@
   .app_logo_container img {
     max-height: 42px;
   }
+  .music_search_container {
+    width: 200px;
+    height: 64px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
   .headers_right {
     height: 65px;
     display: flex;
@@ -65,7 +76,9 @@
 export default {
   name: 'Headers',
   data () {
-    return {}
+    return {
+      searchMusicKey: ''
+    }
   },
   computed: {
     logo () {
@@ -95,6 +108,20 @@ export default {
       this.$router.replace({
         name: 'settings'
       })
+    },
+    searchMusic () {
+      this.$router.push({
+        name: 'search.m',
+        query: {
+          s: this.searchMusicKey
+        }
+      })
+      // return new Promise(async (resolve) => {
+      //   let searchMusicData = await this.$store.dispatch('moduleNem/searchMusic', {
+      //     s: this.searchMusicKey
+      //   })
+      //   resolve(searchMusicData)
+      // })
     }
   },
   components: {

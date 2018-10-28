@@ -421,4 +421,22 @@ export default {
     border: 3px solid rgb(79, 192, 141);
     /*background-color: #c8c8c8;*/
   }
+
+  .m-search .ivu-input-search {
+    background: rgb(79, 192, 141)!important;
+    border-color: rgb(79, 192, 141)!important;
+  }
+  .m-search .ivu-input:hover, .m-search .ivu-input:focus {
+    border-color: rgb(79, 192, 141)!important;
+  }
+  .m-search .ivu-input:focus {
+    box-shadow: none;
+  }
+  .m-search .ivu-input::placeholder {
+    font-size: 12px;
+  }
+
+  .music_search_page .ivu-select-selected-value {
+    margin-right: 20px;
+  }
 </style>

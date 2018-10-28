@@ -71,6 +71,16 @@ export default {
 				import ('../components/pages/audio/pages/discover.recommend.taste.vue')
 		}
 	}, {
+		path: '/audio/search/m',
+		name: 'search.m',
+		meta: {
+			title: '搜索结果'
+		},
+		components: {
+			ContentRouter: () =>
+				import ('../components/pages/audio/pages/search.m.vue')
+		}
+	}, {
 		path: '/lyric',
 		name: 'lyric',
 		meta: {
