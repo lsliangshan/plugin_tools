@@ -25,7 +25,7 @@
           <Spin size="small" v-if="playingInfo.isLoading" style="margin-left: 8px;"></Spin>
         </div>
         <div class="m-pbar">
-          <vue-slider class="duration_slider" :min="0" :max="Math.floor((playingInfo.currentIndex > -1) ? playingList[playingInfo.currentIndex].duration / 1000 : 0)" :value="(playingInfo.currentIndex > -1) ? playingInfo.seek / 1000 : 0" :clickable="true" :tooltip="false" :bg-style="sliderStyles.bgStyle" :process-style="sliderStyles.processStyle" @drag-end="seekMusic"></vue-slider>
+          <vue-slider class="duration_slider" :min="0" :max="Math.floor((playingInfo.currentIndex > -1) ? playingList[playingInfo.currentIndex].duration / 1000 : 0)" :value="(playingInfo.currentIndex > -1) ? (playingInfo.seek > playingList[playingInfo.currentIndex].duration ? 0 : Math.floor(playingInfo.seek / 1000)) : 0" :clickable="true" :tooltip="false" :bg-style="sliderStyles.bgStyle" :process-style="sliderStyles.processStyle" @drag-end="seekMusic"></vue-slider>
           <div class="time">{{playingInfo.seek | formatDuration}} / {{(playingInfo.currentIndex > -1 && playingList[playingInfo.currentIndex].duration || 0) | formatDuration}}</div>
         </div>
       </div>
@@ -58,7 +58,7 @@
                     播放列表 ( <span style="color: rgb(79, 192, 141);">{{playingList.length}}</span> )
                   </div>
                 </div>
-                <div class="right">
+                <div class="right" :style="playingListRightStyles">
                   <div class="music_name" v-if="playingList[playingInfo.currentIndex]">{{playingList[playingInfo.currentIndex].name}}</div>
                   <div class="close" @click="closeListContainer">
                     <Icon type="ios-close" size="30" />
@@ -66,18 +66,23 @@
                 </div>
               </div>
               <div class="bd">
-                <div class="left">
-                  <div class="list_item" v-for="(item, index) in playingList" :key="item.id" :class="{active: index == playingInfo.currentIndex}" :data-index="index" @click="playByIndex">
-                    <div class="ply">
-                      <Icon type="ios-play" size="18" color="rgb(79, 192, 141)" v-if="index == playingInfo.currentIndex" />
-                    </div>
-                    <div class="name">{{item.name}}</div>
-                    <div class="opr"></div>
-                    <div class="by">{{item.artists[0].name}}</div>
-                    <div class="duration">{{item.duration | formatDuration}}</div>
-                  </div>
+                <div class="song_sheet" v-if="nemLoginInfo.userPoint && nemLoginInfo.userPoint.userId">
+                  <play-sheet :current-index="cacheCurrentPlayListIndex" @change="changePlayList"></play-sheet>
                 </div>
-                <div class="right">
+                <div class="left" ref="playingListRef" :style="playingListLeftStyles">
+                  <div class="playing_list_wrapper">
+                    <div class="list_item" v-for="(item, index) in playingList" :key="item.id" :class="{active: index == playingInfo.currentIndex}" :data-index="index" @click="playByIndex">
+                      <div class="ply">
+                        <Icon type="ios-play" size="18" color="rgb(79, 192, 141)" v-if="index == playingInfo.currentIndex" />
+                      </div>
+                      <div class="name">{{item.name}}</div>
+                      <div class="opr"></div>
+                      <div class="by">{{item.artists[0].name}}</div>
+                      <div class="duration">{{item.duration | formatDuration}}</div>
+                    </div>
+                  </div>                  
+                </div>
+                <div class="right" :style="playingListRightStyles">
                   <lyric :current="playingInfo.seek" :id="playingInfo.currentIndex > -1 ? playingList[playingInfo.currentIndex].id : ''"></lyric>
                 </div>
               </div>
@@ -400,7 +405,7 @@
   .audio_box_container .wrap .ctrl .add .playing_list_container .hd .left {
     width: 550px;
     height: 40px;
-    padding: 0 30px;
+    padding: 0 15px;
     box-sizing: border-box;
     font-size: 14px;
     color: #e2e2e2;
@@ -448,8 +453,13 @@
     align-items: center;
     justify-content: space-between;
   }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .song_sheet {
+    width: 150px;
+    height: 260px;
+  }
   .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left {
-    width: 550px;
+    position: relative;
+    width: 450px;
     height: 260px;
     border-right: 1px solid rgba(0, 0, 0, 0.8);
     box-sizing: border-box;
@@ -457,21 +467,30 @@
     overflow-x: hidden;
   }
   .audio_box_container .wrap .ctrl .add .playing_list_container .bd .right {
-    width: 430px;
+    width: 380px;
     height: 260px;
   }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .playing_list_wrapper {
+    /*width: 380px;*/
+    width: 100%;
+    /*height: 260px;*/
+  }
   .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item {
-    width: 550px;
+    width: 100%;
     height: 30px;
     cursor: pointer;
-    color: #ccc;
+    color: #989898;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+  }  
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item.active, .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item:active {
+    background-color: rgba(0, 0, 0, 0.9)!important;
+    color: #fff;
   }
-  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item.active, .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item:hover, .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item:active {
-    background-color: rgba(0, 0, 0, 0.5);
+  .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item:hover {
+    background-color: rgba(0, 0, 0, .3);
     color: #fff;
   }
   .audio_box_container .wrap .ctrl .add .playing_list_container .bd .left .list_item .ply {
@@ -562,20 +581,25 @@
 <script>
   import * as types from '../../../../store/mutation-types.js'
   import vueSlider from 'vue-slider-component'
+  import IScroll from 'iscroll'
   import Lyric from './Lyric.vue'
+  import PlaySheet from './PlaySheet.vue'
 	export default {
 		name: 'AudioBox',
     components: {
       vueSlider,
-      Lyric
+      Lyric,
+      PlaySheet
     },
 		data () {
 			return {
+        cacheCurrentPlayListIndex: -1, // 正在播放的歌单索引
         shown: true,
         lock: true,
         isPlaying: false, // 音乐是否正在播放中
         playingMusic: {},
         playingList: [], // 正在使用中的播放列表
+        playingListScroller: '',
         audioEle: null,
         playingInfo: {
           seek: 0, // 播放进度
@@ -625,6 +649,19 @@
       },
       events () {
         return this.$store.state.events
+      },
+      nemLoginInfo () {
+        return this.$store.state.nemLoginInfo
+      },
+      playingListLeftStyles () {
+        return {
+          width: (this.nemLoginInfo.userPoint && this.nemLoginInfo.userPoint.userId) ? '450px' : '550px'
+        }
+      },
+      playingListRightStyles () {
+        return {
+          width: (this.nemLoginInfo.userPoint && this.nemLoginInfo.userPoint.userId) ? '380px' : '430px'
+        }
       }
     },
     mounted () {
@@ -635,13 +672,24 @@
       this.audioEle.volume = (this.playingInfo.volume / 100).toFixed(2)
     },
     methods: {
+      initPlayListScroller () {
+        if (this.playingListScroller) {
+          this.playingListScroller.refresh()
+        } else {
+          this.playingListScroller = new IScroll(this.$refs.playingListRef, {
+            mouseWheel: true,
+            scrollbars: true,
+            fadeScrollbars: true
+          })
+        }
+      },
       toggleLock () {
         this.lock = !this.lock
       },
       showBox () {
         if (!this.lock) {
           this.shown = true
-        }        
+        }
       },
       hideBox () {
         if (!this.lock) {
@@ -669,7 +717,17 @@
           resolve(lyricData)
         })
       },
-      playMusic (index) {
+      async playMusic (index) {
+        if (!this.playingList[Number(this.playingInfo.currentIndex)].hasOwnProperty('musicInfo')) {
+          let audioListData = await this.$store.dispatch('moduleNem/getMusicDetail', {
+            id: this.playingList[this.playingInfo.currentIndex].id
+          })
+          if (audioListData.length > 0) {
+            this.playingList[this.playingInfo.currentIndex].musicInfo = audioListData[0]
+          } else {
+            this.playingList[this.playingInfo.currentIndex].musicInfo = {}
+          }
+        }
         this.audioEle.src = this.playingList[Number(this.playingInfo.currentIndex)].musicInfo.url
         this.playingInfo.seek = 0
         this.audioEle.oncanplay = async () => {
@@ -739,6 +797,7 @@
         return outIndex
       },
       async playHandle (data) {
+        this.cacheCurrentPlayListIndex = -1
         let _oldLen = this.playingList.length
         // this.playingList = this.playingList.concat(data.music)
         this.concatList(data.music)
@@ -772,6 +831,11 @@
       },
       toggleListContainer () {
         this.playingCtrl.listShown = !this.playingCtrl.listShown
+        if (this.playingCtrl.listShown) {
+          setTimeout(() => {
+            this.initPlayListScroller()
+          }, 1000)
+        }
       },
       closeListContainer () {
         this.playingCtrl.listShown = false
@@ -781,14 +845,45 @@
         this.playingInfo.mode = allModes[(allModes.indexOf(this.playingInfo.mode) + 1) % allModes.length]
       },
       playByIndex (e) {
+        this.playingInfo.seek = 0
         let _index = Number(e.target.dataset.index)
         if (_index !== this.playingInfo.currentIndex) {
-          this.playingInfo.currentIndex = Number(e.target.dataset.index)
+          this.playingInfo.currentIndex = _index
           this.playMusic(this.playingInfo.currentIndex)
         }
         this.$eventHub.$emit(this.events.nemMusic.play, {
           music: [this.playingList[this.playingInfo.currentIndex]]
         })
+      },
+      formatList (list) {
+        let i = 0
+        let _l = JSON.parse(JSON.stringify(list))
+        for (i; i < _l.length; i++) {
+          _l[i].artists = _l[i].ar
+          _l[i].album = _l[i].al
+          _l[i].duration = _l[i].dt
+        }
+        return _l
+      },
+      async changePlayList (data) {
+        this.cacheCurrentPlayListIndex = data.index
+
+        this.playingList = this.formatList(data.detail.tracks)
+
+        this.playingInfo = Object.assign({}, this.playingInfo, {
+          seek: 0,
+          currentIndex: 0
+        })
+
+        let audioListData = await this.$store.dispatch('moduleNem/getMusicDetail', {
+          id: this.playingList[this.playingInfo.currentIndex].id
+        })
+        if (audioListData.length > 0) {
+          this.playingList[this.playingInfo.currentIndex].musicInfo = audioListData[0]
+          this.playMusic(this.playingInfo.currentIndex)
+        } else {
+          this.playingList[this.playingInfo.currentIndex].musicInfo = {}
+        }
       }
     },
     filters: {
@@ -810,30 +905,11 @@
       }
     },
     watch: {
-      'audio.playing' (val) {
-        if (val) {
-          // this.audioEle.load()
-          console.log('......', this.audioEle.ended)
-          if (this.audioEle.paused) {
-            this.audioEle.play()
-          } else {
-            // this.audioEle.addEventListener('canplay', () => {
-            //   this.audioEle.play()
-            // }, false)
-          }
-        } else {
-          console.log('pause: ', this.audioEle.currentTime.toFixed(1))
-          this.audioEle.pause()
-        }
-      },
-      'audio.current' (val) {
-        if (val !== -1) {
-          this.audioEle.oncanplay = () => {
-            console.log(this.audioEle.duration)
-            this.$store.commit(types.SET_AUDIO_DURATION, {
-              duration: this.audioEle.duration
-            })
-          }
+      'playingList': {
+        handler (val) {
+          setTimeout(() => {
+            this.initPlayListScroller()
+          }, 100)
         }
       }
     }

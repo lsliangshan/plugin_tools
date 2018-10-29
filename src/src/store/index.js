@@ -127,6 +127,7 @@ const store = new Vuex.Store({
       nemMusic: {
         play: 'nem-music-play', // 播放音乐
         add: 'nem-music-add', // 添加到播放列表,不立即播放
+        changePlayList: 'nem-change-play-list', // 切换歌单
       }
     },
     localStorageKeys: {

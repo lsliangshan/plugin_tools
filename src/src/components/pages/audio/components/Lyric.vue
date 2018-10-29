@@ -26,8 +26,8 @@
 <style scoped>
   .lyric_container {
     position: relative;
-    width: 430px;
-    height: 260px;
+    width: 100%;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
   }
   .lyric_wrapper {
@@ -138,7 +138,8 @@
         if (this.lyricType === 'lyric') {
           this.lyricScroller = new IScroll(this.$refs.scrollerRef, {
             mouseWheel: true,
-            scrollbars: true
+            scrollbars: true,
+            fadeScrollbars: true
           })
         } else {
         }
@@ -204,9 +205,9 @@
       currentIndex: {
         handler (val) {
           if (val > -1 && this.$refs['lyricItemRef-' + val] && this.$refs['lyricItemRef-' + val][0]) {
-            if (!this.lyricScroller) {
-              this.lyricScroller.refresh()
-            }
+            // if (this.lyricScroller) {
+            //   this.lyricScroller.refresh()
+            // }
             this.lyricScroller.scrollToElement(this.$refs['lyricItemRef-' + val][0], 800, 0, 130)
           }
         }

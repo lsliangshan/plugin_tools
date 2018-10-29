@@ -34,6 +34,8 @@ const moduleNem = {
 			lyric: '/api/song/lyric', // 获取歌词
 			albumDetail: '/weapi/v3/playlist/detail', // 专辑详情
 			searchMusic: '/weapi/cloudsearch/get/web', // 搜索音乐
+			userPlayList: '/weapi/user/playlist', // 用户歌单
+			playListDetail: '/weapi/v3/playlist/detail', // 歌单详情
 		},
 		playList: [], // 热门推荐列表
 		recommendRadioList: [],
@@ -366,6 +368,66 @@ const moduleNem = {
 					resolve(searchMusicData.data.data)
 				} else {
 					resolve([])
+				}
+			})
+		},
+		userPlayList({
+			state
+		}, data) {
+			/**
+			 * 用户歌单
+			 */
+			return new Promise(async (resolve) => {
+				let userPlayListData = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.userPlayList,
+						method: 'post',
+						data: {
+							uid: data.uid,
+							offset: data.offset || '0',
+							limit: data.limit || 30,
+							csrf_token: ''
+						}
+					}
+				})
+				if (userPlayListData.data.data.code === 200) {
+					resolve(userPlayListData.data.data)
+				} else {
+					resolve([])
+				}
+			})
+		},
+		playListDetail({
+			state
+		}, data) {
+			/**
+			 * 歌单详情
+			 */
+			return new Promise(async (resolve) => {
+				let playListDetailData = await global.vue.$axios({
+					url: state.nemApiUrl,
+					method: 'post',
+					data: {
+						baseURL: state.nemApi.baseURL,
+						url: state.nemApi.playListDetail,
+						method: 'post',
+						data: {
+							id: data.id,
+							offset: data.offset || '0',
+							limit: data.limit || 30,
+							n: data.limit || 30,
+							total: data.total || false,
+							csrf_token: ''
+						}
+					}
+				})
+				if (playListDetailData.data.data.code === 200) {
+					resolve(playListDetailData.data.data)
+				} else {
+					resolve({})
 				}
 			})
 		}
