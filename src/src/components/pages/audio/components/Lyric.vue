@@ -28,7 +28,7 @@
     position: relative;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 1);
   }
   .lyric_wrapper {
     position: relative;
@@ -180,6 +180,9 @@
         })
       },
       formatTs (ts) {
+        if (ts.indexOf('.') < 0) {
+          ts += '.000'
+        }
         let _ms = Number(ts.replace(/.*\.(\d*)$/, '$1'))
         let _s = ts.substring(0, ts.indexOf('.')).split(':')
         if (_s.length === 3) {

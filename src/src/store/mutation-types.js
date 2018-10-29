@@ -159,6 +159,9 @@ export const SET_AUDIO_ELE = 'SET_AUDIO_ELE'
 // 缓存网易云音乐登录信息
 export const CACHE_NEM_LOGIN_INFO = 'CACHE_NEM_LOGIN_INFO'
 
+// 缓存最近收听的歌单
+export const CACHE_RECENTLY_PLAY_LIST = 'CACHE_RECENTLY_PLAY_LIST'
+
 // >>>> actions:
 
 // 登录1

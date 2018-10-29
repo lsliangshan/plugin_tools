@@ -61,6 +61,10 @@ const findTemplateByUUID = function (uuid, arr, deep, sub) {
 }
 
 export const mutations = {
+  async [types.CACHE_RECENTLY_PLAY_LIST] (state, data) {
+    state.recentlyPlayList = data.recentlyPlayList
+    await StorageUtil.setItem(state.localStorageKeys.nemRecentlyPlayList, state.recentlyPlayList)
+  },
   [types.CACHE_NEM_LOGIN_INFO] (state, data) {
     state.nemLoginInfo = data.loginInfo
   },

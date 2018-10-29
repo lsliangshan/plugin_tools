@@ -139,7 +139,8 @@ const store = new Vuex.Store({
       maxToolCount: 'local-max-tool-count',
       activeThemeIndex: 'local-active-theme-index',
       blankHomePage: 'local-blank-home-page',
-      userScripts: 'local-user-scripts'
+      userScripts: 'local-user-scripts',
+      nemRecentlyPlayList: 'local-nem-recently-play-list', // 网易云音乐 最近播放列表，本地列表
     },
     blankHomePage: 'default',
     tools: [],
@@ -154,6 +155,7 @@ const store = new Vuex.Store({
     requestInfo: {},
     loginInfo: {},
     nemLoginInfo: {}, // 网易云音乐登录信息
+    recentlyPlayList: [], // 网易云音乐 最近播放的歌单
     allRoles: [{
       value: 1,
       name: '超级管理员'

@@ -251,6 +251,7 @@
     height: 20px;
     overflow: hidden;
     color: #e8e8e8;
+    margin-left: 8px;
     text-shadow: 0 1px 0 #171717;
     display: flex;
     flex-direction: row;
@@ -461,7 +462,8 @@
     position: relative;
     width: 450px;
     height: 260px;
-    border-right: 1px solid rgba(0, 0, 0, 0.8);
+    border-right: 1px solid rgba(255, 255, 255, 0.25);
+    background-color: #000000;
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
@@ -580,6 +582,7 @@
 </style>
 <script>
   import * as types from '../../../../store/mutation-types.js'
+  import { StorageUtil } from '../../../../utils/index'
   import vueSlider from 'vue-slider-component'
   import IScroll from 'iscroll'
   import Lyric from './Lyric.vue'
@@ -650,6 +653,9 @@
       events () {
         return this.$store.state.events
       },
+      localStorageKeys () {
+        return this.$store.state.localStorageKeys
+      },
       nemLoginInfo () {
         return this.$store.state.nemLoginInfo
       },
@@ -664,6 +670,9 @@
         }
       }
     },
+    async created () {
+      this.playingList = await StorageUtil.getItem(this.localStorageKeys.nemRecentlyPlayList)
+    },
     mounted () {
       this.$eventHub.$on(this.events.nemMusic.play, this.playHandle)
 
@@ -673,15 +682,17 @@
     },
     methods: {
       initPlayListScroller () {
-        if (this.playingListScroller) {
-          this.playingListScroller.refresh()
-        } else {
-          this.playingListScroller = new IScroll(this.$refs.playingListRef, {
-            mouseWheel: true,
-            scrollbars: true,
-            fadeScrollbars: true
-          })
-        }
+        if (this.$refs.playingListRef) {
+          if (this.playingListScroller) {
+            this.playingListScroller.refresh()
+          } else {
+            this.playingListScroller = new IScroll(this.$refs.playingListRef, {
+              mouseWheel: true,
+              scrollbars: true,
+              fadeScrollbars: true
+            })
+          }
+        }        
       },
       toggleLock () {
         this.lock = !this.lock
@@ -907,6 +918,11 @@
     watch: {
       'playingList': {
         handler (val) {
+          if (this.cacheCurrentPlayListIndex === -1) {
+            this.$store.commit(types.CACHE_RECENTLY_PLAY_LIST, {
+              recentlyPlayList: this.playingList
+            })
+          }
           setTimeout(() => {
             this.initPlayListScroller()
           }, 100)

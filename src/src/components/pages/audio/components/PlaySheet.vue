@@ -1,5 +1,7 @@
 <template>
   <div class="sheet_container">
+    <div class="sheet_item" :class="{active: -1 === activeIndex}" @click="chooseRecentlyPlayList">最近收听的</div>
+
     <div class="sheet_item_title">创建的歌单</div>
     <div class="sheet_item" v-for="(item, index) in myList" :key="index" :class="{active: (index === activeIndex)}" :data-index="index" @click="choosePlayList">
       <div class="sheet_item_img pen">
@@ -48,7 +50,7 @@
     padding: 10px;
     box-sizing: border-box;    
     cursor: pointer;
-    color: #666;
+    color: #989898;
     transition: all .3s ease-in-out;
     display: flex;
     flex-direction: row;
@@ -102,6 +104,9 @@
     computed: {
       nemLoginInfo () {
         return this.$store.state.nemLoginInfo
+      },
+      recentlyPlayList () {
+        return this.$store.state.recentlyPlayList
       }
     },
     async created () {
@@ -159,6 +164,9 @@
           })
           resolve(playListDetailData)
         })
+      },
+      chooseRecentlyPlayList () {
+        this.activeIndex = -1
       }
     },
     watch: {
