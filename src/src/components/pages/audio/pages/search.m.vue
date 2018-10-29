@@ -143,6 +143,7 @@
 												that.songs['page-' + that.currentPage][that.playingIndex].album = that.songs['page-' + that.currentPage][that.playingIndex].al
 												that.songs['page-' + that.currentPage][that.playingIndex].duration = that.songs['page-' + that.currentPage][that.playingIndex].dt
 												that.$eventHub.$emit(that.events.nemMusic.play, {
+													from: 'search',
 													music: [that.songs['page-' + that.currentPage][that.playingIndex]]
 												})
 											}

@@ -18,14 +18,14 @@
 							<div class="nickname">{{albumDetail.playlist.creator.nickname}}</div>
 							<div class="createtime">{{albumDetail.playlist.createTime | formatCreateTime}} 创建</div>
 						</div>
-						<div class="btns">
+						<!-- <div class="btns">
 							<ButtonGroup>
 						        <Button type="primary" icon="ios-play">播放</Button>
 						        <Button type="primary">
 						        	<Icon type="md-add"/>
 						        </Button>
 						    </ButtonGroup>
-						</div>
+						</div> -->
 						<div class="tags">
 							标签:
 							<span class="u-tag" v-for="(tag, index) in albumDetail.playlist.tags" :key="index">{{tag}}</span>
@@ -330,6 +330,7 @@
 												that.albumDetail.playlist.tracks[that.playingIndex].album = that.albumDetail.playlist.tracks[that.playingIndex].al
 												that.albumDetail.playlist.tracks[that.playingIndex].duration = that.albumDetail.playlist.tracks[that.playingIndex].dt
 												that.$eventHub.$emit(that.events.nemMusic.play, {
+													from: 'list',
 													music: [that.albumDetail.playlist.tracks[that.playingIndex]]
 												})
 											}

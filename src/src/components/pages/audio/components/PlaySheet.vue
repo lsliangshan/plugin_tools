@@ -167,6 +167,10 @@
       },
       chooseRecentlyPlayList () {
         this.activeIndex = -1
+        this.$emit('change', {
+          index: -1,
+          type: 'local'
+        })
       }
     },
     watch: {

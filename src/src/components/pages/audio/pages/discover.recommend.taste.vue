@@ -10,14 +10,14 @@
 						<span class="mask"></span>
 					</div>
 				</div>
-				<div class="middle">
+				<!-- <div class="middle">
 					<ButtonGroup>
 				        <Button type="primary" icon="ios-play">播放全部</Button>
 				        <Button type="primary">
 				        	<Icon type="md-add"/>
 				        </Button>
 				    </ButtonGroup>
-				</div>
+				</div> -->
 				<div class="bottom">
 					<Table stripe :loading="loadingData" :columns="columns" :data="recommendSongsList"></Table>
 				</div>
@@ -235,6 +235,7 @@
 											click (e) {
 												that.playingIndex = Number(params.index)
 												that.$eventHub.$emit(that.events.nemMusic.play, {
+													from: 'recommend',
 													music: [that.recommendSongsList[that.playingIndex]]
 												})
 											}

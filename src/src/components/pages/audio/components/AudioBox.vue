@@ -80,7 +80,7 @@
                       <div class="by">{{item.artists[0].name}}</div>
                       <div class="duration">{{item.duration | formatDuration}}</div>
                     </div>
-                  </div>                  
+                  </div>
                 </div>
                 <div class="right" :style="playingListRightStyles">
                   <lyric :current="playingInfo.seek" :id="playingInfo.currentIndex > -1 ? playingList[playingInfo.currentIndex].id : ''"></lyric>
@@ -671,10 +671,10 @@
       }
     },
     async created () {
-      this.playingList = await StorageUtil.getItem(this.localStorageKeys.nemRecentlyPlayList)
+      this.playingList = await StorageUtil.getItem(this.localStorageKeys.nemRecentlyPlayList) || []
     },
     mounted () {
-      this.$eventHub.$on(this.events.nemMusic.play, this.playHandle)
+    this.$eventHub.$on(this.events.nemMusic.play, this.playHandle)
 
       this.audioEle = document.createElement('audio')
       this.audioEle.setAttribute('autoplay', 'autoplay')
@@ -787,12 +787,13 @@
           }
         }
       },
-      concatList (nl) {
-        let _ids = this.playingList.map(item => item.id)
+      concatList (nl, list) {
+        let _l = list || this.playingList
+        let _ids = _l.map(item => item.id)
         let i = 0
         for (i; i < nl.length; i++) {
           if (_ids.indexOf(nl[i].id) < 0) {
-            this.playingList.push(nl[i])
+            _l.push(nl[i])
           }
         }
       },
@@ -807,14 +808,16 @@
         }
         return outIndex
       },
-      async playHandle (data) {
-        this.cacheCurrentPlayListIndex = -1
-        let _oldLen = this.playingList.length
-        // this.playingList = this.playingList.concat(data.music)
-        this.concatList(data.music)
-        if (_oldLen !== this.playingList.length) {
-          this.playingInfo.isLoading = true
-          this.playingInfo.currentIndex = _oldLen
+      async playHandle (data) {                
+        if (data.from !== 'box-list') {
+          this.cacheCurrentPlayListIndex = -1
+          let _locallist = await StorageUtil.getItem(this.localStorageKeys.nemRecentlyPlayList) || []
+          this.concatList(data.music, _locallist)
+          this.$store.commit(types.CACHE_RECENTLY_PLAY_LIST, {
+            recentlyPlayList: _locallist
+          })
+          this.playingList = _locallist
+          this.playingInfo.currentIndex = this.playingList.length - 1
           let audioListData = await this.$store.dispatch('moduleNem/getMusicDetail', {
             id: this.playingList[this.playingInfo.currentIndex].id
           })
@@ -825,9 +828,26 @@
             this.playingList[this.playingInfo.currentIndex].musicInfo = {}
           }
         } else {
-          this.playingInfo.currentIndex = this.getIndexById(data.music[0].id)
-          this.playMusic(this.playingInfo.currentIndex)
-        }
+          let _oldLen = this.playingList.length
+          // this.playingList = this.playingList.concat(data.music)
+          this.concatList(data.music)
+          if (_oldLen !== this.playingList.length) {
+            this.playingInfo.isLoading = true
+            this.playingInfo.currentIndex = _oldLen
+            let audioListData = await this.$store.dispatch('moduleNem/getMusicDetail', {
+              id: this.playingList[this.playingInfo.currentIndex].id
+            })
+            if (audioListData.length > 0) {
+              this.playingList[this.playingInfo.currentIndex].musicInfo = audioListData[0]
+              this.playMusic(this.playingInfo.currentIndex)
+            } else {
+              this.playingList[this.playingInfo.currentIndex].musicInfo = {}
+            }
+          } else {
+            this.playingInfo.currentIndex = this.getIndexById(data.music[0].id)
+            this.playMusic(this.playingInfo.currentIndex)
+          }
+        }        
       },
       seekMusic (e) {
         this.playingInfo.seek = Math.min(e.getValue() * 1000, this.playingList[this.playingInfo.currentIndex].duration)
@@ -863,6 +883,7 @@
           this.playMusic(this.playingInfo.currentIndex)
         }
         this.$eventHub.$emit(this.events.nemMusic.play, {
+          from: 'box-list',
           music: [this.playingList[this.playingInfo.currentIndex]]
         })
       },
@@ -876,11 +897,13 @@
         }
         return _l
       },
-      async changePlayList (data) {
+      async changePlayList (data) {        
+        if (data.type === 'local') {
+          this.playingList = await StorageUtil.getItem(this.localStorageKeys.nemRecentlyPlayList) || []
+        } else {
+          this.playingList = this.formatList(data.detail.tracks)
+        }        
         this.cacheCurrentPlayListIndex = data.index
-
-        this.playingList = this.formatList(data.detail.tracks)
-
         this.playingInfo = Object.assign({}, this.playingInfo, {
           seek: 0,
           currentIndex: 0
@@ -919,9 +942,9 @@
       'playingList': {
         handler (val) {
           if (this.cacheCurrentPlayListIndex === -1) {
-            this.$store.commit(types.CACHE_RECENTLY_PLAY_LIST, {
-              recentlyPlayList: this.playingList
-            })
+            // this.$store.commit(types.CACHE_RECENTLY_PLAY_LIST, {
+            //   recentlyPlayList: this.playingList
+            // })
           }
           setTimeout(() => {
             this.initPlayListScroller()
