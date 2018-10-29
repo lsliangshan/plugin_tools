@@ -3,18 +3,21 @@
 		<div class="inner">
 			<div class="main_content">
 				<div class="m-search">
-					<Input search enter-button size="large" placeholder="搜索音乐" class="custom-input" v-model="searchKey" @on-enter="searchMusic" @on-search="searchMusic"/>
+					<Input search enter-button size="large" placeholder="搜索音乐" class="custom-input" v-model="searchKey" @on-enter="doSearch" @on-search="doSearch" @input="inputSearchKey"/>
 				</div>
 				<div class="m-bd">
 					<div class="m-bd-title">
-						搜索“{{searchKey}}”，找到 <span style="color: rgb(79, 192, 141);">{{totalCounts}}</span> 首单曲
+						搜索“{{searchKey}}”
+						<transition name="search-result-transition" enter-active-class="animated fadeIn faster" leave-active-class="animated fadeOut faster">
+							<span v-if="!inputing">，找到 <span style="color: rgb(79, 192, 141);">{{totalCounts}}</span> 首单曲</span>
+						</transition>
 					</div>
 					<div class="m-bd-table">
 						<Table stripe :loading="loadingData" :columns="columns" :data="songs['page-' + currentPage]"></Table>
 					</div>
 					<transition name="page-transition" enter-active-class="animated fadeIn faster" leave-active-class="animated fadeOut faster">				
 						<div class="m-bd-page" v-if="totalCounts > 0">
-							<Page :total="totalCounts" class="music_search_page" show-elevator show-sizer @on-change="changePage"/>
+							<Page :total="totalCounts" class="music_search_page" :page-size="limit" show-elevator @on-change="changePage"/>
 						</div>
 					</transition>
 				</div>
@@ -90,6 +93,7 @@
 				songs: {},
 				loadingData: true,
 				playingIndex: -1, // 正在播放当前列表中第几首歌
+				inputing: false,
 				columns: [
 					{
 						title: '',
@@ -135,11 +139,11 @@
 											},
 											click (e) {
 												that.playingIndex = Number(params.index)
-												that.songs['page-' + this.currentPage][this.playingIndex].artists = that.songs['page-' + this.currentPage][this.playingIndex].ar
-												that.songs['page-' + this.currentPage][this.playingIndex].album = that.songs['page-' + this.currentPage][this.playingIndex].al
-												that.songs['page-' + this.currentPage][this.playingIndex].duration = that.songs['page-' + this.currentPage][this.playingIndex].dt
+												that.songs['page-' + that.currentPage][that.playingIndex].artists = that.songs['page-' + that.currentPage][that.playingIndex].ar
+												that.songs['page-' + that.currentPage][that.playingIndex].album = that.songs['page-' + that.currentPage][that.playingIndex].al
+												that.songs['page-' + that.currentPage][that.playingIndex].duration = that.songs['page-' + that.currentPage][that.playingIndex].dt
 												that.$eventHub.$emit(that.events.nemMusic.play, {
-													music: [songs['page-' + this.currentPage][this.playingIndex]]
+													music: [that.songs['page-' + that.currentPage][that.playingIndex]]
 												})
 											}
 										}
@@ -198,10 +202,13 @@
 			},
 			offset () {
 				return this.limit * this.currentPage
+			},
+			events () {
+				return this.$store.state.events
 			}
 		},
-		created () {
-			this.searchKey = this.$route.query.s
+		async created () {
+			
 		},
 		methods: {
 			formatDuration (text) {
@@ -229,12 +236,19 @@
 							offset: this.offset,
 							limit: this.limit
 						})
-						this.totalCounts = searchMusicData.result.songCount
+						this.totalCounts = Math.min(600, searchMusicData.result.songCount)
 						this.songs['page-' + this.currentPage] = searchMusicData.result.songs
 					}
 					this.loadingData = false
 					resolve(true)
 				})
+			},
+			async doSearch () {
+				this.inputing = false
+				this.currentPage = 0
+				this.songs = {}
+				this.totalCounts = 0
+				await this.searchMusic()
 			},
 			async nextPage () {
 				if (this.currentPage < this.totalPages - 1) {
@@ -251,6 +265,18 @@
 			async changePage (index) {
 				this.currentPage = (index - 1)
 				await this.searchMusic()
+			},
+			inputSearchKey () {
+				this.inputing = true
+			}
+		},
+		watch: {
+			'$route.query.s': {
+				immediate: true,
+				async handler (val) {
+					this.searchKey = this.$route.query.s
+					await this.doSearch()
+				}
 			}
 		}
 	}

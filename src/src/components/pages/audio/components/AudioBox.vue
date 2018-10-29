@@ -59,6 +59,7 @@
                   </div>
                 </div>
                 <div class="right">
+                  <div class="music_name" v-if="playingList[playingInfo.currentIndex]">{{playingList[playingInfo.currentIndex].name}}</div>
                   <div class="close" @click="closeListContainer">
                     <Icon type="ios-close" size="30" />
                   </div>
@@ -412,6 +413,16 @@
     width: 430px;
     height: 40px;
   }
+  .audio_box_container .wrap .ctrl .add .playing_list_container .hd .right .music_name {
+    width: 100%;
+    height: 40px;
+    color: #ffffff;
+    font-size: 14px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
   .audio_box_container .wrap .ctrl .add .playing_list_container .hd .right .close {
     position: absolute;
     right: 0;
@@ -570,7 +581,7 @@
           seek: 0, // 播放进度
           interval: 0,
           isLoading: false,
-          volume: 7, // 音量
+          volume: 100, // 音量
           mode: 'list', // 循环模式 list:列表循环; loop:单曲重复; random:随机播放
           currentIndex: -1 // 正在播放的音乐的索引值
         },
