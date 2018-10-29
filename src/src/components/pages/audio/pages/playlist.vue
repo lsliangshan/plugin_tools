@@ -393,6 +393,9 @@
 			this.loadingData = false
 			this.description = (this.albumDetail.playlist.description.length > 100) ? (this.albumDetail.playlist.description.substring(0, 100) + '...').split('\n') : this.albumDetail.playlist.description.split('\n')
 		},
+		mounted () {
+			this.$eventHub.$on(this.events.nemMusic.play, this.playHandle)
+		},
 		methods: {
 			init () {
 				return new Promise(async (resolve) => {
@@ -423,7 +426,22 @@
 					resolve(true)
 				})
 			},
-			getMusicList () {}
+			getMusicList () {},
+			getIndexById (id) {
+				let i = 0
+				let outIndex = -1
+				let _list = this.albumDetail.playlist.tracks
+				for (i; i < _list.length; i++) {
+					if (String(id) === String(_list[i].id)) {
+						outIndex = i
+						i = _list.length
+					}
+				}
+				return outIndex
+			},
+			playHandle (data) {
+				this.playingIndex = this.getIndexById(data.music[0].id)
+			}
 		},
 		filters: {
 			formatCreateTime (text) {
