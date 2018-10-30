@@ -3,9 +3,11 @@
     <div class="app_logo_container" @click="goHome">
       <img :src="logo">
     </div>
-    <div class="music_search_container">
-      <Input prefix="ios-search" placeholder="搜索音乐" style="width: auto" v-model="searchMusicKey" @on-enter="searchMusic" />
-    </div>
+    <transition name="music-search-transition" enter-active-class="animated fadeIn faster" leave-active-class="animated fadeOut faster">
+      <div class="music_search_container" v-if="showAudio">
+        <Input prefix="ios-search" placeholder="搜索音乐" style="width: auto" v-model="searchMusicKey" @on-enter="searchMusic" />
+      </div>
+    </transition>    
     <div class="headers_right">
       <top-menu></top-menu>
       <div class="settings_container">
@@ -96,6 +98,9 @@ export default {
       return {
         color: (this.activeThemeIndex.join(';').indexOf('-1') > -1 ? '#515a6e' : '#FFFFFF')
       }
+    },
+    showAudio () {
+      return this.$store.state.showAudio
     }
   },
   methods: {

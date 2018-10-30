@@ -45,6 +45,9 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta && to.meta.title) {
     document.title = to.meta.title
   }
+  if (to.meta && to.meta.needAudio) {
+    store.state.showAudio = true
+  }
   if (to.meta && to.meta.needLogin) {
     if (to.meta.needLogin === 'nem' && _localNemLoginInfo.userPoint && _localNemLoginInfo.userPoint.userId) {
       next()

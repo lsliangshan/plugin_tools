@@ -246,8 +246,8 @@
 				audioCurrentTime: 0,
 				loginModal: {
 					shown: false,
-					username: 'loveliangshan@126.com',
-					password: 'liangshan001'
+					username: '',
+					password: ''
 				},
 				isLogin: false,
 				md5sum: {},

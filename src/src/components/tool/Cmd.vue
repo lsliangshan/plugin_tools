@@ -1,5 +1,5 @@
 <template>
-	<div class="window_cmd_container">
+	<div class="window_cmd_container" :style="windowCmdContainerStyles">
 		<div class="window_cmd_inner" :class="{show: shown}" :style="{pointerEvents: (shown ? 'auto' : 'none')}">
 			<div class="window_cmd_toggle_container">
 				<Tooltip :content="shown ? '关闭操作框 cmd/ctrl + shift + R' : '打开操作框 cmd/ctrl + shift + R'" placement="left">
@@ -35,6 +35,7 @@
 		overflow: hidden;
 		pointer-events: none;
 		background-color: transparent;
+		transition: all .3s ease-in-out;
 	}
 	.window_cmd_inner {
 		position: absolute;
@@ -137,6 +138,7 @@
 </style>
 
 <script>
+	import * as types from '../../store/mutation-types'
 	import router from '../../router/content-routes.js'
 	export default {
 		name: 'Cmd',
@@ -166,6 +168,16 @@
 				],
 				historyCommands: [],
 				activeHistoryIndex: -1
+			}
+		},
+		computed: {
+			showAudio () {
+				return this.$store.state.showAudio
+			},
+			windowCmdContainerStyles () {
+				return {
+					bottom: (this.shown ? '80px' : (this.showAudio ? '80px' : '30px'))
+				}
 			}
 		},
 		mounted () {
@@ -349,8 +361,11 @@
 				 * audio相关操作
 				 */
 				if (!args.args || args.args.length < 1) {
-					this.$router.replace({
-						name: 'audio'
+					// this.$router.replace({
+					// 	name: 'audio'
+					// })
+					this.$store.commit(types.SET_AUDIO_SHOWN, {
+						show: true
 					})
 					// this.autoReply({
 					// 	status: 'error',
@@ -358,7 +373,12 @@
 					// })
 				} else {
 					let _op = args.args.shift()
-					switch (_op) {						
+					switch (_op) {
+						case 'hide':
+							this.$store.commit(types.SET_AUDIO_SHOWN, {
+								show: false
+							})
+							break
 						case 'play':
 							this.commandPlay({
 								args: args.args

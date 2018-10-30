@@ -119,6 +119,7 @@ const store = new Vuex.Store({
       mode: 'loop', // 播放模式, loop: 单曲重复；list: 列表重复；random: 随机播放
       volume: 1 // 音量
     },
+    showAudio: false, // 是否显示audio模块，audio search 和 audio box
     activeThemeIndex: [0, 1],
     bodyStyles: {},
     events: {

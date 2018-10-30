@@ -2,7 +2,9 @@
   <div id="app">
     <router-view name="HomeRouter"/>
     <all-svg></all-svg>
-    <audio-box></audio-box>
+    <transition name="audio-box-transition" enter-active-class="animated slideInUp faster" leave-active-class="animated slideOutDown faster">
+      <audio-box v-if="showAudio"></audio-box>
+    </transition>
   </div>  
 </template>
 
@@ -44,6 +46,9 @@ export default {
     },
     events () {
       return this.$store.state.events
+    },
+    showAudio () {
+      return this.$store.state.showAudio
     }
   },
   created () {

@@ -43,7 +43,8 @@ export default {
 		path: '/audio',
 		name: 'audio',
 		meta: {
-			title: '音乐'
+			title: '音乐',
+			needAudio: true
 		},
 		components: {
 			ContentRouter: () =>
@@ -53,7 +54,8 @@ export default {
 		path: '/audio/playlist',
 		name: 'playlist',
 		meta: {
-			title: '歌单'
+			title: '歌单',
+			needAudio: true
 		},
 		components: {
 			ContentRouter: () =>
@@ -64,7 +66,8 @@ export default {
 		name: 'discover.recommend.taste',
 		meta: {
 			title: '每日推荐歌曲',
-			needLogin: 'nem'
+			needLogin: 'nem',
+			needAudio: true
 		},
 		components: {
 			ContentRouter: () =>
@@ -74,7 +77,8 @@ export default {
 		path: '/audio/search/m',
 		name: 'search.m',
 		meta: {
-			title: '搜索结果'
+			title: '搜索结果',
+			needAudio: true
 		},
 		components: {
 			ContentRouter: () =>

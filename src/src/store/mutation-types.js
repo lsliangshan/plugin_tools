@@ -162,6 +162,9 @@ export const CACHE_NEM_LOGIN_INFO = 'CACHE_NEM_LOGIN_INFO'
 // 缓存最近收听的歌单
 export const CACHE_RECENTLY_PLAY_LIST = 'CACHE_RECENTLY_PLAY_LIST'
 
+// 是否显示audio模块（audioSearch/audioBox）
+export const SET_AUDIO_SHOWN = 'SET_AUDIO_SHOWN'
+
 // >>>> actions:
 
 // 登录1
