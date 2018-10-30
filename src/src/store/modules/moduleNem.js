@@ -11,8 +11,8 @@ const moduleNem = {
 	state: {
 		md5sum: {},
 		loginInfo: {}, // 用户登录信息
-		// nemApiUrl: 'https://talkapi.dei2.com/nem/index/v1',
-		nemApiUrl: 'http://127.0.0.1:3000/nem/index/v1',
+		nemApiUrl: 'https://talkapi.dei2.com/nem/index/v1',
+		// nemApiUrl: 'http://127.0.0.1:3000/nem/index/v1',
 		nemApi: {
 			baseURL: 'http://music.163.com',
 			login: '/weapi/login', // 登录 网易云音乐
