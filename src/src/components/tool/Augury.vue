@@ -34,7 +34,25 @@
           <div class="item" v-for="(item, index) in list" :key="index" :class="{active: (index === activeIndex)}" :data-index="index" @click="chooseType">{{item.name}}</div>
         </div>
         <div class="ft">
-          <div class="game"></div>
+          <transition name="game-transition" enter-active-class="animated fadeInDown faster" leave-active-class="animated fadeOut faster">
+            <div class="game" v-if="playing"></div>
+          </transition>
+          <transition name="btn-transition" enter-active-class="animated fadeIn delay-1s" leave-active-class="animated fadeOutDown faster">
+            <div class="btn" v-if="!playing" @click="qiuqian">
+              <svg>
+                <use xlink:href="#augury-qiu"></use>
+              </svg>
+            </div>
+          </transition>
+          <transition name="result-transition" enter-active-class="animated bounceIn delay-2s" leave-active-class="animated fadeOut">
+            <div class="result" v-if="!playing && result">
+              <div class="wrapper" :style="{transform: 'rotate(-' + Math.floor(Math.random() * 30) + 'deg)'}">
+                <div class="inner" :class="{danger: (resultIndex > 2)}">
+                  {{result}}
+                </div>
+              </div>
+            </div>
+          </transition>
         </div>
       </div>
     </div>
@@ -42,12 +60,12 @@
 </template>
 <style scoped>
   @keyframes play {
-    100%{
+    100% {
       background-position: -737px -2px;
     }
   }
   @-webkit-keyframes play {
-    100%{
+    100% {
       background-position: -737px -2px;
     }
   }
@@ -69,7 +87,8 @@
     border-radius: 4px;
     padding: 15px;
     box-sizing: border-box;
-    box-shadow: 0 0 1px #ccc, 0 0 2px #ccc, 0 0 3px #ccc, 0 0 4px #fff, 0 0 5px #fff, 0 0 6px #fff, 0 0 7px #fff, 0 0 8px #fff;
+    box-shadow: 0 0 1px #ccc, 0 0 2px #ccc, 0 0 3px #ccc, 0 0 4px #fff,
+      0 0 5px #fff, 0 0 6px #fff, 0 0 7px #fff, 0 0 8px #fff;
     background-color: #c8c8c8;
   }
   .box .hd {
@@ -105,7 +124,7 @@
   .box .su_hd svg {
     width: 16px;
     height: 16px;
-    fill: #fff;    
+    fill: #fff;
   }
   .box .dt {
     width: 100%;
@@ -134,7 +153,7 @@
     height: 60px;
     background-color: #dadada;
     border-radius: 3px;
-    transition: all .3s ease-in-out;
+    transition: all 0.3s ease-in-out;
     cursor: pointer;
     display: flex;
     flex-direction: row;
@@ -146,6 +165,7 @@
     color: #fff;
   }
   .box .ft {
+    position: relative;
     width: 100%;
     height: 250px;
     display: flex;
@@ -154,18 +174,68 @@
     justify-content: center;
   }
   .box .ft .game {
-    width:145px;
-    height:300px;
-    transform: scale(.5);
-    display:inline-block;
-    overflow:hidden;
+    width: 145px;
+    height: 300px;
+    transform: scale(0.5);
+    display: inline-block;
+    overflow: hidden;
     background-repeat: no-repeat;
     background-image: url(/html/static/images/augury.png);
     background-position: -2px -2px;
     animation: play 0.8s steps(5) infinite;
     -webkit-animation: play 0.8s steps(5) infinite;
+    animation-delay: 500ms;
   }
-
+  .box .ft .btn {
+    cursor: pointer;
+    position: absolute;
+  }
+  .box .ft .btn svg {
+    width: 50px;
+    height: 50px;
+    fill: #dc143c;
+  }
+  .box .ft .result {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    font-size: 18px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  @keyframes result {
+    0% {
+      transform: scale(3);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  .box .ft .result .inner {
+    width: 100px;
+    height: 40px;
+    font-weight: bolder;
+    border: 2px solid rgb(79, 192, 141);
+    background-color: transparent;
+    color: rgb(79, 192, 141);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    animation: result 0.3s;
+    animation-delay: 2s;
+  }
+  .box .ft .result .inner.danger {
+    border-color: #dc143c !important;
+    color: #dc143c !important;
+  }
 
   .greeting {
     width: 120px;
@@ -180,132 +250,222 @@
     color: #eee;
     font-size: 40px;
     cursor: pointer;
-    transition: all .3s ease-in-out;
+    transition: all 0.3s ease-in-out;
     animation: neon3 1.5s ease-in-out infinite alternate;
     /*-webkit-animation: neon1 1.5s ease-in-out infinite alternate;*/
   }
   .demo_text:hover {
-    color: #fff;    
+    color: #fff;
   }
   @keyframes neon1 {
     0% {
-      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FF1177, 0 0 70px #FF1177, 0 0 80px #FF1177, 0 0 100px #FF1177, 0 0 150px #FF1177;
+      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff1177,
+        0 0 70px #ff1177, 0 0 80px #ff1177, 0 0 100px #ff1177, 0 0 150px #ff1177;
     }
     100% {
-      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #FF1177, 0 0 35px #FF1177, 0 0 40px #FF1177, 0 0 50px #FF1177, 0 0 75px #FF1177;
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff1177,
+        0 0 35px #ff1177, 0 0 40px #ff1177, 0 0 50px #ff1177, 0 0 75px #ff1177;
     }
   }
   @keyframes neon2 {
     0% {
-      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ccc, 0 0 70px #ccc, 0 0 80px #ccc, 0 0 100px #ccc, 0 0 150px #ccc;
+      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ccc,
+        0 0 70px #ccc, 0 0 80px #ccc, 0 0 100px #ccc, 0 0 150px #ccc;
     }
     100% {
-      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ccc, 0 0 35px #ccc, 0 0 40px #ccc, 0 0 50px #ccc, 0 0 75px #ccc;
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ccc,
+        0 0 35px #ccc, 0 0 40px #ccc, 0 0 50px #ccc, 0 0 75px #ccc;
     }
   }
   @keyframes neon3 {
     0% {
-      text-shadow: 0 0 10px #ccc, 0 0 20px #ccc, 0 0 30px #ccc, 0 0 40px #fff, 0 0 70px #fff, 0 0 80px #fff, 0 0 100px #fff, 0 0 150px #fff;
+      text-shadow: 0 0 10px #ccc, 0 0 20px #ccc, 0 0 30px #ccc, 0 0 40px #fff,
+        0 0 70px #fff, 0 0 80px #fff, 0 0 100px #fff, 0 0 150px #fff;
     }
     100% {
-      text-shadow: 0 0 5px #ccc, 0 0 10px #ccc, 0 0 15px #ccc, 0 0 20px #fff, 0 0 35px #fff, 0 0 40px #fff, 0 0 50px #fff, 0 0 75px #fff;
+      text-shadow: 0 0 5px #ccc, 0 0 10px #ccc, 0 0 15px #ccc, 0 0 20px #fff,
+        0 0 35px #fff, 0 0 40px #fff, 0 0 50px #fff, 0 0 75px #fff;
     }
   }
 </style>
 <script>
   import anime from 'animejs'
+  import { StorageUtil } from '../../utils/index'
   export default {
     name: 'augury',
-    data () {
+    data() {
       return {
         activeIndex: -1,
+        playing: false,
         list: [
           {
-            name: '开发'
+            name: '开发',
+            value: 'develop'
           },
           {
-            name: '测试'
+            name: '测试',
+            value: 'testing'
           },
           {
-            name: '修复bug'
+            name: '修复bug',
+            value: 'fixbug'
           },
           {
-            name: '提交代码'
+            name: '提交代码',
+            value: 'commit'
           },
           {
-            name: '其它'
+            name: '其它',
+            value: 'other'
           }
-        ]
+        ],
+        results: ['大吉', '中吉', '小吉', '小凶', '中凶', '大凶'],
+        result: '',
+        resultIndex: -1,
+        storageKey: 'local-augury-result'
       }
     },
     computed: {
-      bodyStyles () {
+      bodyStyles() {
         return this.$store.state.bodyStyles
       },
-      containerStyles () {    
+      containerStyles() {
         return {
-          height: (this.bodyStyles.height - 65) + 'px'
+          height: this.bodyStyles.height - 65 + 'px'
         }
       }
     },
-    created () {
+    created() {
       this.$nextTick(() => {
         this.animer = anime({
           targets: '.greeting .lines path',
           strokeDashoffset: [anime.setDashoffset, 0],
           easing: 'easeInOutSine',
           duration: 800,
-          delay: function(el, i) { return i * 500 },
+          delay: function(el, i) {
+            return i * 500
+          },
           direction: 'alternate',
           loop: false,
-          complete (anim) {
+          complete(anim) {
             setTimeout(() => {
-            //  let relativeOffset = anime.timeline()
-            //  relativeOffset
-            //  .add([
-            //    // {
-            //    //  targets: '.greeting_wrapper .lines path',
-            //    //  opacity: 0,
-            //    //  offset: 0,
-            //      // complete () {
-            //      //  // that.$router.replace({
-            //      //  //  name: 'json'
-            //      //  // })
-            //      // }
-            // // }
-            //    {
-            //      targets: '.greeting_wrapper',
-            //      scale: 0.42,
-            //      duration: 500,
-            //      left: -120,
-            //      top: -20,
-            //      easing: 'linear',
-            //      complete () {
-            //        that.$router.replace({
-            //          name: 'index'
-            //        })
-            //      }
-            //    }
-            //  ])
+              //  let relativeOffset = anime.timeline()
+              //  relativeOffset
+              //  .add([
+              //    // {
+              //    //  targets: '.greeting_wrapper .lines path',
+              //    //  opacity: 0,
+              //    //  offset: 0,
+              //      // complete () {
+              //      //  // that.$router.replace({
+              //      //  //  name: 'json'
+              //      //  // })
+              //      // }
+              // // }
+              //    {
+              //      targets: '.greeting_wrapper',
+              //      scale: 0.42,
+              //      duration: 500,
+              //      left: -120,
+              //      top: -20,
+              //      easing: 'linear',
+              //      complete () {
+              //        that.$router.replace({
+              //          name: 'index'
+              //        })
+              //      }
+              //    }
+              //  ])
             }, 800)
           }
         })
-      })    
+      })
     },
     methods: {
-      getDateStr () {
+      getDateStr() {
         let _now = new Date()
         let _y = _now.getFullYear()
         let _m = _now.getMonth() + 1
-        _m = (_m < 10 ? ('0' + _m) : _m)
+        _m = _m < 10 ? '0' + _m : _m
         let _d = _now.getDate()
-        _d = (_d < 10 ? ('0' + _d) : _d)
-        let _week_day = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+        _d = _d < 10 ? '0' + _d : _d
+        let _week_day = [
+          '星期日',
+          '星期一',
+          '星期二',
+          '星期三',
+          '星期四',
+          '星期五',
+          '星期六'
+        ]
         let weekDay = _week_day[_now.getDay()]
         return `今天是${_y}年${_m}月${_d}日 ${weekDay}`
       },
-      chooseType (e) {
+      chooseType(e) {
         this.activeIndex = Number(e.target.dataset.index)
+      },
+      sleep(ts) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve(true)
+          }, ts || 3000)
+        })
+      },
+      getTomorrowTs() {
+        /**
+         * 获取自然日  第二天 零点
+         */
+        let _now = new Date()
+        _now.setHours(23)
+        _now.setMinutes(59)
+        _now.setSeconds(59)
+        _now.setMilliseconds(0)
+        return _now.getTime() + 1000
+      },
+      async getResult(result) {
+        this.playing = true
+        await this.sleep(3000)
+        if (result) {
+          this.result = result
+          this.resultIndex = this.results.indexOf(result)
+        } else {
+          let _ran = Math.floor(Math.random() * this.results.length)
+          this.resultIndex = _ran
+          this.result = this.results[_ran]
+          await StorageUtil.setItem(
+            this.storageKey + '-' + this.list[Number(this.activeIndex)].value,
+            {
+              result: this.result,
+              expireAt: this.getTomorrowTs()
+            }
+          )
+        }
+        this.playing = false
+      },
+      async qiuqian() {
+        if (this.playing) {
+          return
+        }
+        if (this.activeIndex < 0) {
+          // 请先选择类型
+          this.$Message.info('请先选择所求之事')
+        } else {
+          let _localResult = await StorageUtil.getItem(
+            this.storageKey + '-' + this.list[Number(this.activeIndex)].value
+          )
+          if (_localResult) {
+            if (_localResult.expireAt <= new Date().getTime()) {
+              await StorageUtil.removeItem(
+                this.storageKey + '-' + this.list[Number(this.activeIndex)].value
+              )
+              this.getResult()
+            } else {
+              this.getResult(_localResult.result)
+            }
+          } else {
+            this.getResult()
+          }
+        }
       }
     }
   }
