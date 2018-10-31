@@ -12,6 +12,20 @@ export default {
   },
   children: [
     {
+      path: '/augury',
+      name: 'augury',
+      meta: {
+        label: '程序员求签',
+        title: '程序员求签',
+        icon: '#route-augury',
+        name: '程序员求签',
+        desc: '不求生老病死，只求程序无BUG，产品无需求，UI无变更'
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Augury.vue')
+      }
+    },
+    {
       path: '/pinyin',
       name: 'pinyin',
       meta: {

@@ -229,6 +229,10 @@
 	}
 </style>
 <script>
+	/**
+	 * https://zurb.com/playground/sliding-vinyl
+	 * css特效 - 专辑
+	 */
 	import * as types from '../../store/mutation-types'
 	import { StorageUtil } from '../../utils/index'
 	import crypto from 'crypto'

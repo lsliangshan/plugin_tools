@@ -361,9 +361,9 @@
 				 * audio相关操作
 				 */
 				if (!args.args || args.args.length < 1) {
-					// this.$router.replace({
-					// 	name: 'audio'
-					// })
+					this.$router.replace({
+						name: 'audio'
+					})
 					this.$store.commit(types.SET_AUDIO_SHOWN, {
 						show: true
 					})
