@@ -39,6 +39,20 @@ export default {
         ContentRouter: () =>
           import('../components/tool/Pinyin.vue')
       }
+    },
+    {
+      path: '/morse',
+      name: 'morse',
+      meta: {
+        label: '摩斯电码',
+        title: '摩斯电码',
+        icon: '#route-morse',
+        name: '摩斯电码',
+        desc: '摩斯电码编码解码'
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Morse.vue')
+      }
     }
   ]
 }
