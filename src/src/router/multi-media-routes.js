@@ -8,7 +8,7 @@ export default {
   },
   components: {
     HomeRouter: () =>
-      import ('../components/Home.vue')
+      import('../components/Home.vue')
   },
   children: [{
     path: '/qrcode',
@@ -22,7 +22,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Qrcode.vue')
+        import('../components/tool/Qrcode.vue')
     }
   }, {
     path: '/img',
@@ -36,7 +36,20 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Image.vue')
+        import('../components/tool/Image.vue')
+    }
+  }, {
+    path: '/steganography',
+    name: 'steganography',
+    meta: {
+      label: '图片隐写术',
+      title: '图片隐写术',
+      icon: '#route-steganography',
+      name: '图片隐写术',
+      desc: '图片隐写术，内向同学的告白神器'
+    },
+    components: {
+      ContentRouter: () => import('../components/tool/Steganography.vue')
     }
   }]
 }
