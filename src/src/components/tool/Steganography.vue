@@ -16,7 +16,7 @@
 						        action="/">
                       <div class="upload_inner" v-if="!imageSrc">
                           <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-                          <p>点击选择或拖动上传图片</p>
+                          <p>点击选择或拖动图片</p>
                       </div>
                   </Upload>
                 </div>
