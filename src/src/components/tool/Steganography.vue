@@ -138,14 +138,15 @@
     justify-content: center;
   }
   .img_previewer > .img {
+    max-width: 100%;
+    max-height: 100%;
+    /* opacity: 0; */
+  }
+  .img_previewer > #canvas {
     position: absolute;
     max-width: 100%;
     max-height: 100%;
     opacity: 0;
-  }
-  .img_previewer > #canvas {
-    max-width: 100%;
-    max-height: 100%;
   }
   .img_uploader {
     position: absolute;
@@ -521,29 +522,37 @@
         this.resetModalData()
       },
       initImage(data) {
-        if (data.width / 600 >= data.height / 250) {
-          this.canvasSize.width = 600
-          this.canvasSize.height = (data.height * 600) / data.width
-        } else {
-          this.canvasSize.height = 250
-          this.canvasSize.width = (data.width * 250) / data.height
-        }
+        // if (data.width / 600 >= data.height / 250) {
+        //   this.canvasSize.width = 600
+        //   this.canvasSize.height = (data.height * 600) / data.width
+        // } else {
+        //   this.canvasSize.height = 250
+        //   this.canvasSize.width = (data.width * 250) / data.height
+        // }
+        // setTimeout(() => {
+        //   let _canvas = document.getElementById('canvas')
+        //   let _ctx = _canvas.getContext('2d')
+        //   _ctx.clearRect(0, 0, this.canvasSize.width, this.canvasSize.height)
+        //   _ctx.drawImage(
+        //     data.img,
+        //     0,
+        //     0,
+        //     data.width,
+        //     data.height,
+        //     0,
+        //     0,
+        //     this.canvasSize.width,
+        //     this.canvasSize.height
+        //   )
+        // }, 100)
+        this.canvasSize.width = data.width
+        this.canvasSize.height = data.height
         setTimeout(() => {
           let _canvas = document.getElementById('canvas')
           let _ctx = _canvas.getContext('2d')
           _ctx.clearRect(0, 0, this.canvasSize.width, this.canvasSize.height)
-          _ctx.drawImage(
-            data.img,
-            0,
-            0,
-            data.width,
-            data.height,
-            0,
-            0,
-            this.canvasSize.width,
-            this.canvasSize.height
-          )
-        }, 100)
+          _ctx.drawImage(data.img, 0, 0)
+        })
       },
       resetModalData() {
         this.encodeModal = {
