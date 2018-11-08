@@ -519,6 +519,7 @@
 					cancelText: '再想想',
 					onOk: () => {
 						this.userScripts.splice(Number(e.target.dataset.index), 1)
+						this.saveUserScripts()
 						this.$Message.success('删除成功')
 					}
 				})

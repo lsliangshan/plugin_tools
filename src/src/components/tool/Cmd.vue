@@ -297,6 +297,9 @@
 						case 'ajax':
 							this.commandAjax()
 							break
+						case 'scripts':
+							this.commandScripts()
+							break
 						// case 'play':
 						// 	this.commandPlay({
 						// 		args: _commandArgs
@@ -314,6 +317,11 @@
 			commandAjax () {
 				this.$router.replace({
 					name: 'ajax'
+				})
+			},
+			commandScripts () {
+				this.$router.replace({
+					name: 'scripts'
 				})
 			},
 			commandGo (args) {
