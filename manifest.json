@@ -15,19 +15,29 @@
   ],
   "browser_action": {
     "default_icon": "icon.png",
-    "default_popup": "html/index.html/#/popup"
+    "default_popup": "index.html#/popup"
   },
-  "content_scripts": [{
-    "matches": ["<all_urls>"],
-    "js": ["js/jquery-1.11.1.min.js", "js/jquery.json.js", "js/json2.js", "js/jsonlint.js", "content-script.js"],
-    "css": [],
-    "run_at": "document_start"
-  }],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "js/jquery-1.11.1.min.js",
+        "js/jquery.json.js",
+        "js/json2.js",
+        "js/jsonlint.js",
+        "content-script.js"
+      ],
+      "css": [],
+      "run_at": "document_start"
+    }
+  ],
   "background": {
-    "page": "html/index.html#/scripts"
+    "page": "index.html#/scripts"
   },
   "chrome_url_overrides": {
-    "newtab": "html/index.html#/blank"
+    "newtab": "index.html#/blank"
   },
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  "content_security_policy": "script-src 'self' https://g.alicdn.com/ 'unsafe-inline'; object-src 'self'"
 }

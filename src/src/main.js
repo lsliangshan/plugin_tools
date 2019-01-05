@@ -17,10 +17,10 @@ import {
 } from './utils/index'
 import '../static/css/font-awesome/css/font-awesome.min.css'
 import 'iview/dist/styles/iview.css'
-import "codemirror/lib/codemirror.css"
-import "codemirror/addon/fold/foldgutter.css"
-import "codemirror/theme/zenburn.css"
-import "codemirror/theme/dracula.css"
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/fold/foldgutter.css'
+import 'codemirror/theme/zenburn.css'
+import 'codemirror/theme/dracula.css'
 
 sync(store, router)
 
@@ -102,3 +102,9 @@ global.vue = new Vue({
   // template: '<App/>',
   // components: { App }
 })
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', { scope: '/' })
+  })
+}

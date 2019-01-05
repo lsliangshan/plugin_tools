@@ -1,5 +1,6 @@
 <template>
-  <div class="container" :style="containerStyles">
+  <div class="container"
+       :style="containerStyles">
     <div class="inner">
       <!-- <div class="greeting">
         <svg viewBox="0 0 100 100">
@@ -31,23 +32,40 @@
           <div class="it">- 选择所求之事并在心中默念，再单击“求”即可</div>
         </div>
         <div class="content">
-          <div class="item" v-for="(item, index) in list" :key="index" :class="{active: (index === activeIndex)}" :data-index="index" @click="chooseType">{{item.name}}</div>
+          <div class="item"
+               v-for="(item, index) in list"
+               :key="index"
+               :class="{active: (index === activeIndex)}"
+               :data-index="index"
+               @click="chooseType">{{item.name}}</div>
         </div>
         <div class="ft">
-          <transition name="game-transition" enter-active-class="animated fadeInDown faster" leave-active-class="animated fadeOut faster">
-            <div class="game" v-if="playing"></div>
+          <transition name="game-transition"
+                      enter-active-class="animated fadeInDown faster"
+                      leave-active-class="animated fadeOut faster">
+            <div class="game"
+                 v-if="playing"></div>
           </transition>
-          <transition name="btn-transition" enter-active-class="animated fadeIn delay-1s" leave-active-class="animated fadeOutDown faster">
-            <div class="btn" v-if="!playing" @click="qiuqian">
+          <transition name="btn-transition"
+                      enter-active-class="animated fadeIn delay-1s"
+                      leave-active-class="animated fadeOutDown faster">
+            <div class="btn"
+                 v-if="!playing"
+                 @click="qiuqian">
               <svg>
                 <use xlink:href="#augury-qiu"></use>
               </svg>
             </div>
           </transition>
-          <transition name="result-transition" enter-active-class="animated bounceIn delay-2s" leave-active-class="animated fadeOut">
-            <div class="result" v-if="!playing && result">
-              <div class="wrapper" :style="{transform: 'rotate(-' + Math.floor(Math.random() * 30) + 'deg)'}">
-                <div class="inner" :class="{danger: (resultIndex > 2)}">
+          <transition name="result-transition"
+                      enter-active-class="animated bounceIn delay-2s"
+                      leave-active-class="animated fadeOut">
+            <div class="result"
+                 v-if="!playing && result">
+              <div class="wrapper"
+                   :style="{transform: 'rotate(-' + Math.floor(Math.random() * 30) + 'deg)'}">
+                <div class="inner"
+                     :class="{danger: (resultIndex > 2)}">
                   {{result}}
                 </div>
               </div>
@@ -59,414 +77,414 @@
   </div>
 </template>
 <style scoped>
-  @keyframes play {
-    100% {
-      background-position: -737px -2px;
-    }
+@keyframes play {
+  100% {
+    background-position: -737px -2px;
   }
-  @-webkit-keyframes play {
-    100% {
-      background-position: -737px -2px;
-    }
+}
+@-webkit-keyframes play {
+  100% {
+    background-position: -737px -2px;
   }
-  .container {
-    width: 100%;
+}
+.container {
+  width: 100%;
+}
+.inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
+}
+.inner .box {
+  width: 360px;
+  height: 480px;
+  border-radius: 4px;
+  padding: 15px;
+  box-sizing: border-box;
+  box-shadow: 0 0 1px #ccc, 0 0 2px #ccc, 0 0 3px #ccc, 0 0 4px #fff,
+    0 0 5px #fff, 0 0 6px #fff, 0 0 7px #fff, 0 0 8px #fff;
+  background-color: #c8c8c8;
+}
+.box .hd {
+  width: 100%;
+  height: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 14px;
+  color: #333;
+  text-shadow: 0 0 1px #fff;
+}
+.box .su_hd {
+  width: 100%;
+  height: 24px;
+  color: #dc143c;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+.box .su_hd .icn {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: #dc143c;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.box .su_hd svg {
+  width: 16px;
+  height: 16px;
+  fill: #fff;
+}
+.box .dt {
+  width: 100%;
+  height: 32px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #ddd;
+}
+.box .tip {
+  width: 100%;
+  padding: 15px 10px;
+  box-sizing: border-box;
+}
+.box .content {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+.box .content .item {
+  width: 60px;
+  height: 60px;
+  background-color: #dadada;
+  border-radius: 3px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.box .content .item.active {
+  background-color: rgb(79, 192, 141);
+  color: #fff;
+}
+.box .ft {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.box .ft .game {
+  width: 145px;
+  height: 300px;
+  transform: scale(0.5);
+  display: inline-block;
+  overflow: hidden;
+  background-repeat: no-repeat;
+  background-image: url(/static/images/augury.png);
+  background-position: -2px -2px;
+  animation: play 0.8s steps(5) infinite;
+  -webkit-animation: play 0.8s steps(5) infinite;
+  animation-delay: 500ms;
+}
+.box .ft .btn {
+  cursor: pointer;
+  position: absolute;
+}
+.box .ft .btn svg {
+  width: 50px;
+  height: 50px;
+  fill: #dc143c;
+}
+.box .ft .result {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  font-size: 18px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+}
+@keyframes result {
+  0% {
+    transform: scale(3);
+    opacity: 0;
   }
-  .inner {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    background-color: #000;
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
-  .inner .box {
-    width: 360px;
-    height: 480px;
-    border-radius: 4px;
-    padding: 15px;
-    box-sizing: border-box;
-    box-shadow: 0 0 1px #ccc, 0 0 2px #ccc, 0 0 3px #ccc, 0 0 4px #fff,
-      0 0 5px #fff, 0 0 6px #fff, 0 0 7px #fff, 0 0 8px #fff;
-    background-color: #c8c8c8;
-  }
-  .box .hd {
-    width: 100%;
-    height: 32px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    font-size: 14px;
-    color: #333;
-    text-shadow: 0 0 1px #fff;
-  }
-  .box .su_hd {
-    width: 100%;
-    height: 24px;
-    color: #dc143c;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  .box .su_hd .icn {
-    width: 20px;
-    height: 20px;
-    border-radius: 10px;
-    background-color: #dc143c;
-    margin-right: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .box .su_hd svg {
-    width: 16px;
-    height: 16px;
-    fill: #fff;
-  }
-  .box .dt {
-    width: 100%;
-    height: 32px;
-    color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid #ddd;
-  }
-  .box .tip {
-    width: 100%;
-    padding: 15px 10px;
-    box-sizing: border-box;
-  }
-  .box .content {
-    width: 100%;
-    height: 60px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-  }
-  .box .content .item {
-    width: 60px;
-    height: 60px;
-    background-color: #dadada;
-    border-radius: 3px;
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  }
-  .box .content .item.active {
-    background-color: rgb(79, 192, 141);
-    color: #fff;
-  }
-  .box .ft {
-    position: relative;
-    width: 100%;
-    height: 250px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  }
-  .box .ft .game {
-    width: 145px;
-    height: 300px;
-    transform: scale(0.5);
-    display: inline-block;
-    overflow: hidden;
-    background-repeat: no-repeat;
-    background-image: url(/html/static/images/augury.png);
-    background-position: -2px -2px;
-    animation: play 0.8s steps(5) infinite;
-    -webkit-animation: play 0.8s steps(5) infinite;
-    animation-delay: 500ms;
-  }
-  .box .ft .btn {
-    cursor: pointer;
-    position: absolute;
-  }
-  .box .ft .btn svg {
-    width: 50px;
-    height: 50px;
-    fill: #dc143c;
-  }
-  .box .ft .result {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    font-size: 18px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
-  }
-  @keyframes result {
-    0% {
-      transform: scale(3);
-      opacity: 0;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-  .box .ft .result .inner {
-    width: 100px;
-    height: 40px;
-    font-weight: bolder;
-    border: 2px solid rgb(79, 192, 141);
-    background-color: transparent;
-    color: rgb(79, 192, 141);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    animation: result 0.3s;
-    animation-delay: 2s;
-  }
-  .box .ft .result .inner.danger {
-    border-color: #dc143c !important;
-    color: #dc143c !important;
-  }
+}
+.box .ft .result .inner {
+  width: 100px;
+  height: 40px;
+  font-weight: bolder;
+  border: 2px solid rgb(79, 192, 141);
+  background-color: transparent;
+  color: rgb(79, 192, 141);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  animation: result 0.3s;
+  animation-delay: 2s;
+}
+.box .ft .result .inner.danger {
+  border-color: #dc143c !important;
+  color: #dc143c !important;
+}
 
-  .greeting {
-    width: 120px;
-    height: 120px;
+.greeting {
+  width: 120px;
+  height: 120px;
+}
+.greeting svg {
+  width: 120px;
+  height: 120px;
+}
+.demo_text {
+  -webkit-user-select: none;
+  color: #eee;
+  font-size: 40px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  animation: neon3 1.5s ease-in-out infinite alternate;
+  /*-webkit-animation: neon1 1.5s ease-in-out infinite alternate;*/
+}
+.demo_text:hover {
+  color: #fff;
+}
+@keyframes neon1 {
+  0% {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff1177,
+      0 0 70px #ff1177, 0 0 80px #ff1177, 0 0 100px #ff1177, 0 0 150px #ff1177;
   }
-  .greeting svg {
-    width: 120px;
-    height: 120px;
+  100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff1177,
+      0 0 35px #ff1177, 0 0 40px #ff1177, 0 0 50px #ff1177, 0 0 75px #ff1177;
   }
-  .demo_text {
-    -webkit-user-select: none;
-    color: #eee;
-    font-size: 40px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    animation: neon3 1.5s ease-in-out infinite alternate;
-    /*-webkit-animation: neon1 1.5s ease-in-out infinite alternate;*/
+}
+@keyframes neon2 {
+  0% {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ccc,
+      0 0 70px #ccc, 0 0 80px #ccc, 0 0 100px #ccc, 0 0 150px #ccc;
   }
-  .demo_text:hover {
-    color: #fff;
+  100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ccc,
+      0 0 35px #ccc, 0 0 40px #ccc, 0 0 50px #ccc, 0 0 75px #ccc;
   }
-  @keyframes neon1 {
-    0% {
-      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff1177,
-        0 0 70px #ff1177, 0 0 80px #ff1177, 0 0 100px #ff1177, 0 0 150px #ff1177;
-    }
-    100% {
-      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff1177,
-        0 0 35px #ff1177, 0 0 40px #ff1177, 0 0 50px #ff1177, 0 0 75px #ff1177;
-    }
+}
+@keyframes neon3 {
+  0% {
+    text-shadow: 0 0 10px #ccc, 0 0 20px #ccc, 0 0 30px #ccc, 0 0 40px #fff,
+      0 0 70px #fff, 0 0 80px #fff, 0 0 100px #fff, 0 0 150px #fff;
   }
-  @keyframes neon2 {
-    0% {
-      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ccc,
-        0 0 70px #ccc, 0 0 80px #ccc, 0 0 100px #ccc, 0 0 150px #ccc;
-    }
-    100% {
-      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ccc,
-        0 0 35px #ccc, 0 0 40px #ccc, 0 0 50px #ccc, 0 0 75px #ccc;
-    }
+  100% {
+    text-shadow: 0 0 5px #ccc, 0 0 10px #ccc, 0 0 15px #ccc, 0 0 20px #fff,
+      0 0 35px #fff, 0 0 40px #fff, 0 0 50px #fff, 0 0 75px #fff;
   }
-  @keyframes neon3 {
-    0% {
-      text-shadow: 0 0 10px #ccc, 0 0 20px #ccc, 0 0 30px #ccc, 0 0 40px #fff,
-        0 0 70px #fff, 0 0 80px #fff, 0 0 100px #fff, 0 0 150px #fff;
-    }
-    100% {
-      text-shadow: 0 0 5px #ccc, 0 0 10px #ccc, 0 0 15px #ccc, 0 0 20px #fff,
-        0 0 35px #fff, 0 0 40px #fff, 0 0 50px #fff, 0 0 75px #fff;
-    }
-  }
+}
 </style>
 <script>
-  import anime from 'animejs'
-  import { StorageUtil } from '../../utils/index'
-  export default {
-    name: 'augury',
-    data() {
-      return {
-        activeIndex: -1,
-        playing: false,
-        list: [
-          {
-            name: '开发',
-            value: 'develop'
-          },
-          {
-            name: '测试',
-            value: 'testing'
-          },
-          {
-            name: '修复bug',
-            value: 'fixbug'
-          },
-          {
-            name: '提交代码',
-            value: 'commit'
-          },
-          {
-            name: '其它',
-            value: 'other'
-          }
-        ],
-        results: ['大吉', '中吉', '小吉', '小凶', '中凶', '大凶'],
-        result: '',
-        resultIndex: -1,
-        storageKey: 'local-augury-result'
-      }
-    },
-    computed: {
-      bodyStyles() {
-        return this.$store.state.bodyStyles
-      },
-      containerStyles() {
-        return {
-          height: this.bodyStyles.height - 65 + 'px'
+import anime from 'animejs'
+import { StorageUtil } from '../../utils/index'
+export default {
+  name: 'augury',
+  data () {
+    return {
+      activeIndex: -1,
+      playing: false,
+      list: [
+        {
+          name: '开发',
+          value: 'develop'
+        },
+        {
+          name: '测试',
+          value: 'testing'
+        },
+        {
+          name: '修复bug',
+          value: 'fixbug'
+        },
+        {
+          name: '提交代码',
+          value: 'commit'
+        },
+        {
+          name: '其它',
+          value: 'other'
         }
-      }
+      ],
+      results: ['大吉', '中吉', '小吉', '小凶', '中凶', '大凶'],
+      result: '',
+      resultIndex: -1,
+      storageKey: 'local-augury-result'
+    }
+  },
+  computed: {
+    bodyStyles () {
+      return this.$store.state.bodyStyles
     },
-    created() {
-      this.$nextTick(() => {
-        this.animer = anime({
-          targets: '.greeting .lines path',
-          strokeDashoffset: [anime.setDashoffset, 0],
-          easing: 'easeInOutSine',
-          duration: 800,
-          delay: function(el, i) {
-            return i * 500
-          },
-          direction: 'alternate',
-          loop: false,
-          complete(anim) {
-            setTimeout(() => {
-              //  let relativeOffset = anime.timeline()
-              //  relativeOffset
-              //  .add([
-              //    // {
-              //    //  targets: '.greeting_wrapper .lines path',
-              //    //  opacity: 0,
-              //    //  offset: 0,
-              //      // complete () {
-              //      //  // that.$router.replace({
-              //      //  //  name: 'json'
-              //      //  // })
-              //      // }
-              // // }
-              //    {
-              //      targets: '.greeting_wrapper',
-              //      scale: 0.42,
-              //      duration: 500,
-              //      left: -120,
-              //      top: -20,
-              //      easing: 'linear',
-              //      complete () {
-              //        that.$router.replace({
-              //          name: 'index'
-              //        })
-              //      }
-              //    }
-              //  ])
-            }, 800)
-          }
-        })
+    containerStyles () {
+      return {
+        height: this.bodyStyles.height - 65 + 'px'
+      }
+    }
+  },
+  created () {
+    this.$nextTick(() => {
+      this.animer = anime({
+        targets: '.greeting .lines path',
+        strokeDashoffset: [anime.setDashoffset, 0],
+        easing: 'easeInOutSine',
+        duration: 800,
+        delay: function (el, i) {
+          return i * 500
+        },
+        direction: 'alternate',
+        loop: false,
+        complete (anim) {
+          setTimeout(() => {
+            //  let relativeOffset = anime.timeline()
+            //  relativeOffset
+            //  .add([
+            //    // {
+            //    //  targets: '.greeting_wrapper .lines path',
+            //    //  opacity: 0,
+            //    //  offset: 0,
+            //      // complete () {
+            //      //  // that.$router.replace({
+            //      //  //  name: 'json'
+            //      //  // })
+            //      // }
+            // // }
+            //    {
+            //      targets: '.greeting_wrapper',
+            //      scale: 0.42,
+            //      duration: 500,
+            //      left: -120,
+            //      top: -20,
+            //      easing: 'linear',
+            //      complete () {
+            //        that.$router.replace({
+            //          name: 'index'
+            //        })
+            //      }
+            //    }
+            //  ])
+          }, 800)
+        }
+      })
+    })
+  },
+  methods: {
+    getDateStr () {
+      let _now = new Date()
+      let _y = _now.getFullYear()
+      let _m = _now.getMonth() + 1
+      _m = _m < 10 ? '0' + _m : _m
+      let _d = _now.getDate()
+      _d = _d < 10 ? '0' + _d : _d
+      let _week_day = [
+        '星期日',
+        '星期一',
+        '星期二',
+        '星期三',
+        '星期四',
+        '星期五',
+        '星期六'
+      ]
+      let weekDay = _week_day[_now.getDay()]
+      return `今天是${_y}年${_m}月${_d}日 ${weekDay}`
+    },
+    chooseType (e) {
+      this.activeIndex = Number(e.target.dataset.index)
+    },
+    sleep (ts) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve(true)
+        }, ts || 3000)
       })
     },
-    methods: {
-      getDateStr() {
-        let _now = new Date()
-        let _y = _now.getFullYear()
-        let _m = _now.getMonth() + 1
-        _m = _m < 10 ? '0' + _m : _m
-        let _d = _now.getDate()
-        _d = _d < 10 ? '0' + _d : _d
-        let _week_day = [
-          '星期日',
-          '星期一',
-          '星期二',
-          '星期三',
-          '星期四',
-          '星期五',
-          '星期六'
-        ]
-        let weekDay = _week_day[_now.getDay()]
-        return `今天是${_y}年${_m}月${_d}日 ${weekDay}`
-      },
-      chooseType(e) {
-        this.activeIndex = Number(e.target.dataset.index)
-      },
-      sleep(ts) {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve(true)
-          }, ts || 3000)
-        })
-      },
-      getTomorrowTs() {
-        /**
-         * 获取自然日  第二天 零点
-         */
-        let _now = new Date()
-        _now.setHours(23)
-        _now.setMinutes(59)
-        _now.setSeconds(59)
-        _now.setMilliseconds(0)
-        return _now.getTime() + 1000
-      },
-      async getResult(result) {
-        this.playing = true
-        await this.sleep(3000)
-        if (result) {
-          this.result = result
-          this.resultIndex = this.results.indexOf(result)
-        } else {
-          let _ran = Math.floor(Math.random() * this.results.length)
-          this.resultIndex = _ran
-          this.result = this.results[_ran]
-          await StorageUtil.setItem(
-            this.storageKey + '-' + this.list[Number(this.activeIndex)].value,
-            {
-              result: this.result,
-              expireAt: this.getTomorrowTs()
-            }
-          )
-        }
-        this.playing = false
-      },
-      async qiuqian() {
-        if (this.playing) {
-          return
-        }
-        if (this.activeIndex < 0) {
-          // 请先选择类型
-          this.$Message.info('请先选择所求之事')
-        } else {
-          let _localResult = await StorageUtil.getItem(
-            this.storageKey + '-' + this.list[Number(this.activeIndex)].value
-          )
-          if (_localResult) {
-            if (_localResult.expireAt <= new Date().getTime()) {
-              await StorageUtil.removeItem(
-                this.storageKey + '-' + this.list[Number(this.activeIndex)].value
-              )
-              this.getResult()
-            } else {
-              this.getResult(_localResult.result)
-            }
-          } else {
-            this.getResult()
+    getTomorrowTs () {
+      /**
+       * 获取自然日  第二天 零点
+       */
+      let _now = new Date()
+      _now.setHours(23)
+      _now.setMinutes(59)
+      _now.setSeconds(59)
+      _now.setMilliseconds(0)
+      return _now.getTime() + 1000
+    },
+    async getResult (result) {
+      this.playing = true
+      await this.sleep(3000)
+      if (result) {
+        this.result = result
+        this.resultIndex = this.results.indexOf(result)
+      } else {
+        let _ran = Math.floor(Math.random() * this.results.length)
+        this.resultIndex = _ran
+        this.result = this.results[_ran]
+        await StorageUtil.setItem(
+          this.storageKey + '-' + this.list[Number(this.activeIndex)].value,
+          {
+            result: this.result,
+            expireAt: this.getTomorrowTs()
           }
+        )
+      }
+      this.playing = false
+    },
+    async qiuqian () {
+      if (this.playing) {
+        return
+      }
+      if (this.activeIndex < 0) {
+        // 请先选择类型
+        this.$Message.info('请先选择所求之事')
+      } else {
+        let _localResult = await StorageUtil.getItem(
+          this.storageKey + '-' + this.list[Number(this.activeIndex)].value
+        )
+        if (_localResult) {
+          if (_localResult.expireAt <= new Date().getTime()) {
+            await StorageUtil.removeItem(
+              this.storageKey + '-' + this.list[Number(this.activeIndex)].value
+            )
+            this.getResult()
+          } else {
+            this.getResult(_localResult.result)
+          }
+        } else {
+          this.getResult()
         }
       }
     }
   }
+}
 </script>

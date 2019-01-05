@@ -19,7 +19,7 @@ export const popupRouter = {
   meta: {},
   components: {
     HomeRouter: () =>
-      import ('../components/Popup.vue')
+      import('../components/Popup.vue')
   }
 }
 
@@ -29,7 +29,7 @@ export const blankRouter = {
   meta: {},
   components: {
     HomeRouter: () =>
-      import ('../components/pages/Blank.vue')
+      import('../components/pages/Blank.vue')
   }
 }
 
@@ -43,7 +43,7 @@ export const scriptsRouter = {
   },
   components: {
     HomeRouter: () =>
-      import ('../components/Home.vue')
+      import('../components/Home.vue')
   },
   children: [
     {
@@ -105,6 +105,7 @@ export const scriptsRouter = {
 // }
 
 export default new Router({
+  // mode: 'history',
   routes: [
     popupRouter,
     blankRouter,

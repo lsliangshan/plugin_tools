@@ -54,9 +54,9 @@ const store = new Vuex.Store({
   },
   state: {
     theme: 'dark',
-    logo: '/html/static/images/new_logo.png',
+    logo: '/static/images/new_logo.png',
     themeColor: 'rgb(79, 192, 141)',
-    themeImages2: ['/html/static/images/themes/bg.jpg'],
+    themeImages2: ['/static/images/themes/bg.jpg'],
     mainColor: '',
     themeImages: [{
       label: '风景',
@@ -128,7 +128,7 @@ const store = new Vuex.Store({
       nemMusic: {
         play: 'nem-music-play', // 播放音乐
         add: 'nem-music-add', // 添加到播放列表,不立即播放
-        changePlayList: 'nem-change-play-list', // 切换歌单
+        changePlayList: 'nem-change-play-list' // 切换歌单
       }
     },
     localStorageKeys: {
@@ -141,7 +141,7 @@ const store = new Vuex.Store({
       activeThemeIndex: 'local-active-theme-index',
       blankHomePage: 'local-blank-home-page',
       userScripts: 'local-user-scripts',
-      nemRecentlyPlayList: 'local-nem-recently-play-list', // 网易云音乐 最近播放列表，本地列表
+      nemRecentlyPlayList: 'local-nem-recently-play-list' // 网易云音乐 最近播放列表，本地列表
     },
     blankHomePage: 'default',
     tools: [],
@@ -150,7 +150,7 @@ const store = new Vuex.Store({
     maxToolCount: 4,
     assets: {
       nemMusic: {
-        playBar: '/html/static/images/audiobox/playbar.png'
+        playBar: '/static/images/audiobox/playbar.png'
       }
     },
     requestInfo: {},

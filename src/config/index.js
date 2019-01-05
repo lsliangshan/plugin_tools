@@ -3,13 +3,15 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+const workbox = require('./workbox')
 
 module.exports = {
+  workbox,
   dev: {
 
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/html/',
+    assetsPublicPath: '/',
     proxyTable: {},
 
     // Various Dev Server settings
@@ -45,12 +47,12 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../dist/index.html'),
+    index: path.resolve(__dirname, '../../index.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../dist'),
+    assetsRoot: path.resolve(__dirname, '../../'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/html/',
+    assetsPublicPath: '/',
 
     /**
      * Source Maps

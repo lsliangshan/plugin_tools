@@ -1,45 +1,50 @@
 <template>
-  <div class="home_container" :style="homeStyles">
-    <div v-if="$route.name === 'home'" class="home" :style="homeStyles">
+  <div class="home_container"
+       :style="homeStyles">
+    <!-- <div v-if="$route.name === 'home'"
+         class="home"
+         :style="homeStyles">
       <greeting></greeting>
-    </div>
-    <div class="main_content" key="otherRouter" v-else :style="mainContentStyles">
+    </div> -->
+    <div class="main_content"
+         key="otherRouter"
+         :style="mainContentStyles">
       <headers></headers>
       <main-content></main-content>
-    </div>  
+    </div>
     <cmd></cmd>
   </div>
 </template>
 <style scoped>
-  .home_container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow-x: auto;
-    /*background-color: #d5d5d5;*/    
-  }
-  .main_content {
-    position: sticky;
-    width: 100%;
-    left: 0;
-    top: 0;
-    /*background-image: url(/html/static/images/themes/bg.jpg);*/
-    background-attachment: fixed;
-    background-size: cover;
-    /*background-size: 100% 100%;*/
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: #f2f2f2;
-  }
-  .home {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.home_container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  /*background-color: #d5d5d5;*/
+}
+.main_content {
+  position: sticky;
+  width: 100%;
+  left: 0;
+  top: 0;
+  /*background-image: url(/html/static/images/themes/bg.jpg);*/
+  background-attachment: fixed;
+  background-size: cover;
+  /*background-size: 100% 100%;*/
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #f2f2f2;
+}
+.home {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>
 <script>
 export default {
@@ -65,6 +70,11 @@ export default {
         backgroundImage: (this.activeThemeIndex.join(';').indexOf('-1') < 0 ? 'url(' + this.themeImages[this.activeThemeIndex[0]].sublist[this.activeThemeIndex[1]].img + ')' : '')
       }
     }
+  },
+  mounted () {
+    this.$router.replace({
+      name: 'index'
+    })
   },
   components: {
     Greeting: () => import('./Greeting.vue'),
