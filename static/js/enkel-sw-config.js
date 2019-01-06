@@ -43,7 +43,7 @@ var ENKEL_SW_CONFIG = {
       //   "maxAgeSeconds": 43200
       // }
       {
-        'match': /^(?!.*?(sockjs-node))(?!.*?(\.hot-update\.json)).*$/,
+        'match': /^(?!.*?(sockjs-node))(?!.*?(\.hot-update\.json))(?!.*?(enkel\/index\/sse)).*$/,
         'strategies': 'staleWhileRevalidate',
         'cacheName': 'route',
         'entries': 30,
