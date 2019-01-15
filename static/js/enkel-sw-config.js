@@ -7,31 +7,31 @@ var ENKEL_SW_CONFIG = {
     'html': {
       'cacheName': 'html',
       'entries': 10,
-      'maxAgeSeconds': 43200,
+      'maxAgeSeconds': 4320000,
       'strategies': 'staleWhileRevalidate'
     },
     'js': {
       'cacheName': 'js',
       'entries': 20,
-      'maxAgeSeconds': 43200,
+      'maxAgeSeconds': 4320000,
       'strategies': 'staleWhileRevalidate'
     },
     'css': {
       'cacheName': 'css',
       'entries': 30,
-      'maxAgeSeconds': 43200,
+      'maxAgeSeconds': 4320000,
       'strategies': 'staleWhileRevalidate'
     },
     'img': {
       'cacheName': 'img',
       'entries': 40,
-      'maxAgeSeconds': 43200,
+      'maxAgeSeconds': 4320000,
       'strategies': 'staleWhileRevalidate'
     },
     'font': {
       'cacheName': 'font',
       'entries': 40,
-      'maxAgeSeconds': 43200,
+      'maxAgeSeconds': 4320000,
       'strategies': 'staleWhileRevalidate'
     },
     'routes': [
@@ -47,7 +47,7 @@ var ENKEL_SW_CONFIG = {
         'strategies': 'staleWhileRevalidate',
         'cacheName': 'route',
         'entries': 30,
-        'maxAgeSeconds': 43200
+        'maxAgeSeconds': 4320000
       }
     ]
   }

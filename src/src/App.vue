@@ -86,7 +86,7 @@ export default {
     this.$store.commit(types.SET_BLANK_HOME_PAGE, {
       blankHomePage: await this.getBlankHomePage()
     })
-    this.connect()
+    // this.connect()
   },
   methods: {
     connect (args) {

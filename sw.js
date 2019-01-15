@@ -1,4 +1,4 @@
-importScripts("https://g.alicdn.com/kg/workbox/3.3.0/workbox-sw.js", "/static/js/enkel-sw-config.js", "/precache-manifest.2252a8918a87e2573fde5eb49101fe18.js");
+importScripts("https://g.alicdn.com/kg/workbox/3.3.0/workbox-sw.js", "/static/js/enkel-sw-config.js", "/precache-manifest.67fa770f25b1ff8a5876a323d84f153c.js");
 
 workbox.setConfig({
   debug: false,

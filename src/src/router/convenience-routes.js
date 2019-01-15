@@ -12,6 +12,20 @@ export default {
   },
   children: [
     {
+      path: '/scripts',
+      name: 'scripts',
+      meta: {
+        label: '网页脚本注入',
+        title: '网页脚本注入',
+        icon: '#route-scripts',
+        name: '网页脚本注入',
+        desc: '允许用户向目标网页注入脚本'
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Scripts.vue')
+      }
+    },
+    {
       path: '/augury',
       name: 'augury',
       meta: {

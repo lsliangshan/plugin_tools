@@ -33,6 +33,17 @@ export const blankRouter = {
   }
 }
 
+export const greetingRouter = {
+  path: '/greeting',
+  name: 'greeting',
+  meta: {
+    title: 'Enkel loves you'
+  },
+  components: {
+    HomeRouter: () => import('../components/Greeting.vue')
+  }
+}
+
 export const scriptsRouter = {
   path: '/',
   name: 'home',
@@ -115,6 +126,7 @@ export default new Router({
     ConvenienceRoutes,
     MultiMediaRoutes,
     StationMasterRoutes,
-    PageRoutes
+    PageRoutes,
+    greetingRouter
   ]
 })
