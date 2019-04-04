@@ -39,6 +39,7 @@ import * as actions from './actions'
 import * as mutations from './mutations'
 import * as getters from './getters'
 import moduleNem from './modules/moduleNem'
+import moduleUserScripts from './modules/moduleUserScripts'
 
 Vue.use(Vuex)
 
@@ -50,7 +51,8 @@ const store = new Vuex.Store({
   mutations: mutations.mutations,
   getters: getters.getters,
   modules: {
-    moduleNem
+    moduleNem,
+    moduleUserScripts
   },
   state: {
     theme: 'dark',

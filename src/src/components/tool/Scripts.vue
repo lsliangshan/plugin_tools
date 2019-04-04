@@ -114,8 +114,8 @@
     box-sizing: border-box;
     overflow-y: auto;
     /*display: flex;
-  		flex-direction: row;
-  		flex-wrap: wrap;*/
+                    		flex-direction: row;
+                    		flex-wrap: wrap;*/
   }
   .user_script_item {
     position: relative;
@@ -277,6 +277,7 @@
   //  })()
   // import CodeMirror from 'CodeMirror'
   import { StorageUtil } from '../../utils/index.js'
+  import { mapState } from 'vuex'
   export default {
     name: 'scripts',
     data () {
@@ -310,6 +311,9 @@
       }
     },
     computed: {
+      ...mapState({
+        officialUserScripts: state => state.moduleUserScripts.userScripts
+      }),
       bodyStyles () {
         return this.$store.state.bodyStyles
       },
@@ -330,7 +334,8 @@
     async created () {
       const that = this
 
-      this.userScripts = await StorageUtil.getItem(this.localStorageKeys.userScripts) || []
+      let userScripts = await StorageUtil.getItem(this.localStorageKeys.userScripts) || []
+      this.userScripts = this.officialUserScripts.concat(userScripts)
 
       let isMac = (navigator.platform === 'Mac68K') || (navigator.platform === 'MacPPC') || (navigator.platform === 'Macintosh') || (navigator.platform === 'MacIntel')
 
