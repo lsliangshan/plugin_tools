@@ -165,6 +165,21 @@ export const CACHE_RECENTLY_PLAY_LIST = 'CACHE_RECENTLY_PLAY_LIST'
 // 是否显示audio模块（audioSearch/audioBox）
 export const SET_AUDIO_SHOWN = 'SET_AUDIO_SHOWN'
 
+// 缓存登录信息
+export const CACHE_LOGIN_INFO = 'CACHE_LOGIN_INFO'
+
+// 获取缓存的登录信息
+export const GET_LOGIN_INFO = 'GET_LOGIN_INFO'
+
+// 清除登录信息
+export const REMOVE_LOGIN_INFO = 'REMOVE_LOGIN_INFO'
+
+// 更新登录信息
+export const CHANGE_LOGIN_INFO = 'CHANGE_LOGIN_INFO'
+
+// 缓存背景图片主色值
+export const CACHE_MAIN_COLOR = 'CACHE_MAIN_COLOR'
+
 // >>>> actions:
 
 // 登录1
@@ -205,3 +220,6 @@ export const AJAX = 'AJAX'
 
 // AJAX请求, 不需要登录状态的请求
 export const AJAX2 = 'AJAX2'
+
+// 获取主题图片
+export const GET_THEME_IMAGES = 'GET_THEME_IMAGES'

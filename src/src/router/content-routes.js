@@ -1,14 +1,8 @@
 export default {
-  path: '/',
-  name: 'home',
   meta: {
     label: 'Home',
     title: 'Enkel Tools',
     name: '代码处理'
-  },
-  components: {
-    HomeRouter: () =>
-      import ('../components/Home.vue')
   },
   children: [{
     path: '/json',
@@ -22,7 +16,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Json.vue')
+        import('../components/tool/Json.vue')
     }
   }, {
     path: '/url',
@@ -36,7 +30,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Url.vue')
+        import('../components/tool/Url.vue')
     }
   }, {
     path: '/base64',
@@ -50,7 +44,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Base64.vue')
+        import('../components/tool/Base64.vue')
     }
   }, {
     path: '/time',
@@ -64,7 +58,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Time.vue')
+        import('../components/tool/Time.vue')
     }
   }, {
     path: '/qrcode',
@@ -78,7 +72,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Qrcode.vue')
+        import('../components/tool/Qrcode.vue')
     }
   }, {
     path: '/img',
@@ -92,7 +86,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Image.vue')
+        import('../components/tool/Image.vue')
     }
   }, {
     path: '/diff',
@@ -132,7 +126,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Code.vue')
+        import('../components/tool/Code.vue')
     }
   }]
 }

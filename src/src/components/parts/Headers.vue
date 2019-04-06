@@ -19,7 +19,7 @@
     </transition>
     <div class="headers_right">
       <top-menu></top-menu>
-      <div class="settings_container">
+      <!-- <div class="settings_container">
         <Tooltip content="打开设置 cmd/ctrl + o"
                  placement="bottom-end">
           <Icon type="ios-cog"
@@ -27,7 +27,52 @@
                 @click="goSettings"
                 :style="settingsContainerStyles" />
         </Tooltip>
-      </div>
+      </div> -->
+      <div class="user_role"
+           v-if="loginInfo.username"
+           v-text="loginInfo.enkel_role ? loginInfo.enkel_role.name : ''"></div>
+      <Poptip trigger="click"
+              placement="bottom-end"
+              width="200"
+              class="user-badge">
+        <!-- <Badge dot> -->
+        <Avatar size="large"
+                :src="loginInfo.headIcon || (loginInfo.gender == 1 ? assets.maleAvatar : assets.femaleAvatar)"
+                class="user-avatar"></Avatar>
+        <!-- </Badge> -->
+        <div class="api"
+             slot="content">
+          <Card :bordered="false"
+                :padding="0">
+            <p slot="title"
+               v-text="loginInfo.nickname || loginInfo.username || '游客'"></p>
+            <a href="#"
+               slot="extra"
+               v-if="loginInfo.username"
+               @click.prevent="logout">
+              退出
+              <Icon type="md-power"></Icon>
+            </a>
+            <a href="#"
+               slot="extra"
+               v-else
+               @click.prevent="goToLogin">
+              登录/注册
+            </a>
+            <Menu width="200"
+                  @on-select="navToUserSet">
+              <MenuItem name="profile">
+              <Icon type="md-paper"></Icon>
+              个人中心
+              </MenuItem>
+              <MenuItem name="settings">
+              <Icon type="md-settings"></Icon>
+              设置
+              </MenuItem>
+            </Menu>
+          </Card>
+        </div>
+      </Poptip>
     </div>
   </div>
 </template>
@@ -86,8 +131,22 @@
   line-height: 65px;
   color: #ffffff;
 }
+
+.user_role {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin-right: 16px;
+  z-index: 1;
+  color: #ffffff;
+}
+.user-avatar {
+  background-color: #87d068;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 </style>
 <script>
+import * as types from '../../store/mutation-types'
 export default {
   name: 'Headers',
   data () {
@@ -98,6 +157,12 @@ export default {
   computed: {
     logo () {
       return this.$store.state.logo
+    },
+    assets () {
+      return this.$store.state.assets
+    },
+    loginInfo () {
+      return this.$store.state.loginInfo
     },
     activeThemeIndex () {
       return this.$store.state.activeThemeIndex
@@ -134,12 +199,20 @@ export default {
           s: this.searchMusicKey
         }
       })
-      // return new Promise(async (resolve) => {
-      //   let searchMusicData = await this.$store.dispatch('moduleNem/searchMusic', {
-      //     s: this.searchMusicKey
-      //   })
-      //   resolve(searchMusicData)
-      // })
+    },
+    navToUserSet (e) {
+      this.$router.replace({
+        name: e
+      })
+    },
+    goToLogin (e) {
+      this.$router.push({
+        name: 'login'
+      })
+    },
+    logout () {
+      this.$store.commit(types.REMOVE_LOGIN_INFO)
+      this.$Message.success('您已经退出')
     }
   },
   components: {

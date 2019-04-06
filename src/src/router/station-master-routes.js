@@ -1,14 +1,8 @@
 export default {
-  path: '/',
-  name: 'home',
   meta: {
     label: 'Home',
     title: 'Enkel Tools',
     name: '站长工具'
-  },
-  components: {
-    HomeRouter: () =>
-      import ('../components/Home.vue')
   },
   children: [{
     path: '/base64',
@@ -22,7 +16,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Base64.vue')
+        import('../components/tool/Base64.vue')
     }
   }, {
     path: '/ip',

@@ -13,8 +13,9 @@ import * as filters from './filters'
 import mixins from './mixins'
 import iView from 'iview'
 import {
-  StorageUtil
+  StorageUtil, KitUtil
 } from './utils/index'
+import * as types from './store/mutation-types'
 import '../static/css/font-awesome/css/font-awesome.min.css'
 import 'iview/dist/styles/iview.css'
 import 'codemirror/lib/codemirror.css'
@@ -37,7 +38,7 @@ Vue.mixin(mixins)
 Vue.use(iView)
 
 Vue.config.productionTip = false
-
+const CryptoJS = require('crypto-js')
 router.beforeEach(async (to, from, next) => {
   let _localNemLoginInfo = await StorageUtil.getItem(store.state.localStorageKeys.nemMusic.loginInfo)
   store.state.nemLoginInfo = _localNemLoginInfo || {}
@@ -48,6 +49,47 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta && to.meta.needAudio) {
     store.state.showAudio = true
   }
+  let _localUserInfo = await StorageUtil.getItem(store.state.localStorageKeys.userInfo)
+  if (_localUserInfo) {
+    let decodeInfo
+    try {
+      decodeInfo = CryptoJS[store.state.cryptoType].decrypt(_localUserInfo, store.state.privateKey).toString(CryptoJS.enc.Utf8)
+    } catch (err) {
+    }
+    if (decodeInfo) {
+      _localUserInfo = JSON.parse(decodeInfo)
+    } else {
+      StorageUtil.clear()
+      _localUserInfo = {}
+    }
+  } else {
+    _localUserInfo = {}
+  }
+  store.commit(types.CACHE_LOGIN_INFO, _localUserInfo)
+  if (to.name === 'login') {
+    // let _loginInfo = StorageUtil.getItem(store.state.localStorageKeys.userInfo)
+    if (_localUserInfo && !KitUtil.isEmptyObject(_localUserInfo)) {
+      // store.state.loginInfo = _localUserInfo
+      if (!from.name || from.name === 'login') {
+        next({
+          replace: true,
+          name: 'index'
+        })
+      } else {
+        setTimeout(() => {
+          next({
+            replace: true,
+            name: 'index'
+          })
+        }, 100)
+      }
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+
   if (to.meta && to.meta.needLogin) {
     if (to.meta.needLogin === 'nem' && _localNemLoginInfo.userPoint && _localNemLoginInfo.userPoint.userId) {
       next()
@@ -59,6 +101,7 @@ router.beforeEach(async (to, from, next) => {
   } else {
     next()
   }
+  // next()
 })
 
 router.afterEach(to => {

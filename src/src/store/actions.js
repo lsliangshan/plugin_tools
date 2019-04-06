@@ -39,41 +39,74 @@ const querystring = require('querystring')
 const instance = axios.create({
   timeout: 3000
 })
-const noop = function () {}
+const noop = function () { }
 export const actions = {
-  [types.LOGIN] ({commit, state}, data) {
-    return new Promise(async (resolve, reject) => {
-      setTimeout(() => {
-        resolve(data)
-      }, 3000)
-      // let loginData = await instance({
-      //   method: 'post',
-      //   baseURL: state.requestInfo.baseUrl,
-      //   url: state.requestInfo.login,
-      //   data: querystring.stringify(data)
-      // }).catch(err => {
-      //   reject(new Error(err.message))
-      // })
-      // resolve(loginData)
+  async [types.LOGIN] ({ commit, state }, data) {
+    let callback = noop
+    let error = noop
+    if (data.callback) {
+      callback = data.callback
+      delete data.callback
+    }
+    if (data.error) {
+      error = data.error
+      delete data.error
+    }
+    let loginData = await instance({
+      method: 'post',
+      baseURL: state.requestInfo.baseUrl,
+      url: state.requestInfo.login,
+      data: querystring.stringify(data)
+    })
+    if (loginData.config) {
+      delete loginData.config
+    }
+    if (loginData.status === 200) {
+      callback(loginData.data)
+    } else {
+      error(loginData)
+    }
+  },
+  async [types.REGISTER] ({ commit, state }, data) {
+    let callback = noop
+    let error = noop
+    if (data.callback) {
+      callback = data.callback
+      delete data.callback
+    }
+    if (data.error) {
+      error = data.error
+      delete data.error
+    }
+    let registerData = await instance({
+      method: 'post',
+      baseURL: state.requestInfo.baseUrl,
+      url: state.requestInfo.register,
+      data: querystring.stringify(data)
+    })
+    if (registerData.config) {
+      delete registerData.config
+    }
+    if (registerData.status === 200) {
+      callback(registerData.data)
+    } else {
+      error(registerData)
+    }
+  },
+  [types.GET_THEME_IMAGES] ({ commit, state }) {
+    return new Promise(async (resolve) => {
+      let responseData = await instance({
+        method: 'get',
+        baseURL: state.requestInfo.baseUrl,
+        url: state.requestInfo.getThemeImages
+      })
+      if (responseData.status === 200) {
+        state.themeImages = responseData.data.list
+      }
+      resolve(true)
     })
   },
-  [types.REGISTER] ({commit, state}, data) {
-    return new Promise(async (resolve, reject) => {
-      setTimeout(() => {
-        resolve(data)
-      }, 3000)
-      // let registerData = await instance({
-      //   method: 'post',
-      //   baseURL: state.requestInfo.baseUrl,
-      //   url: state.requestInfo.register,
-      //   data: querystring.stringify(data)
-      // }).catch(err => {
-      //   reject(new Error(err.message))
-      // })
-      // resolve(registerData)
-    })
-  },
-  [types.AJAX] ({commit, state}, data) {
+  [types.AJAX] ({ commit, state }, data) {
     return new Promise((resolve, reject) => {
       let params = JSON.parse(JSON.stringify(data))
       if (params.url === '') {
@@ -89,9 +122,9 @@ export const actions = {
       if (params.method && params.method.toLowerCase() === 'get') {
         requestData.params = params.data
       } else {
-        requestData.data = params.data
+        requestData.data = querystring.stringify(params.data)
       }
-      instance(requestData).then(({data}) => {
+      instance(requestData).then(({ data }) => {
         resolve(data)
       }).catch(err => {
         if (err.message.indexOf('timeout') > -1) {
@@ -102,7 +135,7 @@ export const actions = {
       })
     })
   },
-  [types.AJAX2] ({commit, state}, data) {
+  [types.AJAX2] ({ commit, state }, data) {
     return new Promise((resolve, reject) => {
       let params = JSON.parse(JSON.stringify(data))
       if (params.url === '') {
@@ -128,7 +161,7 @@ export const actions = {
     })
   },
   // 获取用户信息
-  async [types.GET_USER_INFO] ({commit, state}, data) {
+  async [types.GET_USER_INFO] ({ commit, state }, data) {
     let callback = noop
     let error = noop
     if (data.callback) {
@@ -155,7 +188,7 @@ export const actions = {
     }
   },
   // 更新用户信息
-  async [types.UPDATE_USER_INFO] ({commit, state}, data) {
+  async [types.UPDATE_USER_INFO] ({ commit, state }, data) {
     let callback = noop
     let error = noop
     if (data.callback) {
@@ -182,7 +215,7 @@ export const actions = {
     }
   },
   // 修改密码
-  async [types.MODIFY_PASSWORD] ({commit, state}, data) {
+  async [types.MODIFY_PASSWORD] ({ commit, state }, data) {
     let callback = noop
     let error = noop
     if (data.callback) {

@@ -1,14 +1,8 @@
 export default {
-  path: '/',
-  name: 'home',
   meta: {
     label: 'Home',
     title: 'Enkel Tools',
     name: '代码处理工具'
-  },
-  components: {
-    HomeRouter: () =>
-      import ('../components/Home.vue')
   },
   children: [{
     path: '/json',
@@ -22,7 +16,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Json.vue')
+        import('../components/tool/Json.vue')
     }
   }, {
     path: '/url',
@@ -36,7 +30,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Url.vue')
+        import('../components/tool/Url.vue')
     }
   }, {
     path: '/time',
@@ -50,7 +44,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Time.vue')
+        import('../components/tool/Time.vue')
     }
   }, {
     path: '/diff',
@@ -77,7 +71,7 @@ export default {
     },
     components: {
       ContentRouter: () =>
-        import ('../components/tool/Code.vue')
+        import('../components/tool/Code.vue')
     }
   }]
 }

@@ -47,6 +47,7 @@
 }
 </style>
 <script>
+import * as types from '../store/mutation-types'
 export default {
   name: 'home',
   data () {
@@ -66,8 +67,13 @@ export default {
       return this.$store.state.activeThemeIndex
     },
     mainContentStyles () {
+      let first = Math.min(this.activeThemeIndex[0], this.themeImages.length - 1)
+      let second = Math.min(this.activeThemeIndex[1], this.themeImages[first] ? this.themeImages[first].sublist.length - 1 : -1)
+      this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
+        activeThemeIndex: [first, second]
+      })
       return {
-        backgroundImage: (this.activeThemeIndex.join(';').indexOf('-1') < 0 ? 'url(' + this.themeImages[this.activeThemeIndex[0]].sublist[this.activeThemeIndex[1]].img + ')' : '')
+        backgroundImage: (this.activeThemeIndex.join(';').indexOf('-1') < 0 ? 'url(' + this.themeImages[first].sublist[second].img + ')' : '')
       }
     }
   },

@@ -1,14 +1,8 @@
 export default {
-  path: '/',
-  name: 'home',
   meta: {
     label: 'Home',
     title: 'Enkel Tools',
     name: '多媒体工具'
-  },
-  components: {
-    HomeRouter: () =>
-      import('../components/Home.vue')
   },
   children: [{
     path: '/qrcode',

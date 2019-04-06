@@ -13,6 +13,57 @@ import StationMasterRoutes from './station-master-routes.js'
 import PageRoutes from './page-routes.js'
 Vue.use(Router)
 
+// export const scriptsRouter = [
+//   {
+//     path: '/scripts',
+//     name: 'scripts',
+//     meta: {
+//       title: 'User Scripts'
+//     },
+//     components: {
+//       ContentRouter: () => import('../components/tool/Scripts.vue')
+//     }
+//   }
+// ]
+
+// const ProfileRouter = {
+//   path: '/profile',
+//   name: 'profile',
+//   meta: {
+//     title: '个人中心'
+//   },
+//   components: {
+//     ContentRouter: () => import('../components/pages/Profile.vue')
+//   }
+// }
+
+export const MainRouter = {
+  path: '/',
+  name: 'home',
+  meta: {
+    title: 'Enkel loves you'
+  },
+  components: {
+    HomeRouter: () => import('../components/Home.vue')
+  },
+  children: [
+    ...PageRoutes.children,
+    ...MultiMediaRoutes.children,
+    ...CodeRoutes.children,
+    ...ConvenienceRoutes.children,
+    ...StationMasterRoutes.children,
+    {
+      path: '/profile',
+      name: 'profile',
+      meta: {
+        title: '个人中心'
+      },
+      components: {
+        ContentRouter: () => import('../components/pages/Profile.vue')
+      }
+    }
+  ]
+}
 export const popupRouter = {
   path: '/popup',
   name: 'Popup',
@@ -44,30 +95,26 @@ export const greetingRouter = {
   }
 }
 
-export const scriptsRouter = {
-  path: '/',
-  name: 'home',
+export const LoginRouter = {
+  path: '/login',
+  name: 'login',
   meta: {
-    label: 'Home',
-    title: 'Enkel Tools',
-    name: '代码处理工具'
+    title: '登录 - Enkel loves you'
   },
   components: {
-    HomeRouter: () =>
-      import('../components/Home.vue')
+    HomeRouter: () => import('../components/pages/Login.vue')
+  }
+}
+
+export const RegisterRouter = {
+  path: '/register',
+  name: 'register',
+  meta: {
+    title: '注册 - Enkel loves you'
   },
-  children: [
-    {
-      path: '/scripts',
-      name: 'scripts',
-      meta: {
-        title: 'User Scripts'
-      },
-      components: {
-        ContentRouter: () => import('../components/tool/Scripts.vue')
-      }
-    }
-  ]
+  components: {
+    HomeRouter: () => import('../components/pages/Register.vue')
+  }
 }
 
 // export const contentRouter = ContentRoutes
@@ -118,15 +165,20 @@ export const scriptsRouter = {
 export default new Router({
   // mode: 'history',
   routes: [
+    MainRouter,
+    LoginRouter,
+    RegisterRouter,
     popupRouter,
     blankRouter,
     // ContentRoutes,
-    scriptsRouter,
-    CodeRoutes,
-    ConvenienceRoutes,
-    MultiMediaRoutes,
-    StationMasterRoutes,
-    PageRoutes,
+    // scriptsRouter,
+    // CodeRoutes,
+    // ConvenienceRoutes,
+    // MultiMediaRoutes,
+    // StationMasterRoutes,
+    // PageRoutes,
     greetingRouter
+    // ,
+    // ProfileRouter
   ]
 })

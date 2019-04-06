@@ -59,7 +59,8 @@ const store = new Vuex.Store({
     logo: '/static/images/new_logo.png',
     themeColor: 'rgb(79, 192, 141)',
     themeImages2: ['/static/images/themes/bg.jpg'],
-    mainColor: '',
+    appName: 'Enkel',
+    mainColor: [255, 255, 255],
     themeImages: [{
       label: '风景',
       sublist: [{
@@ -134,6 +135,7 @@ const store = new Vuex.Store({
       }
     },
     localStorageKeys: {
+      userInfo: 'user-info',
       nemMusic: {
         loginInfo: 'local-nem-music-login-info'
       },
@@ -151,11 +153,23 @@ const store = new Vuex.Store({
     inactiveTools: [],
     maxToolCount: 4,
     assets: {
+      maleAvatar: '/static/images/avatar_male_1.jpg',
+      femaleAvatar: '/static/images/avatar_female_1.jpg',
       nemMusic: {
         playBar: '/static/images/audiobox/playbar.png'
       }
     },
-    requestInfo: {},
+    requestInfo: {
+      baseUrl: 'http://127.0.0.1:3000',
+      // baseUrl: 'https://talkapi.dei2.com',
+      login: '/enkel/user/login',
+      register: '/enkel/user/register',
+      getThemeImages: '/enkel/index/getImages',
+      updateUserInfo: '/enkel/user/updateUserInfo',
+      modifyPassword: '/enkel/user/modifyPassword'
+    },
+    privateKey: 'gray-config-9',
+    cryptoType: 'TripleDES',
     loginInfo: {},
     nemLoginInfo: {}, // 网易云音乐登录信息
     recentlyPlayList: [], // 网易云音乐 最近播放的歌单

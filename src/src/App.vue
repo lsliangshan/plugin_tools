@@ -52,9 +52,12 @@ export default {
     },
     showAudio () {
       return this.$store.state.showAudio
+    },
+    themeImages () {
+      return this.$store.state.themeImages
     }
   },
-  created () {
+  async created () {
     document.onclick = e => {
       this.$eventHub.$emit(this.events.bodyClick, e)
     }
@@ -66,6 +69,7 @@ export default {
         duration: 5
       })
     })
+    await this.$store.dispatch(types.GET_THEME_IMAGES)
   },
   async mounted () {
     this.$store.commit(types.INIT_TOOLS, {
@@ -87,8 +91,30 @@ export default {
       blankHomePage: await this.getBlankHomePage()
     })
     // this.connect()
+    window.addEventListener('storage', this.storageHandler, false)
+
+    this.initMainColor()
   },
   methods: {
+    async initMainColor () {
+      if (this.activeThemeIndex[0] > -1 && this.activeThemeIndex[1] > -1) {
+        let first = Math.min(this.activeThemeIndex[0], this.themeImages.length - 1)
+        let second = Math.min(this.activeThemeIndex[1], this.themeImages[first] ? this.themeImages[first].sublist.length - 1 : -1)
+        let themeColor = await this.$getImageDominantColor(this.themeImages[first].sublist[second].img)
+        this.$store.commit(types.CACHE_MAIN_COLOR, {
+          color: themeColor
+        })
+      }
+    },
+    storageHandler (e) {
+      if (e.key === this.localStorageKeys.userInfo) {
+        this.$store.commit(types.CHANGE_LOGIN_INFO, e.newValue || '')
+      } else if (e.key === this.localStorageKeys.activeThemeIndex) {
+        this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
+          activeThemeIndex: JSON.parse(e.newValue || '[-1, -1]')
+        })
+      }
+    },
     connect (args) {
       const sse = new EventSource(`${this.sseUrl}?id=all&mt=notification`)
       sse.addEventListener('notification', this.notify)
@@ -238,11 +264,13 @@ export default {
   /*font-family: Menlo,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;*/
   /*font: 12px/16px Menlo,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;*/
 }
+html,
+body {
+  height: 100%;
+}
 #app {
-  /*background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1537032993978&di=921b9815b1aabefc0b60ba1de79fc70c&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201605%2F31%2F234941i5wc5mii0juw3iat.jpg);
-              background-size: 100% 100%;
-              background-repeat: no-repeat;
-              background-color: red;*/
+  width: 100%;
+  height: 100%;
 }
 .unformat_wrapper textarea {
   outline: none;
@@ -512,5 +540,23 @@ export default {
 }
 .steganography_uploader .ivu-upload-drag:hover {
   border: none;
+}
+
+.user-badge .ivu-poptip-body {
+  padding: 0 !important;
+}
+
+.login_card .ivu-card-head {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.profile_content .ivu-input {
+  border: none;
+  text-align: right;
+  background-color: transparent;
+}
+.profile_content .ivu-input:focus {
+  border: none;
+  box-shadow: none;
 }
 </style>

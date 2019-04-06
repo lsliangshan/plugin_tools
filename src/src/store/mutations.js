@@ -36,8 +36,9 @@
 
 import * as types from './mutation-types'
 import {
-  StorageUtil
+  StorageUtil, KitUtil
 } from '../utils/index'
+const CryptoJS = require('crypto-js')
 
 const findTemplateByUUID = function (uuid, arr, deep, sub) {
   let _deep = deep // deep为1或2
@@ -61,6 +62,45 @@ const findTemplateByUUID = function (uuid, arr, deep, sub) {
 }
 
 export const mutations = {
+  [types.CACHE_LOGIN_INFO] (state, data) {
+    state.loginInfo = JSON.parse(JSON.stringify(data))
+    let loginInfoStr = JSON.stringify(data)
+    let cryptoText = CryptoJS[state.cryptoType].encrypt(loginInfoStr, state.privateKey).toString()
+    StorageUtil.setItem(state.localStorageKeys.userInfo, cryptoText)
+  },
+  [types.GET_LOGIN_INFO] (state) {
+    return new Promise(async (resolve) => {
+      if (!KitUtil.isEmptyObject(state.loginInfo)) {
+        resolve(state.loginInfo)
+      } else {
+        let localUserInfo = await StorageUtil.getItem(state.localStorageKeys.userInfo)
+        let userInfo = {}
+        if (localUserInfo) {
+          userInfo = CryptoJS[state.cryptoType].decrypt(localUserInfo, state.privateKey).toString(CryptoJS.enc.Utf8)
+          state.loginInfo = JSON.parse(userInfo)
+          resolve(state.loginInfo)
+        } else {
+          resolve({})
+        }
+      }
+    })
+  },
+  [types.REMOVE_LOGIN_INFO] (state) {
+    state.loginInfo = {}
+    StorageUtil.removeItem(state.localStorageKeys.userInfo)
+  },
+  [types.CHANGE_LOGIN_INFO] (state, data) {
+    let localUserInfo = data
+    if (localUserInfo) {
+      let userInfo = CryptoJS[state.cryptoType].decrypt(localUserInfo, state.privateKey).toString(CryptoJS.enc.Utf8)
+      state.loginInfo = JSON.parse(userInfo)
+    } else {
+      state.loginInfo = {}
+    }
+  },
+  [types.CACHE_MAIN_COLOR] (state, data) {
+    state.mainColor = data.color
+  },
   [types.SET_AUDIO_SHOWN] (state, data) {
     state.showAudio = data.show
   },
@@ -71,53 +111,53 @@ export const mutations = {
   [types.CACHE_NEM_LOGIN_INFO] (state, data) {
     state.nemLoginInfo = data.loginInfo
   },
-  [types.SET_AUDIO_ELE](state, data) {
+  [types.SET_AUDIO_ELE] (state, data) {
     state.audio.ele = data.ele
   },
-  [types.PLAY_AUDIO](state, data) {
+  [types.PLAY_AUDIO] (state, data) {
     state.audio.current = Number(data.current)
     state.audio.playing = true
   },
-  [types.PAUSE_AUDIO](state) {
+  [types.PAUSE_AUDIO] (state) {
     state.audio.playing = false
   },
-  [types.RESET_AUDIO](state) {
+  [types.RESET_AUDIO] (state) {
     state.audio = Object.assign({}, state.audio, {
       current: 0,
       playing: false,
       volume: 1
     })
   },
-  [types.SET_AUDIO_VOLUME](state, data) {
+  [types.SET_AUDIO_VOLUME] (state, data) {
     state.audio.volume = ((parseFloat(data.volume) / 100).toFixed(2) > 1 ? 1 : (parseFloat(data.volume) / 100).toFixed(2))
   },
-  [types.SET_AUDIO_MODE](state, data) {
+  [types.SET_AUDIO_MODE] (state, data) {
     state.audio.mode = data.mode
   },
-  [types.SET_AUDIO_LIST](state, data) {
+  [types.SET_AUDIO_LIST] (state, data) {
     state.audio.list = data.list
   },
-  [types.SET_AUDIO_DURATION](state, data) {
+  [types.SET_AUDIO_DURATION] (state, data) {
     state.audio.duration = data.duration
   },
-  [types.INIT_TOOLS](state, data) {
+  [types.INIT_TOOLS] (state, data) {
     state.tools = data.tools
   },
-  [types.SET_ACTIVE_TOOLS](state, data) {
+  [types.SET_ACTIVE_TOOLS] (state, data) {
     state.activeTools = data.tools
   },
-  [types.SET_INACTIVE_TOOLS](state, data) {
+  [types.SET_INACTIVE_TOOLS] (state, data) {
     state.inactiveTools = data.tools
   },
-  async [types.SET_MAX_TOOL_COUNT](state, data) {
+  async [types.SET_MAX_TOOL_COUNT] (state, data) {
     state.maxToolCount = Number(data.count)
     await StorageUtil.setItem(state.localStorageKeys.maxToolCount, Number(data.count))
   },
-  async [types.SET_ACTIVE_THEME_INDEX](state, data) {
+  async [types.SET_ACTIVE_THEME_INDEX] (state, data) {
     state.activeThemeIndex = data.activeThemeIndex
     await StorageUtil.setItem(state.localStorageKeys.activeThemeIndex, data.activeThemeIndex)
   },
-  async [types.SET_BLANK_HOME_PAGE](state, data) {
+  async [types.SET_BLANK_HOME_PAGE] (state, data) {
     if (!data.blankHomePage || data.blankHomePage.trim() === 'default') {
       state.blankHomePage = 'default'
     } else if (data.blankHomePage.match(/^\/\//)) {
@@ -129,82 +169,82 @@ export const mutations = {
     }
     await StorageUtil.setItem(state.localStorageKeys.blankHomePage, state.blankHomePage)
   },
-  [types.SHOW_POPUP](state, data) {
+  [types.SHOW_POPUP] (state, data) {
     state.popup = Object.assign({}, state.popup, data, {
       shown: true
     })
   },
-  [types.SET_ALL_PLUGINS](state, data) {
+  [types.SET_ALL_PLUGINS] (state, data) {
     state.allPlugins = data.allPlugins
   },
-  [types.SET_LOADER](state, data) {
+  [types.SET_LOADER] (state, data) {
     state.loaders[data.name] = data.value.vm
   },
-  [types.DEL_LOADER](state, data) {
+  [types.DEL_LOADER] (state, data) {
     if (state.loaders[data.name]) {
       delete state.loaders[data.name]
     }
   },
-  [types.SET_SOCKET](state, data) {
+  [types.SET_SOCKET] (state, data) {
     state.socket.client = data.socket
   },
-  [types.UPDATE_LOGIN_INFO](state, data) {
+  [types.UPDATE_LOGIN_INFO] (state, data) {
     state.loginInfo = data
   },
-  [types.DISCONNECT_SOCKETIO](state) {
+  [types.DISCONNECT_SOCKETIO] (state) {
     state.socket.client.disconnect()
     state.socket.client = {}
   },
-  [types.UPDATE_AVATAR](state, data) {
+  [types.UPDATE_AVATAR] (state, data) {
     state.loginInfo.headIcon = data.avatar
   },
-  [types.TOGGLE_MENU](state, data) {
+  [types.TOGGLE_MENU] (state, data) {
     state.spanLeft = (state.spanLeft === state.minSpanLeft ? state.maxSpanLeft : state.minSpanLeft)
     state.spanRight = (state.spanRight === state.maxSpanRight ? state.minSpanRight : state.maxSpanRight)
     state.menuFold = (state.spanLeft === state.minSpanLeft)
   },
-  [types.FOLD_SIDE_MENU](state, data) {
+  [types.FOLD_SIDE_MENU] (state, data) {
     state.spanLeft = data.fold ? state.minSpanLeft : state.maxSpanLeft
     state.spanRight = data.fold ? state.maxSpanRight : state.minSpanRight
     state.menuFold = data.fold
   },
-  [types.TOGGLE_FULL_SCREEN](state, data) {
+  [types.TOGGLE_FULL_SCREEN] (state, data) {
     state.isFullScreen = data.isFullScreen
   },
-  [types.SET_SIMULATOR](state, data) {
+  [types.SET_SIMULATOR] (state, data) {
     Object.assign(state.simulator, data)
   },
-  [types.ACTIVE_COMPONENT](state, data) {
+  [types.ACTIVE_COMPONENT] (state, data) {
     Object.assign(state.activeComponent, data)
   },
-  [types.ADD_COMPONENT](state, data) {
+  [types.ADD_COMPONENT] (state, data) {
     let thisPage = state.activityInfo.data.pages[state.currentPageIndex].children
     thisPage.push(data)
   },
-  [types.INIT_LOCAL_TEMPLATE](state, data) {
+  [types.INIT_LOCAL_TEMPLATE] (state, data) {
     state.activityInfo = data.template
   },
-  [types.PREV_PAGE](state) {
+  [types.PREV_PAGE] (state) {
     // 上一页
     if (state.currentPageIndex > 0) {
       state.currentPageIndex -= 1
     }
   },
-  [types.NEXT_PAGE](state) {
+  [types.NEXT_PAGE] (state) {
     // 下一页
     if (state.currentPageIndex < state.activityInfo.data.pages.length - 1) {
       state.currentPageIndex += 1
     }
   },
-  [types.SET_CURRENT_PAGE_INDEX](state, data) {
+  [types.SET_CURRENT_PAGE_INDEX] (state, data) {
     if (Number(data.index) >= 0 && Number(data.index) <= state.activityInfo.data.pages.length - 1) {
       state.currentPageIndex = Number(data.index)
     }
   },
-  [types.UPDATE_ACTIVITY_PROPERTY](state, data) {
+  [types.UPDATE_ACTIVITY_PROPERTY] (state, data) {
     Object.assign(state.activityInfo.data, data)
   },
-  [types.SAVE_LOCAL_TEMPLATE](state, data) {
+  [types.SAVE_LOCAL_TEMPLATE] (state, data) {
     /**
      * type: zpm-page
      * uuid: xxxxxxx
@@ -241,42 +281,42 @@ export const mutations = {
       }
     }
   },
-  [types.SHOW_FULL_SCREEN_POPUP](state, data) {
+  [types.SHOW_FULL_SCREEN_POPUP] (state, data) {
     Object.assign(state.fullScreenPopup, data, {
       shown: true
     })
   },
-  [types.HIDE_FULL_SCREEN_POPUP](state) {
+  [types.HIDE_FULL_SCREEN_POPUP] (state) {
     state.fullScreenPopup = {
       shown: false,
       subCom: ''
     }
   },
-  [types.ACTIVITY_INFO_CHANGED](state) {
+  [types.ACTIVITY_INFO_CHANGED] (state) {
     state.activityInfoChanged = true
   },
-  [types.ACTIVITY_INFO_UNCHANGED](state) {
+  [types.ACTIVITY_INFO_UNCHANGED] (state) {
     state.activityInfoChanged = false
   },
-  [types.SET_APP_HEAER](state, data) {
+  [types.SET_APP_HEAER] (state, data) {
     state.appHeaderOperationArea = data
   },
-  [types.SHOW_SIMULATOR_GRID](state) {
+  [types.SHOW_SIMULATOR_GRID] (state) {
     state.grid.shown = true
   },
-  [types.HIDE_SIMULATOR_GRID](state) {
+  [types.HIDE_SIMULATOR_GRID] (state) {
     state.grid.shown = false
   },
-  [types.UPDATE_ACTIVE_POSITION](state, data) {
+  [types.UPDATE_ACTIVE_POSITION] (state, data) {
     state.activePosition = data.position
   },
-  [types.SET_COMMENTS](state, data) {
+  [types.SET_COMMENTS] (state, data) {
     state.article.comments = Object.assign({}, state.article.comments, data)
   },
-  [types.CACHE_ALL_ARTICLE_TAGS](state, data) {
+  [types.CACHE_ALL_ARTICLE_TAGS] (state, data) {
     state.allArticleTags = data.tags
   },
-  [types.SET_BODY_STYLES](state, data) {
+  [types.SET_BODY_STYLES] (state, data) {
     state.bodyStyles = data.styles
   }
 }
