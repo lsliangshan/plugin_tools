@@ -166,7 +166,8 @@ const store = new Vuex.Store({
       register: '/enkel/user/register',
       getThemeImages: '/enkel/index/getImages',
       updateUserInfo: '/enkel/user/updateUserInfo',
-      modifyPassword: '/enkel/user/modifyPassword'
+      modifyPassword: '/enkel/user/modifyPassword',
+      getGankData: '/enkel/index/getGankData'
     },
     privateKey: 'gray-config-9',
     cryptoType: 'TripleDES',

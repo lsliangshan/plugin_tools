@@ -37,7 +37,10 @@ import * as types from './mutation-types'
 import axios from 'axios'
 const querystring = require('querystring')
 const instance = axios.create({
-  timeout: 3000
+  timeout: 5000,
+  headers: {
+    'cookies': document.cookie
+  }
 })
 const noop = function () { }
 export const actions = {
