@@ -19,7 +19,10 @@
              v-if="loginInfo.phonenum">
           <waterfall :imgsArr="list"
                      src-key="url"
-                     @scrollReachBottom="getGankData">
+                     @scrollReachBottom="getGankData"
+                     @imgError="imgError"
+                     preview="gallery"
+                     preview-text="">
             <div slot="loading"
                  slot-scope="{isFirstLoad}">
               <div slot="loading"
@@ -98,7 +101,7 @@ export default {
       list: [],
       formInfo: {
         category: '福利',
-        pageSize: 10,
+        pageSize: 30,
         pageIndex: 1
       }
     }
@@ -125,26 +128,64 @@ export default {
   async created () {
     await this.getGankData()
   },
+  mounted () {
+    if (this.$preview.self) {
+
+    }
+  },
   methods: {
-    async getGankData () {
-      await this.$store.dispatch(types.AJAX, {
-        url: this.requestInfo.getGankData,
-        data: Object.assign({}, this.formInfo, {
-          phonenum: this.loginInfo.phonenum,
-          token: this.loginInfo.token
-        })
-      }).catch(err => {
-        this.$Message.error(err.message || '请求失败，请稍后再试')
-      }).then(responseData => {
-        if (responseData.status === 200) {
-          if (this.formInfo.pageIndex === 1) {
-            this.list = responseData.data.list
-          } else {
-            this.list = this.list.concat(responseData.data.list)
-            this.$Message.success('新增' + responseData.data.count + '条')
+    getGankData () {
+      return new Promise(async (resolve) => {
+        await this.$store.dispatch(types.AJAX, {
+          url: this.requestInfo.getGankData,
+          data: Object.assign({}, this.formInfo, {
+            phonenum: this.loginInfo.phonenum,
+            token: this.loginInfo.token
+          })
+        }).catch(err => {
+          this.$Message.error(err.message || '请求失败，请稍后再试')
+          resolve(true)
+        }).then(responseData => {
+          console.log('.....', responseData)
+          if (responseData && responseData.status === 200) {
+            if (this.formInfo.pageIndex === 1) {
+              this.list = responseData.data.list
+            } else {
+              this.list = this.list.concat(responseData.data.list)
+              this.$Message.success('新增' + responseData.data.count + '条')
+            }
+            this.formInfo.pageIndex = this.formInfo.pageIndex + 1
           }
-          this.formInfo.pageIndex = this.formInfo.pageIndex + 1
+          resolve(true)
+        })
+      })
+    },
+    findIndexByUrl (url) {
+      let list = this.list
+      let outIndex = -1
+      let i = 0
+      for (i; i < list.length; i++) {
+        if (list[i].url === url) {
+          outIndex = i
+          i = list.length
         }
+      }
+      return outIndex
+    },
+    imgError (e) {
+      // let _index = this.findIndexByUrl(e.url)
+      // if (_index > -1) {
+      //   setTimeout(() => {
+      //     this.list.splice(_index, 1)
+      //   }, 500)
+      // }
+    }
+  },
+  watch: {
+    '$preview.self' (val) {
+      console.log('>>>>>', this.$preview)
+      this.$preview.self.listen('imageLoadComplete', (index, item) => {
+        console.log('imageLoadComplete: ', index, item)
       })
     }
   }
