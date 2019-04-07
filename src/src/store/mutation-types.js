@@ -177,6 +177,9 @@ export const REMOVE_LOGIN_INFO = 'REMOVE_LOGIN_INFO'
 // 更新登录信息
 export const CHANGE_LOGIN_INFO = 'CHANGE_LOGIN_INFO'
 
+// 更新头像
+export const UPDATE_AVATAR = 'UPDATE_AVATAR'
+
 // 缓存背景图片主色值
 export const CACHE_MAIN_COLOR = 'CACHE_MAIN_COLOR'
 
@@ -208,9 +211,6 @@ export const UPDATE_LOGIN_INFO = 'UPDATE_LOGIN_INFO'
 
 // 断开socket.io连接
 export const DISCONNECT_SOCKETIO = 'DISCONNECT_SOCKETIO'
-
-// 更新用户头像
-export const UPDATE_AVATAR = 'UPDATE_AVATAR'
 
 // 查询消息的总条数
 export const COUNT_MESSAGE = 'COUNT_MESSAGE'

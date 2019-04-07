@@ -59,6 +59,9 @@ export default {
     },
     blankHomePage () {
       return this.$store.state.blankHomePage
+    },
+    loginInfo () {
+      return this.$store.state.loginInfo
     }
   }
 }
