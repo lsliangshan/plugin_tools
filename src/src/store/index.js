@@ -167,7 +167,9 @@ const store = new Vuex.Store({
       getThemeImages: '/enkel/index/getImages',
       updateUserInfo: '/enkel/user/updateUserInfo',
       modifyPassword: '/enkel/user/modifyPassword',
-      getGankData: '/enkel/index/getGankData'
+      getGankData: '/enkel/index/getGankData',
+      getWrapper: '/enkel/index/getWrapper',
+      getWeather: '/enkel/index/getWeather'
     },
     privateKey: 'gray-config-9',
     cryptoType: 'TripleDES',

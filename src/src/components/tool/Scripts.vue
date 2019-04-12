@@ -54,7 +54,7 @@
       <Card :bordered="false"
             class="user_script_item">
         <div class="user_script_card_inner"
-             @click="createNewCard">
+             @click="openScriptSourceModal">
           <Icon type="md-add"
                 size="50" />
         </div>
@@ -68,7 +68,16 @@
            :fullscreen="true">
       <div class="code_container">
         <div class="code_preview"
-             :ref="codeContainerRef"></div>
+             :ref="codeContainerRef">
+          <Button></Button>
+        </div>
+      </div>
+      <div slot="footer"
+           class="modify_footer">
+        <Button type="info"
+                @click="openFileNameModal">导出</Button>
+        <Button type="primary"
+                @click="confirmModify">保存</Button>
       </div>
       <!-- <Form :label-width="80" :model="cardModal.data">
 	        	<FormItem label="匹配域名">
@@ -81,6 +90,43 @@
 	        		<Button type="primary" ghost>点击修改</Button>
 	        	</FormItem>
 	        </Form> -->
+    </Modal>
+
+    <Modal v-model="fileNameForm.shown"
+           title="设置文件名"
+           :width="300"
+           :mask-closable="false"
+           @on-ok="exportFile">
+      <Form :label-width="50">
+        <FormItem label="文件名">
+          <Input v-model="fileNameForm.filename"
+                 placeholder="请输入文件名">
+          <span slot="append">.ls</span>
+          </Input>
+        </FormItem>
+      </Form>
+    </Modal>
+
+    <Modal title="脚本来源"
+           v-model="scriptSourceForm.shown"
+           :width="300"
+           :footer-hide="true"
+           :mask-closable="false"
+           class="script_source">
+      <div class="script_source_item"
+           @click="setScriptSource('create')">
+        新建
+      </div>
+      <div class="script_source_item">
+        选择文件
+        <Upload action=""
+                class="source_upload"
+                :max-size="formData.maxSize"
+                :format="formData.format"
+                :before-upload="beforeUpload">
+          <div style="width: 300px;">选择文件</div>
+        </Upload>
+      </div>
     </Modal>
   </div>
 </template>
@@ -113,9 +159,6 @@
     padding: 15px;
     box-sizing: border-box;
     overflow-y: auto;
-    /*display: flex;
-                    		flex-direction: row;
-                    		flex-wrap: wrap;*/
   }
   .user_script_item {
     position: relative;
@@ -251,33 +294,38 @@
   .user_scripts_wrapper .script_item .script_item_operate .add_operation {
     color: #19be6b;
   }
+
+  .script_source_item {
+    position: relative;
+    margin: 0;
+    line-height: 24px;
+    font-size: 14px;
+    padding: 7px 16px;
+    clear: both;
+    color: #515a6e;
+    white-space: nowrap;
+    list-style: none;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+  }
+  .script_source_item:hover {
+    background: #f3f3f3;
+  }
+  .source_upload {
+    display: inline-block;
+    width: 100%;
+    height: 38px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+  }
 </style>
 <script>
-  // const Filer = require('filer.js')
-  // /**
-  //  * @author	{{{AUTHOR}}}
-  //  * @match	*.baidu.com*
-  //  * @desc 	测试弹框
-  //  */
-
-  //  (function () {
-  // 	// 输入代码...
-  //    // document.body.innerHTML = 'TEST!!!!!!!'
-  //    // document.body.style.backgroundColor = 'darkcyan'
-  //    // document.body.style.color = '#FFF'  
-  //    if (location.href.match(/baidu\.com\/?$/)) {
-  //     document.querySelector('#kw').value = '摩斯密码'
-  //   	document.querySelector('#su').click()
-  //   } else if (location.href.match(/hao123\.com\/?$/)) {
-  //   	document.querySelector('[data-hook=searchInput]').value = '搞飞机'
-  //     document.querySelector('[data-hook=searchSubmit]').click()
-  //   } else {
-  //     document.querySelector('.c-container').querySelector('a').click()
-  //   }
-  //  })()
   // import CodeMirror from 'CodeMirror'
   import { StorageUtil } from '../../utils/index.js'
   import { mapState } from 'vuex'
+  const CryptoJS = require('crypto-js')
   export default {
     name: 'scripts',
     data () {
@@ -307,7 +355,20 @@
         },
         activeIndex: -1,
         markdownContent: '',
-        editor: {}
+        editor: {},
+        fileNameForm: {
+          filename: '',
+          shown: false
+        },
+        scriptSourceForm: {
+          shown: false,
+          type: 'create' // create: 新建   file: 文件
+        },
+        formData: {
+          maxSize: 2 * 1024,
+          format: ['ls']
+        },
+        fileReader: null
       }
     },
     computed: {
@@ -329,13 +390,20 @@
       },
       localStorageKeys () {
         return this.$store.state.localStorageKeys
+      },
+      cryptoType () {
+        return this.$store.state.cryptoType
+      },
+      privateKey () {
+        return this.$store.state.privateKey
       }
     },
     async created () {
       const that = this
 
       let userScripts = await StorageUtil.getItem(this.localStorageKeys.userScripts) || []
-      this.userScripts = this.officialUserScripts.concat(userScripts)
+      this.userScripts = [].concat(userScripts)
+      // this.userScripts = this.officialUserScripts.concat(userScripts)
 
       let isMac = (navigator.platform === 'Mac68K') || (navigator.platform === 'MacPPC') || (navigator.platform === 'Macintosh') || (navigator.platform === 'MacIntel')
 
@@ -346,13 +414,13 @@
               if (ev.metaKey && ev.keyCode === 83) {
                 // 保存
                 that.confirmModify()
-                that.closeModal()
+                // that.closeModal()
                 ev.preventDefault()
               }
             } else {
               if (ev.ctrlKey && ev.keyCode === 83) {
                 that.confirmModify()
-                that.closeModal()
+                // that.closeModal()
                 ev.preventDefault()
               }
             }
@@ -375,6 +443,27 @@
       const that = this
     },
     methods: {
+      fakeClick (obj) {
+        let ev = document.createEvent('MouseEvents')
+        ev.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+        obj.dispatchEvent(ev)
+      },
+      exportRaw (data, filename) {
+        var urlObject = window.URL || window.webkitURL || window
+        var export_blob = new Blob([data])
+        var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+        save_link.href = urlObject.createObjectURL(export_blob)
+        save_link.download = filename
+        this.fakeClick(save_link)
+      },
+      exportFile () {
+        let cryptoText = CryptoJS[this.cryptoType].encrypt(this.cardModal.data.scripts, this.privateKey).toString()
+        this.exportRaw(cryptoText, this.fileNameForm.filename + '.' + this.formData.format[0])
+      },
+      openFileNameModal () {
+        this.fileNameForm.filename = 'scripts-' + Math.random().toString(36).substr(6).toUpperCase()
+        this.fileNameForm.shown = true
+      },
       getScritps (data) {
         let _userScripts = this.userScripts
         let outScript = []
@@ -517,6 +606,9 @@
         console.log('filer error callback: ', e.name || e.message)
       },
       getHost (str) {
+        if (!str) {
+          return ''
+        }
         return 'www' + str.replace(/([^\.]*)(\.[a-z0-9-]*\.(ac.cn|bj.cn|sh.cn|tj.cn|cq.cn|he.cn|sn.cn|sx.cn|nm.cn|ln.cn|jl.cn|hl.cn|js.cn|zj.cn|ah.cn|fj.cn|jx.cn|sd.cn|ha.cn|hb.cn|hn.cn|gd.cn|gx.cn|hi.cn|sc.cn|gz.cn|yn.cn|gs.cn|qh.cn|nx.cn|xj.cn|tw.cn|hk.cn|mo.cn|xz.cn|com.cn|net.cn|org.cn|gov.cn|.com.hk|我爱你|在线|中国|网址|网店|中文网|公司|网络|集团|com|cn|cc|org|net|xin|xyz|vip|shop|top|club|wang|fun|info|online|tech|store|site|ltd|ink|biz|group|link|work|pro|mobi|ren|kim|name|tv|red|cool|team|live|pub|company|zone|today|video|art|chat|gold|guru|show|life|love|email|fund|city|plus|design|social|center|world|auto|.rip|.ceo|.sale|.hk|.io|.gg|.tm|.gs|.us))(.*)/, '$2')
       },
       imgLoadError (e) {
@@ -530,6 +622,12 @@
       },
       closeModal () {
         this.cardModal.shown = false
+      },
+      openScriptSourceModal () {
+        this.scriptSourceForm.shown = true
+      },
+      closeScriptSourceModal () {
+        this.scriptSourceForm.shown = false
       },
       confirmModify (e) {
         this.userScripts.splice(this.activeIndex, 1, this.cardModal.data)
@@ -562,8 +660,9 @@
           }
         })
       },
-      createNewCard () {
-        this.userScripts.push(JSON.parse(JSON.stringify(this.blankScript)))
+      createNewCard (scriptsObj) {
+        let scripts = scriptsObj || this.blankScript
+        this.userScripts.push(JSON.parse(JSON.stringify(scripts)))
         this.openModal({
           target: {
             dataset: {
@@ -579,6 +678,48 @@
       },
       async saveUserScripts () {
         await StorageUtil.setItem(this.localStorageKeys.userScripts, this.userScripts)
+      },
+      setScriptSource (name) {
+        if (name === 'create') {
+          this.closeScriptSourceModal()
+          this.createNewCard()
+        }
+      },
+      async beforeUpload (file, fileList) {
+        if (!file.name.match(/\.ls$/)) {
+          this.$Notice.warning({
+            title: '文件格式不正确',
+            desc: file.name + '格式不正确，请选择.' + (this.formData.format.join(';')) + '格式的文件'
+          })
+        } else if (file.size > (this.formData.maxSize * 1024)) {
+          this.$Notice.warning({
+            title: '文件太大了',
+            desc: '文件' + file.name + '太大，请不要超过' + (this.formData.maxSize / 1024) + 'M'
+          })
+        } else {
+          let txt = await this.readFileData(file)
+          let decodeInfo = CryptoJS[this.cryptoType].decrypt(txt, this.privateKey).toString(CryptoJS.enc.Utf8)
+          let scriptsObj = {
+            match: '',
+            desc: '',
+            author: '',
+            scripts: decodeInfo,
+            active: false
+          }
+          this.createNewCard(scriptsObj)
+        }
+        return false
+      },
+      readFileData (file) {
+        return new Promise((resolve) => {
+          if (!this.fileReader) {
+            this.fileReader = new FileReader()
+          }
+          this.fileReader.readAsText(file, 'UTF-8')
+          this.fileReader.onload = (e) => {
+            resolve(e.target.result)
+          }
+        })
       }
     }
   }
