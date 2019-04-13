@@ -183,6 +183,9 @@ export const UPDATE_AVATAR = 'UPDATE_AVATAR'
 // 缓存背景图片主色值
 export const CACHE_MAIN_COLOR = 'CACHE_MAIN_COLOR'
 
+// 缓存登录状态
+export const CACHE_LOGIN_STATUS = 'CACHE_LOGIN_STATUS'
+
 // >>>> actions:
 
 // 登录1

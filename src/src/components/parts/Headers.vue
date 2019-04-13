@@ -30,7 +30,7 @@
       </div> -->
       <div class="user_role"
            v-if="loginInfo.username"
-           v-text="loginInfo.enkel_role ? loginInfo.enkel_role.name : ''"></div>
+           v-text="loginInfo.nickname || loginInfo.username || '游客'"></div>
       <Poptip trigger="click"
               placement="bottom-end"
               width="200"
@@ -45,7 +45,7 @@
           <Card :bordered="false"
                 :padding="0">
             <p slot="title"
-               v-text="loginInfo.nickname || loginInfo.username || '游客'"></p>
+               v-text="loginInfo.enkel_role ? loginInfo.enkel_role.name : ''"></p>
             <a href="#"
                slot="extra"
                v-if="loginInfo.username"

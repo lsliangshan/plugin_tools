@@ -62,6 +62,9 @@ const findTemplateByUUID = function (uuid, arr, deep, sub) {
 }
 
 export const mutations = {
+  [types.CACHE_LOGIN_STATUS] (state, data) {
+    state.isLogin = data.isLogin
+  },
   [types.CACHE_LOGIN_INFO] (state, data) {
     state.loginInfo = JSON.parse(JSON.stringify(data))
     let loginInfoStr = JSON.stringify(data)
