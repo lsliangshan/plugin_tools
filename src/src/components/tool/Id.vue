@@ -91,9 +91,9 @@
         </transition>
       </Form>
       <div slot="footer">
-        <Button @click="closeFileNameModal">关闭</Button>
         <Button type="warning"
                 @click="resetFileNameForm">重置</Button>
+        <Button @click="closeFileNameModal">关闭</Button>
       </div>
     </Modal>
 
