@@ -61,6 +61,20 @@ export default {
       components: {
         ContentRouter: () => import('../components/tool/Morse.vue')
       }
+    },
+    {
+      path: '/id-photo',
+      name: 'id',
+      meta: {
+        label: '证件照',
+        title: '证件照',
+        icon: '#route-id',
+        name: '证件照',
+        desc: '免费获取各种尺寸、背景色证件照'
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Id.vue')
+      }
     }
   ]
 }

@@ -86,6 +86,25 @@ export default {
         }
         _img.src = img
       })
+    },
+    $fakeClick (obj) {
+      let ev = document.createEvent('MouseEvents')
+      ev.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+      obj.dispatchEvent(ev)
+    },
+    $exportRaw (data, filename) {
+      var urlObject = window.URL || window.webkitURL || window
+      var exportBlob = new Blob([data])
+      var saveLink = document.createElementNS('http://www.w3.org/1999/xhtml', 'a')
+      saveLink.href = urlObject.createObjectURL(exportBlob)
+      saveLink.download = filename
+      this.$fakeClick(saveLink)
+    },
+    $saveImage (data, filename) {
+      var saveLink = document.createElementNS('http://www.w3.org/1999/xhtml', 'a')
+      saveLink.href = data
+      saveLink.download = filename
+      this.$fakeClick(saveLink)
     }
   }
 }

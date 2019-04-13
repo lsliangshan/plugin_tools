@@ -496,7 +496,7 @@ export default {
     },
     exportFile () {
       let cryptoText = CryptoJS[this.cryptoType].encrypt(this.cardModal.data.scripts, this.privateKey).toString()
-      this.exportRaw(cryptoText, this.fileNameForm.filename + '.' + this.formData.format[0])
+      this.$exportRaw(cryptoText, this.fileNameForm.filename + '.' + this.formData.format[0])
     },
     openFileNameModal () {
       this.fileNameForm.filename = 'scripts-' + Math.random().toString(36).substr(6).toUpperCase()
