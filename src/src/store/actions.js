@@ -127,6 +127,9 @@ export const actions = {
       } else {
         requestData.data = querystring.stringify(params.data)
       }
+      if (params.timeout) {
+        requestData.timeout = params.timeout
+      }
       instance(requestData).then(({ data }) => {
         resolve(data)
       }).catch(err => {

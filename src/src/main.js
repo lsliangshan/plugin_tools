@@ -24,6 +24,10 @@ import 'codemirror/theme/zenburn.css'
 import 'codemirror/theme/dracula.css'
 import preview from 'vue-photo-preview'
 import 'vue-photo-preview/dist/skin.css'
+import VueDraggableResizable from 'vue-draggable-resizable'
+// import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
+
+Vue.component('draggable', VueDraggableResizable)
 Vue.use(preview)
 
 sync(store, router)

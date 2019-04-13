@@ -160,8 +160,8 @@ const store = new Vuex.Store({
       }
     },
     requestInfo: {
-      baseUrl: 'http://127.0.0.1:3000',
-      // baseUrl: 'https://talkapi.dei2.com',
+      // baseUrl: 'http://127.0.0.1:3000',
+      baseUrl: 'https://talkapi.dei2.com',
       login: '/enkel/user/login',
       register: '/enkel/user/register',
       getThemeImages: '/enkel/index/getImages',
@@ -169,7 +169,8 @@ const store = new Vuex.Store({
       modifyPassword: '/enkel/user/modifyPassword',
       getGankData: '/enkel/index/getGankData',
       getWrapper: '/enkel/index/getWrapper',
-      getWeather: '/enkel/index/getWeather'
+      getWeather: '/enkel/index/getWeather',
+      getIdImage: '/enkel/index/getIdImage'
     },
     privateKey: 'gray-config-9',
     cryptoType: 'TripleDES',
@@ -177,6 +178,10 @@ const store = new Vuex.Store({
     isLogin: false, // 是否登录
     nemLoginInfo: {}, // 网易云音乐登录信息
     recentlyPlayList: [], // 网易云音乐 最近播放的歌单
+    facepp: {
+      key: 'BDwv4OaugITE8HVAbe12HqOy46VOceMt',
+      secret: 'JBkSDM5LKyl7jTsuZBC2aLXBffdDdZrJ'
+    },
     allRoles: [{
       value: 1,
       name: '超级管理员'
