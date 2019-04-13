@@ -276,7 +276,8 @@ export default {
           label: '.gif',
           value: 'gif'
         }
-      ]
+      ],
+      videoStream: null
     }
   },
   computed: {
@@ -399,6 +400,7 @@ export default {
       video.onerror = function () {
         stream.stop()
       }
+      this.videoStream = typeof stream.stop === 'function' ? stream : stream.getTracks()[1]
       stream.onended = this.noStream
       video.onloadedmetadata = () => {
         setTimeout(() => {
@@ -442,6 +444,17 @@ export default {
     changeHeight (e) {
       this.videoBox.height = Number(e.target.value)
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    if (to.name !== 'id') {
+      if (this.videoStream) {
+        /**
+         * 关闭摄像头
+         */
+        this.videoStream.stop()
+      }
+    }
+    next()
   },
   watch: {
     'videoBox.width' (val) {
