@@ -157,6 +157,10 @@ const store = new Vuex.Store({
       femaleAvatar: '/static/images/avatar_female_1.jpg',
       nemMusic: {
         playBar: '/static/images/audiobox/playbar.png'
+      },
+      tag: {
+        hot: '/static/images/hot.gif',
+        new: '/static/images/new.gif'
       }
     },
     requestInfo: {

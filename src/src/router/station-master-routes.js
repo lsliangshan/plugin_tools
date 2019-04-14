@@ -12,7 +12,9 @@ export default {
       title: 'base64转换',
       icon: '#route-base64',
       name: 'base64编码解码',
-      desc: '字符与base64互转，图片与base64互转'
+      desc: '字符与base64互转，图片与base64互转',
+      createTime: '545440088000',
+      hot: false
     },
     components: {
       ContentRouter: () =>
@@ -26,7 +28,9 @@ export default {
       title: 'ip地址查询',
       icon: '#route-ip',
       name: 'ip地址查询',
-      desc: '查询IP或域名的地理位置、宽带供应商；查看我的IP'
+      desc: '查询IP或域名的地理位置、宽带供应商；查看我的IP',
+      createTime: '1555234941000',
+      hot: false
     },
     components: {
       ContentRouter: () => import('../components/tool/Ip.vue')
@@ -39,7 +43,9 @@ export default {
       title: '文字加密解密',
       icon: '#route-crypto',
       name: '文字加密解密',
-      desc: '支持MD5、AES、DES、RC4、Rabbit等多种加密算法'
+      desc: '支持MD5、AES、DES、RC4、Rabbit等多种加密算法',
+      createTime: '545440088000',
+      hot: false
     },
     components: {
       ContentRouter: () => import('../components/tool/Crypto.vue')

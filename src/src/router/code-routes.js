@@ -12,7 +12,9 @@ export default {
       title: 'JSON格式化',
       icon: '#route-json',
       name: 'JSON格式化',
-      desc: '可以对JSON代码进行格式化和美化'
+      desc: '可以对JSON代码进行格式化和美化',
+      createTime: '545440088000',
+      hot: false
     },
     components: {
       ContentRouter: () =>
@@ -26,7 +28,9 @@ export default {
       title: 'URL参数解析',
       icon: '#route-url',
       name: 'URL参数解析',
-      desc: 'URL参数解析，URL参数转JSON，JSON转URL参数格式'
+      desc: 'URL参数解析，URL参数转JSON，JSON转URL参数格式',
+      createTime: '545440088000',
+      hot: false
     },
     components: {
       ContentRouter: () =>
@@ -40,7 +44,9 @@ export default {
       title: '时间戳转换',
       icon: '#route-time',
       name: '时间戳转换',
-      desc: '时间戳与北京时间互转，获取时间戳'
+      desc: '时间戳与北京时间互转，获取时间戳',
+      createTime: '545440088000',
+      hot: false
     },
     components: {
       ContentRouter: () =>
@@ -54,7 +60,9 @@ export default {
       title: '文件对比',
       icon: '#route-diff',
       name: '文件对比',
-      desc: '在线检测/比较两个文件或文本的不同'
+      desc: '在线检测/比较两个文件或文本的不同',
+      createTime: '545440088000',
+      hot: false
     },
     components: {
       ContentRouter: () => import('../components/tool/Diff.vue')
@@ -67,7 +75,9 @@ export default {
       title: 'html实体代码',
       icon: '#route-code',
       name: 'html实体代码',
-      desc: 'html实体代码查询'
+      desc: 'html实体代码查询',
+      createTime: '545440088000',
+      hot: false
     },
     components: {
       ContentRouter: () =>

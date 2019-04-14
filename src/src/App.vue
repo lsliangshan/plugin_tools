@@ -209,10 +209,10 @@ export default {
     },
     getAllTools () {
       let outPath = []
+      outPath.push(this.getTools(ConvenienceRoutes))
       outPath.push(this.getTools(CodeRoutes))
       outPath.push(this.getTools(StationMasterRoutes))
       outPath.push(this.getTools(MultiMediaRoutes))
-      outPath.push(this.getTools(ConvenienceRoutes))
       return outPath
     },
     getActiveTools () {
