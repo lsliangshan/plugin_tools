@@ -31,19 +31,30 @@
                 :width="videoBox.width"
                 :height="videoBox.height"></canvas>
         <div class="bottom_container">
-          <Button type="primary"
-                  class="capture_btn"
-                  icon="md-camera"
-                  @click="doCapture">拍照</Button>
-          <transition name="id-photo-transition"
-                      enter-active-class="animated fadeIn"
-                      leave-active-class="animated fadeOut faster">
+          <Tooltip placement="top"
+                   content="拍照并保存"
+                   :transfer="true">
             <Button type="primary"
                     class="capture_btn"
                     icon="md-camera"
-                    v-if="isLogin"
+                    @click="doCapture">拍照</Button>
+          </Tooltip>
+          <Tooltip placement="top"
+                   :transfer="true">
+            <div slot="content">
+              <div v-if="!isLogin">
+                登录后可免费生成证件照，
+                <a href="javascript:void(0)"
+                   @click="goLogin">去登录</a>
+              </div>
+              <div v-else>生成证件照</div>
+            </div>
+            <Button type="primary"
+                    class="capture_btn"
+                    icon="md-camera"
+                    :disabled="!isLogin"
                     @click="getIdImage">生成证件照</Button>
-          </transition>
+          </Tooltip>
           <Button type="text"
                   class="video_settings_btn"
                   icon="md-settings"
@@ -471,6 +482,11 @@ export default {
     },
     toggleVolume () {
       this.videoMute = !this.videoMute
+    },
+    goLogin () {
+      this.$router.replace({
+        name: 'login'
+      })
     }
   },
   beforeRouteLeave (to, from, next) {

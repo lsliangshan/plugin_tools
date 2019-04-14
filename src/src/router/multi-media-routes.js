@@ -12,7 +12,9 @@ export default {
       title: '二维码生成',
       icon: '#route-qrcode',
       name: '二维码生成',
-      desc: '将字符生成二维码，可下载生成的二维码'
+      desc: '将字符生成二维码，可下载生成的二维码',
+      createTime: '545440088000',
+      hot: false
     },
     components: {
       ContentRouter: () =>
@@ -26,7 +28,9 @@ export default {
       title: '传图识色',
       icon: '#route-img',
       name: '传图识色',
-      desc: '可识别图片的主色调及辅色'
+      desc: '可识别图片的主色调及辅色',
+      createTime: '545440088000',
+      hot: false
     },
     components: {
       ContentRouter: () =>
@@ -40,7 +44,9 @@ export default {
       title: '图片隐写术',
       icon: '#route-steganography',
       name: '图片隐写术',
-      desc: '图片隐写术，内向同学的告白神器'
+      desc: '图片隐写术，内向同学的告白神器',
+      createTime: '545440088000',
+      hot: false
     },
     components: {
       ContentRouter: () => import('../components/tool/Steganography.vue')
