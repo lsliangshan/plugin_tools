@@ -8,11 +8,23 @@
                :style="idInnerStyles">
       <div class="camera_wrapper"
            :style="idInnerStyles">
-        <div class="video_file_name">{{fileNameForm.filename}}.{{imgSuffix}}</div>
+        <div class="video_file_name">
+          <div class="video_file_name_text">{{fileNameForm.filename}}.{{imgSuffix}}</div>
+          <div class="video_mute"
+               @click="toggleVolume">
+            <Tooltip placement="bottom"
+                     :content="videoMute ? '开启声音' : '关闭声音'"
+                     :transfer="true">
+              <Icon :type="videoMute ? 'md-volume-off' : 'md-volume-up'"
+                    size="16" />
+            </Tooltip>
+          </div>
+        </div>
         <video ref="videoRef"
                id="video"
                :width="videoBox.width"
                :height="videoBox.height"
+               :muted="videoMute"
                autoplay></video>
         <canvas ref="captureRef"
                 class="capture_canvas"
@@ -156,9 +168,21 @@
   position: relative;
 }
 .video_file_name {
+  position: relative;
   width: 100%;
   height: 32px;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.video_mute {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  height: 32px;
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -243,6 +267,7 @@ export default {
         width: 295,
         height: 413
       },
+      videoMute: true, // 视频禁音
       fileNameForm: {
         filename: 'img-' + Math.random().toString(36).substr(6).toUpperCase(),
         bgColor: '#fff',
@@ -314,9 +339,9 @@ export default {
   mounted () {
     this.$nextTick(() => {
       if (this.$route.name === 'id') {
-        setTimeout(() => {
-          this.initVideo()
-        }, 50)
+        // setTimeout(() => {
+        this.initVideo()
+        // }, 50)
       }
     })
   },
@@ -384,11 +409,11 @@ export default {
         this.$saveImage(imageData, 'id-' + this.fileNameForm.filename + '.' + this.imgSuffix)
       }
     },
-    initVideo (withAudio = true) {
+    initVideo (widthAudio = true) {
       navigator.getUserMedia = navigator.getUserMedia ||
         navigator.webkitGetUserMedia ||
         navigator.mozGetUserMedia
-      navigator.getUserMedia({ video: { width: this.videoBox.width, height: this.videoBox.height, facingMode: 'user' }, audio: withAudio }, this.gotStream, this.noStream)
+      navigator.getUserMedia({ video: { width: this.videoBox.width, height: this.videoBox.height, facingMode: 'user' }, audio: widthAudio }, this.gotStream, this.noStream)
     },
     gotStream (stream) {
       let video = this.$refs.videoRef
@@ -400,7 +425,7 @@ export default {
       video.onerror = function () {
         stream.stop()
       }
-      this.videoStream = typeof stream.stop === 'function' ? stream : stream.getTracks()[1]
+      // this.videoStream = typeof stream.stop === 'function' ? stream : stream.getTracks()[0]
       stream.onended = this.noStream
       video.onloadedmetadata = () => {
         setTimeout(() => {
@@ -443,16 +468,22 @@ export default {
     },
     changeHeight (e) {
       this.videoBox.height = Number(e.target.value)
+    },
+    toggleVolume () {
+      this.videoMute = !this.videoMute
     }
   },
   beforeRouteLeave (to, from, next) {
     if (to.name !== 'id') {
-      if (this.videoStream) {
-        /**
+      /**
          * 关闭摄像头
          */
-        this.videoStream.stop()
-      }
+      let video = this.$refs.videoRef
+      let tracks = video.srcObject.getTracks()
+      tracks.forEach(track => {
+        track.stop()
+      })
+      video.srcObject = null
     }
     next()
   },
