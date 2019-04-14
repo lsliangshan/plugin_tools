@@ -46,7 +46,7 @@
       </div>
     </div>
 
-    <Modal v-model="toolTagsModal.shown"
+    <!-- <Modal v-model="toolTagsModal.shown"
            :mask-closable="false"
            @on-ok="saveTools"
            ok-text="保存"
@@ -83,7 +83,7 @@
           </div>
         </div>
       </div>
-    </Modal>
+    </Modal> -->
 
     <Modal v-model="themeImagesModal.shown"
            :mask-closable="false"
@@ -362,7 +362,7 @@ import { StorageUtil } from '../../utils/index.js'
 export default {
   name: 'settings',
   components: {
-    Draggable: () => import('vuedraggable')
+    // Draggable: () => import('vuedraggable')
   },
   data () {
     return {

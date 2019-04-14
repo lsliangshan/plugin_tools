@@ -27,6 +27,7 @@
     "marked": "^0.5.0",
     "qrcode": "^1.2.2",
     "qs": "^6.5.2",
+    "rtcmulticonnection": "^3.6.8",
     "vue": "^2.5.2",
     "vue-draggable-resizable": "^2.0.0-rc1",
     "vue-photo-preview": "^1.1.3",

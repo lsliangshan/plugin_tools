@@ -85,6 +85,22 @@ export default {
       components: {
         ContentRouter: () => import('../components/tool/Id.vue')
       }
+    },
+    {
+      path: '/conference',
+      name: 'conference',
+      meta: {
+        label: '视频通话',
+        title: '视频通话',
+        icon: '#route-conference',
+        name: '视频通话',
+        desc: '免费视频通话',
+        createTime: '1555234941000',
+        hot: true
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Conference.vue')
+      }
     }
   ]
 }
