@@ -62,6 +62,9 @@ const findTemplateByUUID = function (uuid, arr, deep, sub) {
 }
 
 export const mutations = {
+  [types.CACHE_SOCKET_CONNECTION] (state, data) {
+    state.socketConnection = data.connection
+  },
   [types.CACHE_LOGIN_STATUS] (state, data) {
     state.isLogin = data.isLogin
   },

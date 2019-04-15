@@ -186,6 +186,9 @@ export const CACHE_MAIN_COLOR = 'CACHE_MAIN_COLOR'
 // 缓存登录状态
 export const CACHE_LOGIN_STATUS = 'CACHE_LOGIN_STATUS'
 
+// 缓存socket connection
+export const CACHE_SOCKET_CONNECTION = 'CACHE_SOCKET_CONNECTION'
+
 // >>>> actions:
 
 // 登录1

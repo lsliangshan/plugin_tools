@@ -199,6 +199,10 @@ const store = new Vuex.Store({
       value: 4,
       name: '普通用户'
     }],
+    socketInfo: {
+      broadcastId: 'enkel-user-connection-broadcast-channel'
+    },
+    socketConnection: null, // socket.io
     needlessLogin: ['Login', 'Register', 'Forget', 'ActivityPreview', 'ArticleList', 'ArticleView'] // 不需要登录的页面
   }
 })
