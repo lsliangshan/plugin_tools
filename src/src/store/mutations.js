@@ -175,6 +175,10 @@ export const mutations = {
     }
     await StorageUtil.setItem(state.localStorageKeys.blankHomePage, state.blankHomePage)
   },
+  async [types.CACHE_CUSTOM_THEME_IMAGE] (state, data) {
+    state.customThemeImage = data.customThemeImage
+    await StorageUtil.setItem(state.localStorageKeys.customThemeImage, data.customThemeImage)
+  },
   [types.SHOW_POPUP] (state, data) {
     state.popup = Object.assign({}, state.popup, data, {
       shown: true

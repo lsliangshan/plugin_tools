@@ -40,6 +40,7 @@ import * as mutations from './mutations'
 import * as getters from './getters'
 import moduleNem from './modules/moduleNem'
 import moduleUserScripts from './modules/moduleUserScripts'
+import moduleUserSettings from './modules/moduleUserSettings'
 
 Vue.use(Vuex)
 
@@ -52,7 +53,8 @@ const store = new Vuex.Store({
   getters: getters.getters,
   modules: {
     moduleNem,
-    moduleUserScripts
+    moduleUserScripts,
+    moduleUserSettings
   },
   state: {
     theme: 'dark',
@@ -124,6 +126,7 @@ const store = new Vuex.Store({
     },
     showAudio: false, // 是否显示audio模块，audio search 和 audio box
     activeThemeIndex: [0, 1],
+    customThemeImage: '',
     bodyStyles: {},
     events: {
       bodyClick: 'body-click',
@@ -143,6 +146,7 @@ const store = new Vuex.Store({
       inactiveTools: 'local-inactive-tools',
       maxToolCount: 'local-max-tool-count',
       activeThemeIndex: 'local-active-theme-index',
+      customThemeImage: 'local-custom-theme-image',
       blankHomePage: 'local-blank-home-page',
       userScripts: 'local-user-scripts',
       nemRecentlyPlayList: 'local-nem-recently-play-list' // 网易云音乐 最近播放列表，本地列表
@@ -164,13 +168,14 @@ const store = new Vuex.Store({
       }
     },
     requestInfo: {
-      // baseUrl: 'http://127.0.0.1:3000',
-      baseUrl: 'https://talkapi.dei2.com',
+      baseUrl: 'http://127.0.0.1:3000',
+      // baseUrl: 'https://talkapi.dei2.com',
       login: '/enkel/user/login',
       register: '/enkel/user/register',
       getThemeImages: '/enkel/index/getImages',
       updateUserInfo: '/enkel/user/updateUserInfo',
       modifyPassword: '/enkel/user/modifyPassword',
+      updateUserSettings: '/enkel/user/updateUserSettings',
       getGankData: '/enkel/index/getGankData',
       getWrapper: '/enkel/index/getWrapper',
       getWeather: '/enkel/index/getWeather',

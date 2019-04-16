@@ -67,6 +67,9 @@
       },
       socketInfo () {
         return this.store.state.socketInfo
+      },
+      customThemeImage () {
+        return this.isLogin ? this.store.state.customThemeImage : ''
       }
     },
     async created () {
@@ -107,9 +110,9 @@
 
       this.initMainColor()
 
-      if (this.isLogin) {
-        this.connectRTC()
-      }
+      // if (this.isLogin) {
+      //   this.connectRTC()
+      // }
     },
     methods: {
       connectRTC () {
