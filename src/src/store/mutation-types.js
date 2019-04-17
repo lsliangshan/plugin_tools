@@ -135,6 +135,9 @@ export const SET_BLANK_HOME_PAGE = 'SET_BLANK_HOME_PAGE'
 // 缓存用户自定义的主题图片
 export const CACHE_CUSTOM_THEME_IMAGE = 'CACHE_CUSTOM_THEME_IMAGE'
 
+// 缓存用户的配置
+export const CACHE_USER_SETTINGS = 'CACHE_USER_SETTINGS'
+
 // 播放音乐
 export const PLAY_AUDIO = 'PLAY_AUDIO'
 

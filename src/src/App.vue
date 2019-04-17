@@ -12,6 +12,8 @@
 
 <script>
   // https://developers.google.com/web/updates/2017/06/play-request-was-interrupted !!!!!!
+  import { createNamespacedHelpers, mapGetters } from 'vuex'
+  const { mapActions } = createNamespacedHelpers('./store/modules')
   import * as types from './store/mutation-types'
   import router from './router/content-routes.js'
   import CodeRoutes from './router/code-routes.js'
@@ -32,6 +34,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        userSettings: 'moduleUserSettings/userSettings'
+      }),
       store () {
         return this.$store
       },
@@ -67,9 +72,6 @@
       },
       socketInfo () {
         return this.store.state.socketInfo
-      },
-      customThemeImage () {
-        return this.isLogin ? this.store.state.customThemeImage : ''
       }
     },
     async created () {
@@ -99,12 +101,18 @@
       this.store.commit(types.SET_MAX_TOOL_COUNT, {
         count: await this.getMaxToolCount()
       })
-      this.store.commit(types.SET_ACTIVE_THEME_INDEX, {
-        activeThemeIndex: await this.getActiveThemeIndex()
+      this.store.commit(types.CACHE_USER_SETTINGS, {
+        userSettings: await this.getUserSettings()
       })
-      this.store.commit(types.SET_BLANK_HOME_PAGE, {
-        blankHomePage: await this.getBlankHomePage()
-      })
+      // this.store.commit(types.SET_ACTIVE_THEME_INDEX, {
+      //   activeThemeIndex: await this.getActiveThemeIndex()
+      // })
+      // this.store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
+      //   customThemeImage: await this.getCustomThemeImage()
+      // })
+      // this.store.commit(types.SET_BLANK_HOME_PAGE, {
+      //   blankHomePage: await this.getBlankHomePage()
+      // })
       // this.connect()
       window.addEventListener('storage', this.storageHandler, false)
 
@@ -115,6 +123,9 @@
       // }
     },
     methods: {
+      ...mapActions([
+        'moduleUserSettings'
+      ]),
       connectRTC () {
         const that = this
         // recording is disabled because it is resulting for browser-crash
@@ -246,6 +257,11 @@
           this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
             activeThemeIndex: JSON.parse(e.newValue || '[-1, -1]')
           })
+        } else if (e.key === this.localStorageKeys.userSettings) {
+          // this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
+          //   activeThemeIndex: JSON.parse(e.newValue || '[-1, -1]')
+          // })
+          this.$store.dispatch('moduleUserSettings/updateUserSettings', JSON.parse(e.newValue || '{}'))
         }
       },
       connect (args) {
@@ -374,12 +390,24 @@
           resolve(activeThemeIndex || this.activeThemeIndex)
         })
       },
+      getCustomThemeImage () {
+        return new Promise(async resolve => {
+          let customThemeImage = await StorageUtil.getItem(this.localStorageKeys.customThemeImage)
+          resolve(customThemeImage || this.customThemeImage)
+        })
+      },
       getBlankHomePage () {
         return new Promise(async resolve => {
           let blankHomePage = await StorageUtil.getItem(
             this.localStorageKeys.blankHomePage
           )
           resolve(blankHomePage || this.blankHomePage)
+        })
+      },
+      getUserSettings () {
+        return new Promise(async resolve => {
+          let userSettings = await StorageUtil.getItem(this.localStorageKeys.userSettings)
+          resolve(userSettings || {})
         })
       }
     },

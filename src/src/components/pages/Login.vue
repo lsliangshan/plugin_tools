@@ -12,6 +12,7 @@
                    :x="100"
                    :y="(bodyStyles.height - 273) / 2">
           <Card :bordered="false"
+                :dis-hover="true"
                 class="login_card">
             <p slot="title"
                style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
@@ -106,6 +107,7 @@
 </style>
 <script>
   import { KitUtil, StorageUtil } from '../../utils/index'
+  import { mapGetters } from 'vuex'
   import * as types from '../../store/mutation-types'
   export default {
     name: 'Login',
@@ -143,6 +145,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        themeImage: 'moduleUserSettings/themeImage'
+      }),
       themeImages () {
         return this.$store.state.themeImages
       },
@@ -151,7 +156,8 @@
       },
       mainContentStyles () {
         return {
-          backgroundImage: (this.activeThemeIndex.join(';').indexOf('-1') < 0 ? 'url(' + this.themeImages[this.activeThemeIndex[0]].sublist[this.activeThemeIndex[1]].img + ')' : '')
+          backgroundImage: (this.themeImage ? 'url(' + this.themeImage + ')' : '')
+          // backgroundImage: (this.activeThemeIndex.join(';').indexOf('-1') < 0 ? 'url(' + this.themeImages[this.activeThemeIndex[0]].sublist[this.activeThemeIndex[1]].img + ')' : '')
         }
       },
       localStorageKeys () {
@@ -185,6 +191,9 @@
                   // 登录成功
                   if (res.data.status === 1) {
                     that.$Message.success('登录成功!')
+                    if (res.data.settings) {
+                      res.data.settings = JSON.parse(res.data.settings)
+                    }
                     that.$store.commit(types.CACHE_LOGIN_INFO, res.data)
                     that.$router.replace('/')
                   } else {

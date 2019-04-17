@@ -62,6 +62,15 @@ const findTemplateByUUID = function (uuid, arr, deep, sub) {
 }
 
 export const mutations = {
+  [types.CACHE_USER_SETTINGS] (state, data) {
+    // state.userSettings = data.userSettings
+    if (state.isLogin) {
+      state.loginInfo.settings = data.userSettings
+    } else {
+      state.userSettings = data.userSettings
+      StorageUtil.setItem(state.localStorageKeys.userSettings, data.userSettings)
+    }
+  },
   [types.CACHE_SOCKET_CONNECTION] (state, data) {
     state.socketConnection = data.connection
   },

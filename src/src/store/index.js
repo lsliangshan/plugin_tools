@@ -139,6 +139,7 @@ const store = new Vuex.Store({
     },
     localStorageKeys: {
       userInfo: 'user-info',
+      userSettings: 'local-user-settings',
       nemMusic: {
         loginInfo: 'local-nem-music-login-info'
       },
@@ -184,6 +185,7 @@ const store = new Vuex.Store({
     privateKey: 'gray-config-9',
     cryptoType: 'TripleDES',
     loginInfo: {},
+    userSettings: {}, // 用户的配置
     isLogin: false, // 是否登录
     nemLoginInfo: {}, // 网易云音乐登录信息
     recentlyPlayList: [], // 网易云音乐 最近播放的歌单

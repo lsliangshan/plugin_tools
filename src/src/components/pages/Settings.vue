@@ -3,9 +3,8 @@
        :style="settingsContainerStyles">
     <draggable class="settings_inner"
                :x="(bodyStyles.width - 500) / 2"
-               :y="100"
+               :y="30"
                :w="500"
-               :h="405"
                :parent="true"
                :style="settingsInnerStyles">
       <div class="settings_item">
@@ -35,26 +34,37 @@
       <div class="settings_item">
         <label class="settings_item_label">主题</label>
         <div class="settings_item_value h100">
-          <div class="bg_preview"
-               @click="openThemeImagesModal">
-            <img v-if="activeThemeIndex.join(';').indexOf('-1') < 0"
-                 :src="themeImages[activeThemeIndex[0]].sublist[activeThemeIndex[1]].img" />
+          <div class="bg_preview_wrapper">
+            <div class="bg_preview"
+                 @click="openThemeImagesModal">
+              <img v-if="customThemeImageValidate"
+                   :src="customThemeImage">
+              <img v-else-if="activeThemeIndex.join(';').indexOf('-1') < 0"
+                   :src="themeImage" />
+            </div>
           </div>
         </div>
       </div>
-      <transition name="custom-theme-settings-transition"
+      <!-- <transition name="custom-theme-settings-transition"
                   enter-active-class="animated fadeIn"
                   leave-active-class="animated fadeOut faster">
         <div class="settings_item"
              v-if="isLogin">
           <label class="settings_item_label">自定义主题</label>
-          <div class="settings_item_value">
+          <div class="settings_item_value settings_item_value_2">
             <Input type="text"
                    v-model="customThemeImage"
                    @on-change="changeCustomThemeImage" />
+            <div class="bg_preview_wrapper h100">
+              <span>无自定义图片</span>
+              <div class="bg_preview"
+                   v-if="customThemeImageValidate">
+                <img :src="customThemeImage" />
+              </div>
+            </div>
           </div>
         </div>
-      </transition>
+      </transition> -->
       <div class="settings_item">
         <label class="settings_item_label">清除缓存</label>
         <div class="settings_item_value">
@@ -125,6 +135,49 @@
            @on-ok="saveTheme"
            ok-text="确定"
            title="选择主题">
+      <transition name="custom-theme-image-transition"
+                  enter-active-class="animated fadeIn"
+                  leave-active-class="animated fadeOut faster">
+        <div class="themes_item_containner"
+             v-if="isLogin">
+          <div class="themes_item_label themes_item_label_2">
+            <span>自定义主题</span>
+            <Input type="text"
+                   style="width: calc(100% - 200px); max-width: 400px;"
+                   placeholder="请输入自定义图片"
+                   v-model="customThemeImage"
+                   @on-change="changeCustomThemeImage" />
+          </div>
+          <div class="themes_item_content">
+            <div class="themes_item blank_theme"
+                 :data-index="-2"
+                 :data-sub-index="-2"
+                 @click="chooseThemeImage">
+              <!-- <div class="themes_item_selected"> -->
+              <div class="bg_preview_wrapper"
+                   style="width: 100%; height: 100%;">
+                <span>无自定义图片</span>
+                <div class="bg_preview"
+                     style="width: 100%; height: 100%;"
+                     v-if="customThemeImageValidate">
+                  <img :src="customThemeImage"
+                       v-if="customThemeImageValidate" />
+                </div>
+                <transition name="theme-item-transition"
+                            enter-active-class="animated fast fadeIn"
+                            leave-active-class="animated fast fadeOut">
+                  <div class="themes_item_selected"
+                       v-if="customThemeImageValidate">
+                    <Icon type="md-checkmark"
+                          size="40" />
+                  </div>
+                </transition>
+                <!-- </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
       <div class="themes_item_containner">
         <div class="themes_item_label">不设置背景图</div>
         <div class="themes_item_content">
@@ -133,7 +186,7 @@
                :data-sub-index="-1"
                @click="chooseThemeImage">
             <div class="themes_item_selected"
-                 v-if="cacheActiveThemeIndex[0] == -1 || cacheActiveThemeIndex[1] == -1">
+                 v-if="!customThemeImageValidate && (cacheActiveThemeIndex[0] == -1 || cacheActiveThemeIndex[1] == -1)">
               <Icon type="md-checkmark"
                     size="40" />
             </div>
@@ -156,7 +209,7 @@
                         enter-active-class="animated fast fadeIn"
                         leave-active-class="animated fast fadeOut">
               <div class="themes_item_selected"
-                   v-if="cacheActiveThemeIndex[0] == index && cacheActiveThemeIndex[1] == idx">
+                   v-if="!customThemeImageValidate && cacheActiveThemeIndex[0] == index && cacheActiveThemeIndex[1] == idx">
                 <Icon type="md-checkmark"
                       size="40" />
               </div>
@@ -185,6 +238,7 @@
   .settings_inner {
     position: relative;
     /* width: 500px; */
+    height: auto;
     cursor: move;
     background-color: rgba(255, 255, 255, 0.4);
     padding: 40px 15px 15px 15px;
@@ -222,28 +276,39 @@
     margin: 15px 0;
     line-height: 40px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
   }
   .settings_item_label {
     display: inline-block;
     width: 100px;
+    height: 40px;
     font-size: 14px;
     line-height: 16px;
     color: #282828;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
   }
   .settings_item_value {
     width: 100%;
     height: 40px;
     padding: 0 15px;
     box-sizing: border-box;
-    cursor: pointer;
+    /* cursor: pointer; */
     /*background-color: #f8f8f8;*/
     overflow-x: auto;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+  }
+  .settings_item_value_2 {
+    height: 150px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
   }
   .router_item_tag {
     background-color: rgb(79, 192, 141);
@@ -325,18 +390,37 @@
     left: 10px;
   }
 
-  .bg_preview {
+  .bg_preview_wrapper {
+    position: relative;
     width: 100px;
     height: 100px;
-    border: 1px solid #c8c8c8;
+    border: 1px solid #f5f5f5;
+    box-sizing: content-box;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #f8f8f8;
   }
+  .bg_preview {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bg_preview_wrapper .bg_preview {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
   .bg_preview img {
+    position: absolute;
     max-width: 100%;
     max-height: 100%;
+  }
+  .bg_preview_wrapper span {
+    font-size: 12px;
+    color: #c8c8c8;
   }
 
   .themes_item_containner {
@@ -346,6 +430,15 @@
   .themes_item_label {
     height: 32px;
     line-height: 32px;
+  }
+  .themes_item_label_2 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .themes_item_label_2 span {
+    width: 120px;
   }
   .themes_item_content {
     width: 100%;
@@ -394,6 +487,8 @@
 </style>
 <script>
   import * as types from '../../store/mutation-types.js'
+  import { createNamespacedHelpers, mapGetters } from 'vuex'
+  const { mapActions } = createNamespacedHelpers('./store/modules')
   import { StorageUtil } from '../../utils/index.js'
   export default {
     name: 'settings',
@@ -412,10 +507,17 @@
         },
         cacheActiveThemeIndex: [-1, -1],
         cacheBlankHomePage: '',
-        customThemeImage: '' // 用户自定义的主题图片，优先级高于activeThemeIndex
+        customThemeImage: '', // 用户自定义的主题图片，优先级高于activeThemeIndex
+        customThemeImageValidate: false
       }
     },
     computed: {
+      ...mapGetters({
+        userSettings: 'moduleUserSettings/userSettings',
+        themeImage: 'moduleUserSettings/themeImage',
+        blankHomePage: 'moduleUserSettings/blankHomePage',
+        activeThemeIndex: 'moduleUserSettings/activeThemeIndex'
+      }),
       maxToolCount () {
         return this.$store.state.maxToolCount
       },
@@ -432,7 +534,8 @@
       },
       settingsInnerStyles () {
         return {
-          maxHeight: (this.bodyStyles.height - 65 - 30) + 'px'
+          maxHeight: (this.bodyStyles.height - 65 - 30) + 'px',
+          height: 'auto'
         }
       },
       localStorageKeys () {
@@ -447,11 +550,17 @@
       themeImages () {
         return this.$store.state.themeImages
       },
-      activeThemeIndex () {
-        return this.$store.state.activeThemeIndex
+      requestInfo () {
+        return this.$store.state.requestInfo
       },
-      blankHomePage () {
-        return this.$store.state.blankHomePage
+      // activeThemeIndex () {
+      //   return this.$store.state.activeThemeIndex
+      // },
+      // blankHomePage () {
+      //   return this.$store.state.blankHomePage
+      // },
+      loginInfo () {
+        return this.$store.state.loginInfo
       },
       isLogin () {
         return this.$store.state.isLogin
@@ -469,6 +578,26 @@
       })
     },
     methods: {
+      ...mapActions([
+        'moduleUserSettings'
+      ]),
+      updateUserSettings (data) {
+        return new Promise(async (resolve) => {
+          await this.$store.dispatch('moduleUserSettings/updateUserSettings', data)
+        })
+      },
+      validteImage (url, minWidth = 10) {
+        return new Promise((resolve) => {
+          let image = new Image()
+          image.src = url
+          image.onload = () => {
+            resolve(image.width >= minWidth)
+          }
+          image.onerror = (e) => {
+            resolve(false)
+          }
+        })
+      },
       getActiveTools () {
         return new Promise(async (resolve) => {
           let activeTools = await StorageUtil.getItem(this.localStorageKeys.activeTools)
@@ -507,9 +636,28 @@
         this.cacheActiveThemeIndex = [Number(e.target.dataset.index), Number(e.target.dataset.subIndex)]
       },
       saveTheme () {
-        this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
+        let _preperToUpdate = {
           activeThemeIndex: this.cacheActiveThemeIndex
-        })
+        }
+        if (this.customThemeImageValidate) {
+          _preperToUpdate.customThemeImage = this.customThemeImage
+        } else {
+          _preperToUpdate.customThemeImage = ''
+        }
+        this.updateUserSettings(_preperToUpdate)
+
+        // this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
+        //   activeThemeIndex: this.cacheActiveThemeIndex
+        // })
+        // if (this.customThemeImageValidate) {
+        //   this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
+        //     customThemeImage: this.customThemeImage
+        //   })
+        // } else {
+        //   this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
+        //     customThemeImage: ''
+        //   })
+        // }
       },
       changeBlankHomePage () {
         this.$store.commit(types.SET_BLANK_HOME_PAGE, {
@@ -517,12 +665,31 @@
         })
       },
       changeCustomThemeImage () {
-        this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
-          customThemeImage: this.customThemeImage
-        })
+        // this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
+        //   customThemeImage: this.customThemeImage
+        // })
       },
       updateSettings () {
-
+        // updateUserSettings
+        return new Promise(async (resolve) => {
+          console.log('update settings: ', this.userSettings)
+          await this.$store.dispatch(types.AJAX, {
+            url: this.requestInfo.updateUserSettings,
+            data: {
+              phonenum: this.loginInfo.phonenum,
+              token: this.loginInfo.token,
+              settings: this.userSettings
+            }
+          }).catch(err => {
+            this.$Message.error(err.message || '请求失败，请稍后再试')
+            resolve(true)
+          }).then(responseData => {
+            if (responseData && responseData.status === 200) {
+              console.log('.....', responseData)
+            }
+            resolve(true)
+          })
+        })
       },
       clearAllStorage () {
         const that = this
@@ -541,6 +708,34 @@
           }
         })
       }
+    },
+    watch: {
+      customThemeImage: {
+        immediate: true,
+        async handler (val) {
+          // 自定义图片是否可以正常渲染
+          console.log('validate image:', val)
+          if (!this.isLogin || !val) {
+            this.customThemeImageValidate = false
+          } else {
+            let validator = await this.validteImage(val)
+            console.log('validate result: ', validator)
+            this.customThemeImageValidate = validator
+          }
+        }
+      }
+      // ,
+      // customThemeImageValidate (val) {
+      //   if (val) {
+      //     this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
+      //       customThemeImage: this.customThemeImage
+      //     })
+      //   } else {
+      //     this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
+      //       customThemeImage: ''
+      //     })
+      //   }
+      // }
     }
   }
 </script>
