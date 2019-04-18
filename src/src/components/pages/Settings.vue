@@ -678,7 +678,7 @@
             data: {
               phonenum: this.loginInfo.phonenum,
               token: this.loginInfo.token,
-              settings: this.userSettings
+              settings: JSON.stringify(this.userSettings)
             }
           }).catch(err => {
             this.$Message.error(err.message || '请求失败，请稍后再试')

@@ -78,10 +78,15 @@ export const mutations = {
     state.isLogin = data.isLogin
   },
   [types.CACHE_LOGIN_INFO] (state, data) {
-    state.loginInfo = JSON.parse(JSON.stringify(data))
-    let loginInfoStr = JSON.stringify(data)
-    let cryptoText = CryptoJS[state.cryptoType].encrypt(loginInfoStr, state.privateKey).toString()
-    StorageUtil.setItem(state.localStorageKeys.userInfo, cryptoText)
+    // state.loginInfo = JSON.parse(JSON.stringify(data))
+    // let loginInfo = Object.assign({}, data, {
+    //   settings: JSON.stringify(data.settings)
+    // })
+    // state.userInfo = loginInfo
+    // console.log('CACHE_LOGIN_INFO 2: ', state.userInfo, '...', state.loginInfo, '....', data)
+    // let loginInfoStr = JSON.stringify(data)
+    // let cryptoText = CryptoJS[state.cryptoType].encrypt(loginInfoStr, state.privateKey).toString()
+    // StorageUtil.setItem(state.localStorageKeys.userInfo, cryptoText)
   },
   [types.GET_LOGIN_INFO] (state) {
     return new Promise(async (resolve) => {

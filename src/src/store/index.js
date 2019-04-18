@@ -185,6 +185,7 @@ const store = new Vuex.Store({
     privateKey: 'gray-config-9',
     cryptoType: 'TripleDES',
     loginInfo: {},
+    userInfo: {},
     userSettings: {}, // 用户的配置
     isLogin: false, // 是否登录
     nemLoginInfo: {}, // 网易云音乐登录信息

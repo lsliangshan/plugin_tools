@@ -13,6 +13,7 @@ const moduleUserSettings = {
         /**
          * 如果登录，则优先取登录用户的配置
          */
+        console.log('login user settings: ', rootState.loginInfo.settings)
         return rootState.loginInfo.settings
       } else {
         /**
