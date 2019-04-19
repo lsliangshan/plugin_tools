@@ -37,10 +37,9 @@
           <div class="bg_preview_wrapper">
             <div class="bg_preview"
                  @click="openThemeImagesModal">
-              <img v-if="customThemeImageValidate"
-                   :src="customThemeImage">
-              <img v-else-if="activeThemeIndex.join(';').indexOf('-1') < 0"
-                   :src="themeImage" />
+              <img :src="themeImage">
+              <!-- <img v-else-if="activeThemeIndex.join(';').indexOf('-1') < 0"
+                   :src="themeImages[activeThemeIndex[0]]" /> -->
             </div>
           </div>
         </div>
@@ -145,22 +144,22 @@
             <Input type="text"
                    style="width: calc(100% - 200px); max-width: 400px;"
                    placeholder="请输入自定义图片"
-                   v-model="customThemeImage"
+                   v-model="cacheCustomThemeImage"
                    @on-change="changeCustomThemeImage" />
           </div>
           <div class="themes_item_content">
             <div class="themes_item blank_theme"
                  :data-index="-2"
-                 :data-sub-index="-2"
-                 @click="chooseThemeImage">
+                 :data-sub-index="-2">
+              <!-- @click="chooseThemeImage"> -->
               <!-- <div class="themes_item_selected"> -->
               <div class="bg_preview_wrapper"
                    style="width: 100%; height: 100%;">
                 <span>无自定义图片</span>
-                <div class="bg_preview"
+                <div class="bg_preview bg_preview_modal"
                      style="width: 100%; height: 100%;"
                      v-if="customThemeImageValidate">
-                  <img :src="customThemeImage"
+                  <img :src="cacheCustomThemeImage"
                        v-if="customThemeImageValidate" />
                 </div>
                 <transition name="theme-item-transition"
@@ -178,7 +177,7 @@
           </div>
         </div>
       </transition>
-      <div class="themes_item_containner">
+      <!-- <div class="themes_item_containner">
         <div class="themes_item_label">不设置背景图</div>
         <div class="themes_item_content">
           <div class="themes_item blank_theme"
@@ -192,7 +191,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="themes_item_container"
            v-for="(item, index) in themeImages"
            :key="index">
@@ -394,8 +393,8 @@
     position: relative;
     width: 100px;
     height: 100px;
-    border: 1px solid #f5f5f5;
-    box-sizing: content-box;
+    border: 1px solid #f8f8f8;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -408,7 +407,7 @@
     align-items: center;
     justify-content: center;
   }
-  .bg_preview_wrapper .bg_preview {
+  .bg_preview_wrapper .bg_preview_modal {
     position: absolute;
     left: 0;
     top: 0;
@@ -507,16 +506,16 @@
         },
         cacheActiveThemeIndex: [-1, -1],
         cacheBlankHomePage: '',
-        customThemeImage: '', // 用户自定义的主题图片，优先级高于activeThemeIndex
+        cacheCustomThemeImage: '', // 用户自定义的主题图片，优先级高于activeThemeIndex
         customThemeImageValidate: false
       }
     },
     computed: {
       ...mapGetters({
-        userSettings: 'moduleUserSettings/userSettings',
-        themeImage: 'moduleUserSettings/themeImage',
-        blankHomePage: 'moduleUserSettings/blankHomePage',
-        activeThemeIndex: 'moduleUserSettings/activeThemeIndex'
+        settings: 'moduleSettings/settings',
+        themeImage: 'moduleSettings/themeImage',
+        // blankHomePage: 'moduleSettings/blankHomePage',
+        // activeThemeIndex: 'moduleSettings/activeThemeIndex'
       }),
       maxToolCount () {
         return this.$store.state.maxToolCount
@@ -573,17 +572,29 @@
           this.toolTagsModal.inactiveItems = JSON.parse(JSON.stringify(this.inactiveTools))
         } catch (err) {
         }
-        this.cacheActiveThemeIndex = this.activeThemeIndex
-        this.cacheBlankHomePage = this.blankHomePage
+        this.cacheActiveThemeIndex = this.settings.activeThemeIndex || [-1, -1]
+        this.cacheBlankHomePage = this.settings.blankHomePage
+        this.cacheCustomThemeImage = this.settings.customThemeImage
       })
+    },
+    async beforeRouteLeave (to, from, next) {
+      if (to.name !== 'settings') {
+        await this.syncSettings()
+      }
+      next()
     },
     methods: {
       ...mapActions([
-        'moduleUserSettings'
+        'moduleSettings'
       ]),
-      updateUserSettings (data) {
+      updateSettings (data) {
         return new Promise(async (resolve) => {
-          await this.$store.dispatch('moduleUserSettings/updateUserSettings', data)
+          await this.$store.dispatch('moduleSettings/updateSettings', data)
+        })
+      },
+      updateSettingsRemote (data) {
+        return new Promise(async (resolve) => {
+          await this.$store.dispatch('moduleSettings/updateSettingsRemote', data)
         })
       },
       validteImage (url, minWidth = 10) {
@@ -634,58 +645,49 @@
       },
       chooseThemeImage (e) {
         this.cacheActiveThemeIndex = [Number(e.target.dataset.index), Number(e.target.dataset.subIndex)]
+        this.updateSettings({
+          activeThemeIndex: this.cacheActiveThemeIndex
+        })
       },
       saveTheme () {
+        // if (!this.isLogin) {
         let _preperToUpdate = {
           activeThemeIndex: this.cacheActiveThemeIndex
         }
         if (this.customThemeImageValidate) {
-          _preperToUpdate.customThemeImage = this.customThemeImage
+          _preperToUpdate.customThemeImage = this.cacheCustomThemeImage
         } else {
           _preperToUpdate.customThemeImage = ''
         }
-        this.updateUserSettings(_preperToUpdate)
-
-        // this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
-        //   activeThemeIndex: this.cacheActiveThemeIndex
-        // })
-        // if (this.customThemeImageValidate) {
-        //   this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
-        //     customThemeImage: this.customThemeImage
-        //   })
+        this.updateSettingsRemote(_preperToUpdate)
         // } else {
-        //   this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
-        //     customThemeImage: ''
-        //   })
+        // this.syncSettings()
         // }
       },
       changeBlankHomePage () {
-        this.$store.commit(types.SET_BLANK_HOME_PAGE, {
+        this.updateSettings({
           blankHomePage: this.cacheBlankHomePage
         })
       },
       changeCustomThemeImage () {
-        // this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
-        //   customThemeImage: this.customThemeImage
+        // this.updateSettings({
+        //   customThemeImage: this.cacheCustomThemeImage
         // })
       },
-      updateSettings () {
-        // updateUserSettings
+      syncSettings () {
         return new Promise(async (resolve) => {
-          console.log('update settings: ', this.userSettings)
           await this.$store.dispatch(types.AJAX, {
-            url: this.requestInfo.updateUserSettings,
+            url: this.requestInfo.updateSettings,
             data: {
               phonenum: this.loginInfo.phonenum,
               token: this.loginInfo.token,
-              settings: JSON.stringify(this.userSettings)
+              settings: JSON.stringify(this.settings)
             }
           }).catch(err => {
             this.$Message.error(err.message || '请求失败，请稍后再试')
             resolve(true)
           }).then(responseData => {
             if (responseData && responseData.status === 200) {
-              console.log('.....', responseData)
             }
             resolve(true)
           })
@@ -710,18 +712,22 @@
       }
     },
     watch: {
-      customThemeImage: {
+      'cacheCustomThemeImage': {
         immediate: true,
         async handler (val) {
           // 自定义图片是否可以正常渲染
-          console.log('validate image:', val)
           if (!this.isLogin || !val) {
             this.customThemeImageValidate = false
           } else {
             let validator = await this.validteImage(val)
-            console.log('validate result: ', validator)
             this.customThemeImageValidate = validator
           }
+        }
+      },
+      'settings.blankHomePage': {
+        immediate: true,
+        handler (val) {
+          this.cacheBlankHomePage = val
         }
       }
       // ,

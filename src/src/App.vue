@@ -35,7 +35,7 @@
     },
     computed: {
       ...mapGetters({
-        userSettings: 'moduleUserSettings/userSettings'
+        settings: 'moduleSettings/settings'
       }),
       store () {
         return this.$store
@@ -92,17 +92,21 @@
       this.store.commit(types.INIT_TOOLS, {
         tools: this.getAllTools()
       })
-      this.store.commit(types.SET_ACTIVE_TOOLS, {
-        tools: await this.getActiveTools()
-      })
-      this.store.commit(types.SET_INACTIVE_TOOLS, {
-        tools: await this.getInactiveTools()
-      })
-      this.store.commit(types.SET_MAX_TOOL_COUNT, {
-        count: await this.getMaxToolCount()
-      })
-      this.store.commit(types.CACHE_USER_SETTINGS, {
-        userSettings: await this.getUserSettings()
+      let getActiveToolsPromise = this.getActiveTools()
+      let getInactiveToolsPromise = this.getInactiveTools()
+      let getMaxToolCountPromise = this.getMaxToolCount()
+      let getSettingsPromise = this.getSettings()
+      Promise.all([getActiveToolsPromise, getInactiveToolsPromise, getMaxToolCountPromise, getSettingsPromise]).then(response => {
+        this.store.commit(types.SET_ACTIVE_TOOLS, {
+          tools: response[0]
+        })
+        this.store.commit(types.SET_INACTIVE_TOOLS, {
+          tools: response[1]
+        })
+        this.store.commit(types.SET_MAX_TOOL_COUNT, {
+          count: response[2]
+        })
+        // this.$store.dispatch('moduleSettings/updateSettingsWithoutAjax', response[3])
       })
       // this.store.commit(types.SET_ACTIVE_THEME_INDEX, {
       //   activeThemeIndex: await this.getActiveThemeIndex()
@@ -124,7 +128,7 @@
     },
     methods: {
       ...mapActions([
-        'moduleUserSettings'
+        'moduleSettings'
       ]),
       connectRTC () {
         const that = this
@@ -257,11 +261,11 @@
           this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
             activeThemeIndex: JSON.parse(e.newValue || '[-1, -1]')
           })
-        } else if (e.key === this.localStorageKeys.userSettings) {
+        } else if (e.key === this.localStorageKeys.settings) {
           // this.$store.commit(types.SET_ACTIVE_THEME_INDEX, {
           //   activeThemeIndex: JSON.parse(e.newValue || '[-1, -1]')
           // })
-          this.$store.dispatch('moduleUserSettings/updateUserSettings', JSON.parse(e.newValue || '{}'))
+          this.$store.dispatch('moduleSettings/updateSettings', JSON.parse(e.newValue || '{}'))
         }
       },
       connect (args) {
@@ -404,10 +408,10 @@
           resolve(blankHomePage || this.blankHomePage)
         })
       },
-      getUserSettings () {
+      getSettings () {
         return new Promise(async resolve => {
-          let userSettings = await StorageUtil.getItem(this.localStorageKeys.userSettings)
-          resolve(userSettings || {})
+          let settings = await StorageUtil.getItem(this.localStorageKeys.settings)
+          resolve(settings || {})
         })
       }
     },

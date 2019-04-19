@@ -58,7 +58,7 @@
     },
     computed: {
       ...mapGetters({
-        themeImage: 'moduleUserSettings/themeImage'
+        themeImage: 'moduleSettings/themeImage'
       }),
       homeStyles () {
         return {

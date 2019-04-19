@@ -75,7 +75,6 @@ router.beforeEach(async (to, from, next) => {
   // if (_localUserInfo.settings) {
   //   _localUserInfo.settings = JSON.parse(JSON.stringify(_localUserInfo.settings))
   // }
-  console.log('customThemeImage: ', JSON.stringify(_localUserInfo, null, 2), _localUserInfo.settings ? _localUserInfo.settings.customThemeImage : '')
   store.commit(types.CACHE_LOGIN_INFO, _localUserInfo)
   if (to.name === 'login') {
     // let _loginInfo = StorageUtil.getItem(store.state.localStorageKeys.userInfo)

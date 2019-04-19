@@ -87,7 +87,7 @@
   }
   .login_box {
     /* width: 320px;
-            margin-left: 10%; */
+              margin-left: 10%; */
     cursor: move;
     border-radius: 4px;
     overflow: hidden;
@@ -156,7 +156,7 @@
     },
     computed: {
       ...mapGetters({
-        themeImage: 'moduleUserSettings/themeImage'
+        themeImage: 'moduleSettings/themeImage'
       }),
       themeImages () {
         return this.$store.state.themeImages

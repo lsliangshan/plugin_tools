@@ -40,7 +40,7 @@ import * as mutations from './mutations'
 import * as getters from './getters'
 import moduleNem from './modules/moduleNem'
 import moduleUserScripts from './modules/moduleUserScripts'
-import moduleUserSettings from './modules/moduleUserSettings'
+import moduleSettings from './modules/moduleSettings'
 
 Vue.use(Vuex)
 
@@ -54,7 +54,7 @@ const store = new Vuex.Store({
   modules: {
     moduleNem,
     moduleUserScripts,
-    moduleUserSettings
+    moduleSettings
   },
   state: {
     theme: 'dark',
@@ -139,7 +139,7 @@ const store = new Vuex.Store({
     },
     localStorageKeys: {
       userInfo: 'user-info',
-      userSettings: 'local-user-settings',
+      settings: 'local-user-settings',
       nemMusic: {
         loginInfo: 'local-nem-music-login-info'
       },
@@ -176,7 +176,7 @@ const store = new Vuex.Store({
       getThemeImages: '/enkel/index/getImages',
       updateUserInfo: '/enkel/user/updateUserInfo',
       modifyPassword: '/enkel/user/modifyPassword',
-      updateUserSettings: '/enkel/user/updateUserSettings',
+      updateSettings: '/enkel/user/updateUserSettings',
       getGankData: '/enkel/index/getGankData',
       getWrapper: '/enkel/index/getWrapper',
       getWeather: '/enkel/index/getWeather',
@@ -186,7 +186,7 @@ const store = new Vuex.Store({
     cryptoType: 'TripleDES',
     loginInfo: {},
     userInfo: {},
-    userSettings: {}, // 用户的配置
+    settings: {}, // localStorage中用户的配置
     isLogin: false, // 是否登录
     nemLoginInfo: {}, // 网易云音乐登录信息
     recentlyPlayList: [], // 网易云音乐 最近播放的歌单

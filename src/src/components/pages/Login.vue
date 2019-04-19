@@ -146,7 +146,7 @@
     },
     computed: {
       ...mapGetters({
-        themeImage: 'moduleUserSettings/themeImage'
+        themeImage: 'moduleSettings/themeImage'
       }),
       themeImages () {
         return this.$store.state.themeImages

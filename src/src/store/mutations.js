@@ -63,13 +63,8 @@ const findTemplateByUUID = function (uuid, arr, deep, sub) {
 
 export const mutations = {
   [types.CACHE_USER_SETTINGS] (state, data) {
-    // state.userSettings = data.userSettings
-    if (state.isLogin) {
-      state.loginInfo.settings = data.userSettings
-    } else {
-      state.userSettings = data.userSettings
-      StorageUtil.setItem(state.localStorageKeys.userSettings, data.userSettings)
-    }
+    state.settings = Object.assign({}, state.settings, data)
+    StorageUtil.setItem(state.localStorageKeys.settings, state.settings)
   },
   [types.CACHE_SOCKET_CONNECTION] (state, data) {
     state.socketConnection = data.connection
@@ -79,14 +74,18 @@ export const mutations = {
   },
   [types.CACHE_LOGIN_INFO] (state, data) {
     // state.loginInfo = JSON.parse(JSON.stringify(data))
-    // let loginInfo = Object.assign({}, data, {
-    //   settings: JSON.stringify(data.settings)
-    // })
-    // state.userInfo = loginInfo
-    // console.log('CACHE_LOGIN_INFO 2: ', state.userInfo, '...', state.loginInfo, '....', data)
-    // let loginInfoStr = JSON.stringify(data)
-    // let cryptoText = CryptoJS[state.cryptoType].encrypt(loginInfoStr, state.privateKey).toString()
-    // StorageUtil.setItem(state.localStorageKeys.userInfo, cryptoText)
+    let loginInfo = Object.assign({}, data)
+    state.loginInfo = loginInfo
+    let loginInfoStr = JSON.stringify(loginInfo)
+    let cryptoText = CryptoJS[state.cryptoType].encrypt(loginInfoStr, state.privateKey).toString()
+    StorageUtil.setItem(state.localStorageKeys.userInfo, cryptoText)
+  },
+  [types.UPDATE_LOGIN_INFO] (state, data) {
+    let loginInfo = Object.assign({}, state.loginInfo, data)
+    state.loginInfo = loginInfo
+    let loginInfoStr = JSON.stringify(loginInfo)
+    let cryptoText = CryptoJS[state.cryptoType].encrypt(loginInfoStr, state.privateKey).toString()
+    StorageUtil.setItem(state.localStorageKeys.userInfo, cryptoText)
   },
   [types.GET_LOGIN_INFO] (state) {
     return new Promise(async (resolve) => {
@@ -211,9 +210,6 @@ export const mutations = {
   },
   [types.SET_SOCKET] (state, data) {
     state.socket.client = data.socket
-  },
-  [types.UPDATE_LOGIN_INFO] (state, data) {
-    state.loginInfo = data
   },
   [types.DISCONNECT_SOCKETIO] (state) {
     state.socket.client.disconnect()
