@@ -64,13 +64,13 @@
           </div>
         </div>
       </transition> -->
-      <div class="settings_item">
+      <!-- <div class="settings_item">
         <label class="settings_item_label">清除缓存</label>
         <div class="settings_item_value">
           <Button type="warning"
                   @click="clearAllStorage">清除缓存</Button>
         </div>
-      </div>
+      </div> -->
       <transition name="sync-settings-transition"
                   enter-active-class="animated fadeIn"
                   leave-active-class="animated fadeOut">
@@ -82,8 +82,9 @@
                      :transfer="true"
                      content="同步我的配置到远端">
               <Button type="primary"
-                      @click="updateSettings">同步配置</Button>
+                      @click="syncSettings">同步配置</Button>
             </Tooltip>
+            <span style="margin-left: 10px; color: #282828;">修改配置后请点击同步</span>
           </div>
         </div>
       </transition>
@@ -149,6 +150,7 @@
           </div>
           <div class="themes_item_content">
             <div class="themes_item blank_theme"
+                 :class="[(customThemeImageValidate && !fetchingCustomImage) ? 'active' : '']"
                  :data-index="-2"
                  :data-sub-index="-2">
               <!-- @click="chooseThemeImage"> -->
@@ -160,15 +162,23 @@
                      style="width: 100%; height: 100%;"
                      v-if="customThemeImageValidate">
                   <img :src="cacheCustomThemeImage"
-                       v-if="customThemeImageValidate" />
+                       v-if="customThemeImageValidate && !fetchingCustomImage" />
                 </div>
+                <transition name="bg-preivew-loading-transition"
+                            enter-active-class="animated fadeIn"
+                            leave-active-class="animated fadeOut">
+                  <div class="bg_preview_loading"
+                       v-if="fetchingCustomImage">
+                    <Spin></Spin>
+                  </div>
+                </transition>
                 <transition name="theme-item-transition"
                             enter-active-class="animated fast fadeIn"
                             leave-active-class="animated fast fadeOut">
                   <div class="themes_item_selected"
-                       v-if="customThemeImageValidate">
+                       v-if="customThemeImageValidate && !fetchingCustomImage">
                     <Icon type="md-checkmark"
-                          size="40" />
+                          size="14" />
                   </div>
                 </transition>
                 <!-- </div> -->
@@ -198,6 +208,7 @@
         <div class="themes_item_label">{{item.label}}</div>
         <div class="themes_item_content">
           <div class="themes_item"
+               :class="[(!customThemeImageValidate && cacheActiveThemeIndex[0] == index && cacheActiveThemeIndex[1] == idx) ? 'active' : '']"
                v-for="(itm, idx) in item.sublist"
                :key="idx"
                :data-index="index"
@@ -210,7 +221,7 @@
               <div class="themes_item_selected"
                    v-if="!customThemeImageValidate && cacheActiveThemeIndex[0] == index && cacheActiveThemeIndex[1] == idx">
                 <Icon type="md-checkmark"
-                      size="40" />
+                      size="14" />
               </div>
             </transition>
           </div>
@@ -220,528 +231,573 @@
   </div>
 </template>
 <style scoped>
-  .h100 {
-    height: 100px !important;
-  }
-  .settings_container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding: 15px;
-    box-sizing: border-box;
-    /*background-color: #f5f5f5;*/
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-  }
-  .settings_inner {
-    position: relative;
-    /* width: 500px; */
-    height: auto;
-    cursor: move;
-    background-color: rgba(255, 255, 255, 0.4);
-    padding: 40px 15px 15px 15px;
-    border-radius: 5px;
-    overflow-y: auto;
-  }
-  .settings_tag_container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 60px;
-    height: 40px;
-    pointer-events: none;
-  }
-  .settings_tag_bg {
-    width: 0;
-    height: 0;
-    border-top: 20px solid rgb(79, 192, 141);
-    border-right: 30px solid rgb(79, 192, 141);
-    border-bottom: 20px solid transparent;
-    border-left: 30px solid transparent;
-  }
-  .settings_tag_label {
-    position: absolute;
-    right: 4px;
-    top: 6px;
-    font-size: 13px;
-    color: #ffffff;
-    font-weight: bolder;
-    transform-origin: center;
-    transform: rotate(35deg);
-  }
-  .settings_item {
-    width: 100%;
-    margin: 15px 0;
-    line-height: 40px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
-  .settings_item_label {
-    display: inline-block;
-    width: 100px;
-    height: 40px;
-    font-size: 14px;
-    line-height: 16px;
-    color: #282828;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  .settings_item_value {
-    width: 100%;
-    height: 40px;
-    padding: 0 15px;
-    box-sizing: border-box;
-    /* cursor: pointer; */
-    /*background-color: #f8f8f8;*/
-    overflow-x: auto;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  .settings_item_value_2 {
-    height: 150px;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
-  .router_item_tag {
-    background-color: rgb(79, 192, 141);
-    color: #ffffff;
-    height: 24px;
-    padding: 0 10px;
-    border-radius: 4px;
-    margin-right: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-  }
-  .router_item_tag.fade {
-    background-color: rgba(79, 192, 141, 0.5);
-  }
+.h100 {
+  height: 100px !important;
+}
+.settings_container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  box-sizing: border-box;
+  /*background-color: #f5f5f5;*/
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.settings_inner {
+  position: relative;
+  /* width: 500px; */
+  height: auto;
+  cursor: move;
+  background-color: rgba(255, 255, 255, 0.4);
+  padding: 40px 15px 15px 15px;
+  border-radius: 5px;
+  overflow-y: auto;
+}
+.settings_tag_container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 40px;
+  pointer-events: none;
+}
+.settings_tag_bg {
+  width: 0;
+  height: 0;
+  border-top: 20px solid rgb(79, 192, 141);
+  border-right: 30px solid rgb(79, 192, 141);
+  border-bottom: 20px solid transparent;
+  border-left: 30px solid transparent;
+}
+.settings_tag_label {
+  position: absolute;
+  right: 4px;
+  top: 6px;
+  font-size: 13px;
+  color: #ffffff;
+  font-weight: bolder;
+  transform-origin: center;
+  transform: rotate(35deg);
+}
+.settings_item {
+  width: 100%;
+  margin: 15px 0;
+  line-height: 40px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.settings_item_label {
+  display: inline-block;
+  width: 100px;
+  height: 40px;
+  font-size: 14px;
+  line-height: 16px;
+  color: #282828;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+.settings_item_value {
+  width: 100%;
+  height: 40px;
+  padding: 0 15px;
+  box-sizing: border-box;
+  /* cursor: pointer; */
+  /*background-color: #f8f8f8;*/
+  overflow-x: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+.settings_item_value_2 {
+  height: 150px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.router_item_tag {
+  background-color: rgb(79, 192, 141);
+  color: #ffffff;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 4px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+.router_item_tag.fade {
+  background-color: rgba(79, 192, 141, 0.5);
+}
 
-  .tool_modal_container {
-    width: 100%;
-    height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .tool_modal_panel {
-    width: 50%;
-    height: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-  }
-  .tool_modal_panel_title {
-    width: 100%;
-    height: 32px;
-    line-height: 32px;
-    font-size: 14px;
-    font-weight: bolder;
-    text-align: center;
-    background-color: #f2f2f2;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-  }
-  .tool_modal_panel.active .tool_modal_panel_title {
-    background-color: rgba(79, 192, 141, 1);
-    color: #fff;
-  }
-  .tool_modal_panel.active .tool_modal_panel_content {
-    border-left: 1px solid rgba(79, 192, 141, 0.6);
-    border-right: 1px solid rgba(79, 192, 141, 0.6);
-    border-bottom: 1px solid rgba(79, 192, 141, 0.6);
-    background-color: rgba(79, 192, 141, 0.1);
-  }
-  .tool_modal_panel_content {
-    width: 100%;
-    height: calc(100% - 32px);
-    background-color: #f8f8f8;
-    overflow-y: auto;
-    padding: 0 10px;
-    box-sizing: border-box;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-  }
-  .tool_modal_panel_content > div {
-    height: 250px;
-  }
-  .draggable_item {
-    position: relative;
-    cursor: move;
-    width: 100%;
-    height: 40px;
-    border: 1px solid #c8c8c8;
-    margin-top: 10px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .draggable_item i {
-    position: absolute;
-    left: 10px;
-  }
+.tool_modal_container {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tool_modal_panel {
+  width: 50%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.tool_modal_panel_title {
+  width: 100%;
+  height: 32px;
+  line-height: 32px;
+  font-size: 14px;
+  font-weight: bolder;
+  text-align: center;
+  background-color: #f2f2f2;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.tool_modal_panel.active .tool_modal_panel_title {
+  background-color: rgba(79, 192, 141, 1);
+  color: #fff;
+}
+.tool_modal_panel.active .tool_modal_panel_content {
+  border-left: 1px solid rgba(79, 192, 141, 0.6);
+  border-right: 1px solid rgba(79, 192, 141, 0.6);
+  border-bottom: 1px solid rgba(79, 192, 141, 0.6);
+  background-color: rgba(79, 192, 141, 0.1);
+}
+.tool_modal_panel_content {
+  width: 100%;
+  height: calc(100% - 32px);
+  background-color: #f8f8f8;
+  overflow-y: auto;
+  padding: 0 10px;
+  box-sizing: border-box;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.tool_modal_panel_content > div {
+  height: 250px;
+}
+.draggable_item {
+  position: relative;
+  cursor: move;
+  width: 100%;
+  height: 40px;
+  border: 1px solid #c8c8c8;
+  margin-top: 10px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.draggable_item i {
+  position: absolute;
+  left: 10px;
+}
 
-  .bg_preview_wrapper {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    border: 1px solid #f8f8f8;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f8f8f8;
-  }
-  .bg_preview {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .bg_preview_wrapper .bg_preview_modal {
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-  .bg_preview img {
-    position: absolute;
-    max-width: 100%;
-    max-height: 100%;
-  }
-  .bg_preview_wrapper span {
-    font-size: 12px;
-    color: #c8c8c8;
-  }
+.bg_preview_wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #f8f8f8;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f8f8;
+}
+.bg_preview {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bg_preview_wrapper .bg_preview_modal {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.bg_preview img {
+  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+}
+.bg_preview_wrapper span {
+  font-size: 12px;
+  color: #c8c8c8;
+}
+.bg_preview_loading {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f8f8f8;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
 
-  .themes_item_containner {
-    width: 100%;
-    margin-bottom: 15px;
-  }
-  .themes_item_label {
-    height: 32px;
-    line-height: 32px;
-  }
-  .themes_item_label_2 {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  .themes_item_label_2 span {
-    width: 120px;
-  }
-  .themes_item_content {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .themes_item {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    border: 1px solid #f2f2f2;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .themes_item img {
-    max-width: 100%;
-    max-height: 100%;
-    pointer-events: none;
-  }
-  .themes_item.blank_theme {
-    background-color: #f8f8f8;
-  }
-  .themes_item_selected {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(79, 192, 141, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-  }
-  .themes_item_selected i {
-    color: #ffffff;
-  }
+.themes_item_containner {
+  width: 100%;
+  margin-bottom: 15px;
+}
+.themes_item_label {
+  height: 32px;
+  line-height: 32px;
+}
+.themes_item_label_2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+.themes_item_label_2 span {
+  width: 120px;
+}
+.themes_item_content {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.themes_item {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  border: 1px solid #f2f2f2;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.themes_item.active {
+  border: 1px solid rgba(79, 192, 141, 1);
+}
+.themes_item img {
+  max-width: 100%;
+  max-height: 100%;
+  pointer-events: none;
+}
+.themes_item.blank_theme {
+  background-color: #f8f8f8;
+}
+.themes_item_selected {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  /* width: 100%;
+  height: 100%; */
+  background-color: rgba(79, 192, 141, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.themes_item_selected i {
+  color: #ffffff;
+}
 </style>
 <script>
-  import * as types from '../../store/mutation-types.js'
-  import { createNamespacedHelpers, mapGetters } from 'vuex'
-  const { mapActions } = createNamespacedHelpers('./store/modules')
-  import { StorageUtil } from '../../utils/index.js'
-  export default {
-    name: 'settings',
-    components: {
-      // Draggable: () => import('vuedraggable')
+import * as types from '../../store/mutation-types.js'
+import { createNamespacedHelpers, mapGetters } from 'vuex'
+const { mapActions } = createNamespacedHelpers('./store/modules')
+import { StorageUtil } from '../../utils/index.js'
+export default {
+  name: 'settings',
+  components: {
+    // Draggable: () => import('vuedraggable')
+  },
+  data () {
+    return {
+      toolTagsModal: {
+        shown: false,
+        activeItems: [],
+        inactiveItems: []
+      },
+      themeImagesModal: {
+        shown: false
+      },
+      cacheActiveThemeIndex: [-1, -1],
+      cacheBlankHomePage: '',
+      cacheCustomThemeImage: '', // 用户自定义的主题图片，优先级高于activeThemeIndex
+      customThemeImageValidate: false,
+      fetchingCustomImage: false // 正在加载自定义图片
+    }
+  },
+  computed: {
+    ...mapGetters({
+      settings: 'moduleSettings/settings',
+      themeImage: 'moduleSettings/themeImage',
+      // blankHomePage: 'moduleSettings/blankHomePage',
+      // activeThemeIndex: 'moduleSettings/activeThemeIndex'
+    }),
+    maxToolCount () {
+      return this.$store.state.maxToolCount
     },
-    data () {
+    tools () {
+      return this.$store.state.tools
+    },
+    bodyStyles () {
+      return this.$store.state.bodyStyles
+    },
+    settingsContainerStyles () {
       return {
-        toolTagsModal: {
-          shown: false,
-          activeItems: [],
-          inactiveItems: []
-        },
-        themeImagesModal: {
-          shown: false
-        },
-        cacheActiveThemeIndex: [-1, -1],
-        cacheBlankHomePage: '',
-        cacheCustomThemeImage: '', // 用户自定义的主题图片，优先级高于activeThemeIndex
-        customThemeImageValidate: false
+        minHeight: (this.bodyStyles.height - 65) + 'px'
       }
     },
-    computed: {
-      ...mapGetters({
-        settings: 'moduleSettings/settings',
-        themeImage: 'moduleSettings/themeImage',
-        // blankHomePage: 'moduleSettings/blankHomePage',
-        // activeThemeIndex: 'moduleSettings/activeThemeIndex'
-      }),
-      maxToolCount () {
-        return this.$store.state.maxToolCount
-      },
-      tools () {
-        return this.$store.state.tools
-      },
-      bodyStyles () {
-        return this.$store.state.bodyStyles
-      },
-      settingsContainerStyles () {
-        return {
-          minHeight: (this.bodyStyles.height - 65) + 'px'
-        }
-      },
-      settingsInnerStyles () {
-        return {
-          maxHeight: (this.bodyStyles.height - 65 - 30) + 'px',
-          height: 'auto'
-        }
-      },
-      localStorageKeys () {
-        return this.$store.state.localStorageKeys
-      },
-      activeTools () {
-        return this.$store.state.activeTools
-      },
-      inactiveTools () {
-        return this.$store.state.inactiveTools
-      },
-      themeImages () {
-        return this.$store.state.themeImages
-      },
-      requestInfo () {
-        return this.$store.state.requestInfo
-      },
-      // activeThemeIndex () {
-      //   return this.$store.state.activeThemeIndex
-      // },
-      // blankHomePage () {
-      //   return this.$store.state.blankHomePage
-      // },
-      loginInfo () {
-        return this.$store.state.loginInfo
-      },
-      isLogin () {
-        return this.$store.state.isLogin
+    settingsInnerStyles () {
+      return {
+        maxHeight: (this.bodyStyles.height - 65 - 30) + 'px',
+        height: 'auto'
       }
     },
-    created () {
-      this.$nextTick(() => {
-        this.toolTagsModal.activeItems = JSON.parse(JSON.stringify(this.activeTools))
-        try {
-          this.toolTagsModal.inactiveItems = JSON.parse(JSON.stringify(this.inactiveTools))
-        } catch (err) {
-        }
-        this.cacheActiveThemeIndex = this.settings.activeThemeIndex || [-1, -1]
-        this.cacheBlankHomePage = this.settings.blankHomePage
-        this.cacheCustomThemeImage = this.settings.customThemeImage
+    localStorageKeys () {
+      return this.$store.state.localStorageKeys
+    },
+    activeTools () {
+      return this.$store.state.activeTools
+    },
+    inactiveTools () {
+      return this.$store.state.inactiveTools
+    },
+    themeImages () {
+      return this.$store.state.themeImages
+    },
+    requestInfo () {
+      return this.$store.state.requestInfo
+    },
+    // activeThemeIndex () {
+    //   return this.$store.state.activeThemeIndex
+    // },
+    // blankHomePage () {
+    //   return this.$store.state.blankHomePage
+    // },
+    loginInfo () {
+      return this.$store.state.loginInfo
+    },
+    isLogin () {
+      return this.$store.state.isLogin
+    }
+  },
+  created () {
+    this.$nextTick(() => {
+      this.toolTagsModal.activeItems = JSON.parse(JSON.stringify(this.activeTools))
+      try {
+        this.toolTagsModal.inactiveItems = JSON.parse(JSON.stringify(this.inactiveTools))
+      } catch (err) {
+      }
+      this.cacheActiveThemeIndex = this.settings.activeThemeIndex || [-1, -1]
+      this.cacheBlankHomePage = this.settings.blankHomePage
+      this.cacheCustomThemeImage = this.settings.customThemeImage
+    })
+  },
+  async beforeRouteLeave (to, from, next) {
+    if (to.name !== 'settings') {
+      await this.syncSettings()
+    }
+    next()
+  },
+  methods: {
+    ...mapActions([
+      'moduleSettings'
+    ]),
+    updateSettings (data) {
+      return new Promise(async (resolve) => {
+        await this.$store.dispatch('moduleSettings/updateSettings', data)
       })
     },
-    async beforeRouteLeave (to, from, next) {
-      if (to.name !== 'settings') {
-        await this.syncSettings()
-      }
-      next()
+    updateSettingsRemote (data) {
+      return new Promise(async (resolve) => {
+        await this.$store.dispatch('moduleSettings/updateSettingsRemote', data)
+      })
     },
-    methods: {
-      ...mapActions([
-        'moduleSettings'
-      ]),
-      updateSettings (data) {
-        return new Promise(async (resolve) => {
-          await this.$store.dispatch('moduleSettings/updateSettings', data)
-        })
-      },
-      updateSettingsRemote (data) {
-        return new Promise(async (resolve) => {
-          await this.$store.dispatch('moduleSettings/updateSettingsRemote', data)
-        })
-      },
-      validteImage (url, minWidth = 10) {
-        return new Promise((resolve) => {
-          let image = new Image()
-          image.src = url
-          image.onload = () => {
-            resolve(image.width >= minWidth)
-          }
-          image.onerror = (e) => {
-            resolve(false)
-          }
-        })
-      },
-      getActiveTools () {
-        return new Promise(async (resolve) => {
-          let activeTools = await StorageUtil.getItem(this.localStorageKeys.activeTools)
-          resolve(activeTools || JSON.parse(JSON.stringify(this.tools)))
-        })
-      },
-      getInactiveTools () {
-        return new Promise(async (resolve) => {
-          let inactiveTools = await StorageUtil.getItem(this.localStorageKeys.inactiveTools)
-          resolve(inactiveTools || [])
-        })
-      },
-      openToolTagsModal () {
-        this.toolTagsModal.shown = true
-      },
-      async saveTools () {
-        this.$store.commit(types.SET_ACTIVE_TOOLS, {
-          tools: this.toolTagsModal.activeItems
-        })
-        this.$store.commit(types.SET_INACTIVE_TOOLS, {
-          tools: this.toolTagsModal.inactiveTools
-        })
-        await StorageUtil.setItem(this.localStorageKeys.activeTools, this.toolTagsModal.activeItems)
-        await StorageUtil.setItem(this.localStorageKeys.inactiveTools, this.toolTagsModal.inactiveItems)
+    validteImage (url, minWidth = 10) {
+      return new Promise((resolve) => {
+        let image = new Image()
+        image.src = url
+        image.onload = () => {
+          resolve(image.width >= minWidth)
+        }
+        image.onerror = (e) => {
+          resolve(false)
+        }
+      })
+    },
+    getActiveTools () {
+      return new Promise(async (resolve) => {
+        let activeTools = await StorageUtil.getItem(this.localStorageKeys.activeTools)
+        resolve(activeTools || JSON.parse(JSON.stringify(this.tools)))
+      })
+    },
+    getInactiveTools () {
+      return new Promise(async (resolve) => {
+        let inactiveTools = await StorageUtil.getItem(this.localStorageKeys.inactiveTools)
+        resolve(inactiveTools || [])
+      })
+    },
+    openToolTagsModal () {
+      this.toolTagsModal.shown = true
+    },
+    async saveTools () {
+      this.$store.commit(types.SET_ACTIVE_TOOLS, {
+        tools: this.toolTagsModal.activeItems
+      })
+      this.$store.commit(types.SET_INACTIVE_TOOLS, {
+        tools: this.toolTagsModal.inactiveTools
+      })
+      await StorageUtil.setItem(this.localStorageKeys.activeTools, this.toolTagsModal.activeItems)
+      await StorageUtil.setItem(this.localStorageKeys.inactiveTools, this.toolTagsModal.inactiveItems)
 
-      },
-      changeMaxToolCount (e) {
-        this.$store.commit(types.SET_MAX_TOOL_COUNT, {
-          count: Number(e.target.value)
-        })
-      },
-      openThemeImagesModal () {
-        this.themeImagesModal.shown = true
-      },
-      chooseThemeImage (e) {
-        this.cacheActiveThemeIndex = [Number(e.target.dataset.index), Number(e.target.dataset.subIndex)]
+    },
+    changeMaxToolCount (e) {
+      this.$store.commit(types.SET_MAX_TOOL_COUNT, {
+        count: Number(e.target.value)
+      })
+    },
+    openThemeImagesModal () {
+      this.themeImagesModal.shown = true
+    },
+    chooseThemeImage (e) {
+      this.cacheCustomThemeImage = ''
+      this.cacheActiveThemeIndex = [Number(e.target.dataset.index), Number(e.target.dataset.subIndex)]
+      // this.updateSettings({
+      //   activeThemeIndex: this.cacheActiveThemeIndex
+      // })
+    },
+    saveTheme () {
+      // if (!this.isLogin) {
+      let _preperToUpdate = {
+        activeThemeIndex: this.cacheActiveThemeIndex
+      }
+      if (this.customThemeImageValidate) {
+        _preperToUpdate.customThemeImage = this.cacheCustomThemeImage
+      } else {
+        _preperToUpdate.customThemeImage = ''
+      }
+      this.updateSettingsRemote(_preperToUpdate)
+      // } else {
+      // this.syncSettings()
+      // }
+    },
+    filterBlankHomePage () {
+      let blankHomePage = ''
+      if (!this.cacheBlankHomePage || this.cacheBlankHomePage.trim() === 'default') {
+        blankHomePage = 'default'
+      } else if (this.cacheBlankHomePage.match(/^\/\//)) {
+        blankHomePage = 'http://' + this.cacheBlankHomePage.replace(/^\/\//, '')
+      } else if (!this.cacheBlankHomePage.match(/^http(s?):/)) {
+        blankHomePage = 'http://' + this.cacheBlankHomePage
+      } else {
+        blankHomePage = this.cacheBlankHomePage
+      }
+      return blankHomePage
+    },
+    changeBlankHomePage () {
+      if (!this.isLogin) {
         this.updateSettings({
-          activeThemeIndex: this.cacheActiveThemeIndex
-        })
-      },
-      saveTheme () {
-        // if (!this.isLogin) {
-        let _preperToUpdate = {
-          activeThemeIndex: this.cacheActiveThemeIndex
-        }
-        if (this.customThemeImageValidate) {
-          _preperToUpdate.customThemeImage = this.cacheCustomThemeImage
-        } else {
-          _preperToUpdate.customThemeImage = ''
-        }
-        this.updateSettingsRemote(_preperToUpdate)
-        // } else {
-        // this.syncSettings()
-        // }
-      },
-      changeBlankHomePage () {
-        this.updateSettings({
-          blankHomePage: this.cacheBlankHomePage
-        })
-      },
-      changeCustomThemeImage () {
-        // this.updateSettings({
-        //   customThemeImage: this.cacheCustomThemeImage
-        // })
-      },
-      syncSettings () {
-        return new Promise(async (resolve) => {
-          await this.$store.dispatch(types.AJAX, {
-            url: this.requestInfo.updateSettings,
-            data: {
-              phonenum: this.loginInfo.phonenum,
-              token: this.loginInfo.token,
-              settings: JSON.stringify(this.settings)
-            }
-          }).catch(err => {
-            this.$Message.error(err.message || '请求失败，请稍后再试')
-            resolve(true)
-          }).then(responseData => {
-            if (responseData && responseData.status === 200) {
-            }
-            resolve(true)
-          })
-        })
-      },
-      clearAllStorage () {
-        const that = this
-        this.$Modal.confirm({
-          title: '清除缓存',
-          content: '删除缓存后，用户所有设置会恢复为默认，确定删除所有缓存？',
-          okText: '确认',
-          cancelText: '取消',
-          async onOk () {
-            for (let k in that.localStorageKeys) {
-              if (that.localStorageKeys.hasOwnProperty(k)) {
-                await StorageUtil.removeItem(that.localStorageKeys[k])
-              }
-            }
-            that.$Message.success('缓存已经清除')
-          }
+          blankHomePage: this.filterBlankHomePage()
         })
       }
     },
-    watch: {
-      'cacheCustomThemeImage': {
-        immediate: true,
-        async handler (val) {
-          // 自定义图片是否可以正常渲染
-          if (!this.isLogin || !val) {
-            this.customThemeImageValidate = false
-          } else {
-            let validator = await this.validteImage(val)
-            this.customThemeImageValidate = validator
+    changeCustomThemeImage () {
+      // this.fetchingCustomImage = true
+      // this.updateSettings({
+      //   customThemeImage: this.cacheCustomThemeImage
+      // })
+    },
+    syncSettings () {
+      return new Promise(async (resolve) => {
+        await this.$store.dispatch(types.AJAX, {
+          url: this.requestInfo.updateSettings,
+          data: {
+            phonenum: this.loginInfo.phonenum,
+            token: this.loginInfo.token,
+            settings: JSON.stringify(Object.assign({}, this.settings, {
+              blankHomePage: this.filterBlankHomePage()
+            }))
           }
+        }).catch(err => {
+          this.$Message.error(err.message || '请求失败，请稍后再试')
+          resolve(true)
+        }).then(responseData => {
+          if (responseData && responseData.status === 200) {
+            this.$store.commit(types.UPDATE_LOGIN_INFO, {
+              settings: responseData.data.settings || {}
+            })
+            this.$Message.success('保存成功')
+          }
+          resolve(true)
+        })
+      })
+    },
+    clearAllStorage () {
+      const that = this
+      this.$Modal.confirm({
+        title: '清除缓存',
+        content: '删除缓存后，用户所有设置会恢复为默认，确定删除所有缓存？',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          for (let k in that.localStorageKeys) {
+            if (that.localStorageKeys.hasOwnProperty(k)) {
+              await StorageUtil.removeItem(that.localStorageKeys[k])
+            }
+          }
+          that.$Message.success('缓存已经清除')
         }
-      },
-      'settings.blankHomePage': {
-        immediate: true,
-        handler (val) {
-          this.cacheBlankHomePage = val
-        }
-      }
-      // ,
-      // customThemeImageValidate (val) {
-      //   if (val) {
-      //     this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
-      //       customThemeImage: this.customThemeImage
-      //     })
-      //   } else {
-      //     this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
-      //       customThemeImage: ''
-      //     })
-      //   }
-      // }
+      })
     }
+  },
+  watch: {
+    'cacheCustomThemeImage': {
+      immediate: true,
+      async handler (val) {
+        this.fetchingCustomImage = true
+        // 自定义图片是否可以正常渲染
+        if (!this.isLogin || !val) {
+          this.customThemeImageValidate = false
+        } else {
+          let validator = await this.validteImage(val)
+          this.customThemeImageValidate = validator
+        }
+        setTimeout(() => {
+          this.fetchingCustomImage = false
+        }, 300)
+      }
+    },
+    'settings.blankHomePage': {
+      immediate: true,
+      handler (val) {
+        this.cacheBlankHomePage = val
+      }
+    }
+    // ,
+    // customThemeImageValidate (val) {
+    //   if (val) {
+    //     this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
+    //       customThemeImage: this.customThemeImage
+    //     })
+    //   } else {
+    //     this.$store.commit(types.CACHE_CUSTOM_THEME_IMAGE, {
+    //       customThemeImage: ''
+    //     })
+    //   }
+    // }
   }
+}
 </script>

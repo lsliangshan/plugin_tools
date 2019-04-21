@@ -66,6 +66,9 @@ export const mutations = {
     state.settings = Object.assign({}, state.settings, data)
     StorageUtil.setItem(state.localStorageKeys.settings, state.settings)
   },
+  [types.CHANGE_USER_SETTINGS] (state, data) {
+    state.settings = data
+  },
   [types.CACHE_SOCKET_CONNECTION] (state, data) {
     state.socketConnection = data.connection
   },

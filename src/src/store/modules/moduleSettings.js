@@ -27,9 +27,9 @@ const moduleSettings = {
         }
         if (!settings.customThemeImage) {
           settings.customThemeImage = ''
-          if (!settings.activeThemeIndex) {
-            settings.activeThemeIndex = [0, 0]
-          }
+        }
+        if (!settings.activeThemeIndex) {
+          settings.activeThemeIndex = [0, 0]
         }
       }
       return settings || {}
@@ -66,17 +66,20 @@ const moduleSettings = {
             settings: JSON.stringify(data)
           }
         }, {
-            root: true
-          }).catch(err => {
-            // this.$Message.error(err.message || '请求失败，请稍后再试')
-            console.log('...保存配置至远端 error..', err)
-            resolve(true)
-          }).then(responseData => {
-            if (responseData && responseData.status === 200) {
-              console.log('...保存配置至远端..', responseData)
-            }
-            resolve(true)
-          })
+          root: true
+        }).catch(() => {
+          // this.$Message.error(err.message || '请求失败，请稍后再试')
+          resolve(true)
+        }).then(responseData => {
+          if (responseData && responseData.status === 200) {
+            commit(types.UPDATE_LOGIN_INFO, {
+              settings: responseData.data.settings || {}
+            }, {
+              root: true
+            })
+          }
+          resolve(true)
+        })
       })
     },
     updateSettings ({ state, commit, dispatch, rootState }, data) {
@@ -89,8 +92,8 @@ const moduleSettings = {
         commit(types.UPDATE_LOGIN_INFO, {
           settings: settings
         }, {
-            root: true
-          })
+          root: true
+        })
       }
     },
     async updateSettingsRemote ({ state, commit, dispatch, rootState }, data) {
@@ -103,8 +106,8 @@ const moduleSettings = {
         commit(types.UPDATE_LOGIN_INFO, {
           settings: settings
         }, {
-            root: true
-          })
+          root: true
+        })
         await dispatch('saveSettingsRemote', settings)
       }
     }

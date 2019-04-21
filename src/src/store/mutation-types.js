@@ -138,6 +138,9 @@ export const CACHE_CUSTOM_THEME_IMAGE = 'CACHE_CUSTOM_THEME_IMAGE'
 // 缓存用户的配置
 export const CACHE_USER_SETTINGS = 'CACHE_USER_SETTINGS'
 
+// 清除本地缓存的用户配置
+export const CHANGE_USER_SETTINGS = 'CHANGE_USER_SETTINGS'
+
 // 播放音乐
 export const PLAY_AUDIO = 'PLAY_AUDIO'
 

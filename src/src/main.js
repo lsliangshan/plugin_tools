@@ -75,10 +75,15 @@ router.beforeEach(async (to, from, next) => {
   // if (_localUserInfo.settings) {
   //   _localUserInfo.settings = JSON.parse(JSON.stringify(_localUserInfo.settings))
   // }
+  if (!_localUserInfo.settings) {
+    _localUserInfo.settings = {}
+  }
+  let _settings = await StorageUtil.getItem(store.state.localStorageKeys.settings)
   store.commit(types.CACHE_LOGIN_INFO, _localUserInfo)
+  store.commit(types.CHANGE_USER_SETTINGS, _settings || {})
   if (to.name === 'login') {
     // let _loginInfo = StorageUtil.getItem(store.state.localStorageKeys.userInfo)
-    if (_localUserInfo && !KitUtil.isEmptyObject(_localUserInfo)) {
+    if (_localUserInfo && (_localUserInfo.phonenum && _localUserInfo.token)) {
       // store.state.loginInfo = _localUserInfo
       if (!from.name || from.name === 'login') {
         next({
