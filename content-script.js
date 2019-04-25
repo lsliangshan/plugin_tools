@@ -9,6 +9,22 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   })
+
+  /**
+   * 自动密码管理
+   */
+  chrome.extension.sendMessage({
+    location: location.href,
+    action: 'auto-password'
+  }, function (response) {
+    console.log('auto-password', response)
+    if (response && Object.prototype.toString.call(response) === '[object Array]') {
+      for (let i = 0; i < response.length; i++) {
+        loadScriptString(response[i].scripts)
+      }
+    }
+  })
+
   // document.body.innerHTML = '<p style="color: darkcyan; font-size: 40px;">测试</p>'
   let content = document.body.innerText
   let result = ''
@@ -32,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.innerHTML = result;
 
     addJsonOperation();
-  } else {}
+  } else { }
 })
 
 const insertCssAndJs = function () {
@@ -61,7 +77,7 @@ const compressAll = function (currentJsonStr) {
   currentJsonStr.trim() !== '' && (new JSONFormat(currentJsonStr, 4).hideAll())
 }
 
-function loadScriptString(code) {
+function loadScriptString (code) {
   var script = document.createElement("script");
   script.type = "text/javascript";
   try {
