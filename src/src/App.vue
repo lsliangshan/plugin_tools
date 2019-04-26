@@ -6,6 +6,7 @@
                 enter-active-class="animated slideInUp faster"
                 leave-active-class="animated slideOutDown faster">
       <audio-box v-if="showAudio"></audio-box>
+      <context-menu></context-menu>
     </transition>
   </div>
 </template>
@@ -21,12 +22,12 @@
   import MultiMediaRoutes from './router/multi-media-routes.js'
   import StationMasterRoutes from './router/station-master-routes.js'
   import { StorageUtil } from './utils/index.js'
-  import Filer from 'filer.js'
   export default {
     name: 'App',
     components: {
       AllSvg: () => import('./components/common/svgs.vue'),
-      AudioBox: () => import('./components/pages/audio/components/AudioBox.vue')
+      AudioBox: () => import('./components/pages/audio/components/AudioBox.vue'),
+      ContextMenu: () => import('./components/common/ContextMenu.vue')
     },
     data () {
       return {
@@ -90,33 +91,33 @@
       })
       await this.store.dispatch(types.GET_THEME_IMAGES)
       this.$nextTick(() => {
-        if (!this.reader) {
-          this.reader = new FileReader()
-        }
-        chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-          if (request.action === 'auto-password') {
-            sendResponse(request)
-          }
-        })
+        // if (!this.reader) {
+        //   this.reader = new FileReader()
+        // }
+        // chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        //   if (request.action === 'auto-password') {
+        //     sendResponse(request)
+        //   }
+        // })
         // this.reader.readAsText('/static/js/main.js')
         // console.log('#######3')
         // this.reader.onload = function (e) {
         //   console.log('......', e)
         // }
       })
-      var filer = new Filer()
-      filer.init({ persistent: false, size: 1024 * 1024 }, async (fs) => {
-        // filer.size == Filer.DEFAULT_FS_SIZE
-        // filer.isOpen == true
-        // filer.fs == fs
-        console.log('init: ', fs)
-        let fileContent = await filer.open('/static/js/main.js', file => {
-          this.reader.onload = (e) => {
-            console.log('file: ', e)
-          }
-          this.reader.readAsArrayBuffer(file)
-        })
-      }, (err) => { });
+      // var filer = new Filer()
+      // filer.init({ persistent: false, size: 1024 * 1024 }, async (fs) => {
+      //   // filer.size == Filer.DEFAULT_FS_SIZE
+      //   // filer.isOpen == true
+      //   // filer.fs == fs
+      //   console.log('init: ', fs)
+      //   let fileContent = await filer.open('/static/js/main.js', file => {
+      //     this.reader.onload = (e) => {
+      //       console.log('file: ', e)
+      //     }
+      //     this.reader.readAsArrayBuffer(file)
+      //   })
+      // }, (err) => { });
 
     },
     async mounted () {
