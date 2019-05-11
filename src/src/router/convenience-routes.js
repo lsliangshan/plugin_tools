@@ -2,25 +2,9 @@ export default {
   meta: {
     label: 'Home',
     title: 'Enkel Tools',
-    name: '便民工具'
+    name: '其它工具'
   },
   children: [
-    {
-      path: '/scripts',
-      name: 'scripts',
-      meta: {
-        label: '网页脚本注入',
-        title: '网页脚本注入',
-        icon: '#route-scripts',
-        name: '网页脚本注入',
-        desc: '允许用户向目标网页注入脚本',
-        createTime: '1555234941000',
-        hot: true
-      },
-      components: {
-        ContentRouter: () => import('../components/tool/Scripts.vue')
-      }
-    },
     {
       path: '/augury',
       name: 'augury',
@@ -84,6 +68,69 @@ export default {
       },
       components: {
         ContentRouter: () => import('../components/tool/Id.vue')
+      }
+    },
+    {
+      path: '/img',
+      name: 'img',
+      meta: {
+        label: '传图识色',
+        title: '传图识色',
+        icon: '#route-img',
+        name: '传图识色',
+        desc: '可识别图片的主色调及辅色',
+        createTime: '545440088000',
+        hot: false
+      },
+      components: {
+        ContentRouter: () =>
+          import('../components/tool/Image.vue')
+      }
+    }, {
+      path: '/steganography',
+      name: 'steganography',
+      meta: {
+        label: '图片隐写术',
+        title: '图片隐写术',
+        icon: '#route-steganography',
+        name: '图片隐写术',
+        desc: '图片隐写术，内向同学的告白神器',
+        createTime: '545440088000',
+        hot: false
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Steganography.vue')
+      }
+    },
+    {
+      path: '/ip',
+      name: 'ip',
+      meta: {
+        label: 'IP',
+        title: 'ip地址查询',
+        icon: '#route-ip',
+        name: 'ip地址查询',
+        desc: '查询IP或域名的地理位置、宽带供应商；查看我的IP',
+        createTime: '1555234941000',
+        hot: false
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Ip.vue')
+      }
+    }, {
+      path: '/crypto',
+      name: 'crypto',
+      meta: {
+        label: '文字加密解密',
+        title: '文字加密解密',
+        icon: '#route-crypto',
+        name: '文字加密解密',
+        desc: '支持MD5、AES、DES、RC4、Rabbit等多种加密算法',
+        createTime: '545440088000',
+        hot: false
+      },
+      components: {
+        ContentRouter: () => import('../components/tool/Crypto.vue')
       }
     }
     // ,

@@ -143,6 +143,7 @@ const store = new Vuex.Store({
       nemMusic: {
         loginInfo: 'local-nem-music-login-info'
       },
+      ajaxHistory: 'local-a-h', // local-ajax-history
       activeTools: 'local-active-tools',
       inactiveTools: 'local-inactive-tools',
       maxToolCount: 'local-max-tool-count',
@@ -152,6 +153,7 @@ const store = new Vuex.Store({
       userScripts: 'local-user-scripts',
       nemRecentlyPlayList: 'local-nem-recently-play-list' // 网易云音乐 最近播放列表，本地列表
     },
+    ajaxHistory: [],
     blankHomePage: 'default',
     tools: [],
     activeTools: [],

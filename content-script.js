@@ -13,13 +13,13 @@ document.addEventListener('DOMContentLoaded', function () {
   /**
    * 自动密码管理
    */
-  chrome.extension.sendMessage({
-    location: location.href,
-    action: 'context-menu'
-  }, response => {
-    let bp = chrome.extension
-    console.log('response: ', bp)
-  })
+  // chrome.extension.sendMessage({
+  //   location: location.href,
+  //   action: 'context-menu'
+  // }, response => {
+  //   let bp = chrome.extension
+  //   console.log('response: ', bp)
+  // })
 
   // document.body.innerHTML = '<p style="color: darkcyan; font-size: 40px;">测试</p>'
   let content = document.body.innerText

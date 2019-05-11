@@ -61,7 +61,8 @@
             </a>
             <Menu width="200"
                   @on-select="navToUserSet">
-              <MenuItem name="profile">
+              <MenuItem name="profile"
+                        v-if="isLogin">
               <Icon type="md-paper"></Icon>
               个人中心
               </MenuItem>
@@ -163,6 +164,9 @@ export default {
     },
     loginInfo () {
       return this.$store.state.loginInfo
+    },
+    isLogin () {
+      return this.$store.state.isLogin
     },
     activeThemeIndex () {
       return this.$store.state.activeThemeIndex

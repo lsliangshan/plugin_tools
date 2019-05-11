@@ -2,7 +2,7 @@ export default {
   meta: {
     label: 'Home',
     title: 'Enkel Tools',
-    name: '代码处理工具'
+    name: '常用工具'
   },
   children: [{
     path: '/json',
@@ -21,6 +21,38 @@ export default {
         import('../components/tool/Json.vue')
     }
   }, {
+    path: '/qrcode',
+    name: 'qrcode',
+    meta: {
+      label: '二维码',
+      title: '二维码生成',
+      icon: '#route-qrcode',
+      name: '二维码生成',
+      desc: '将字符生成二维码，可下载生成的二维码',
+      createTime: '545440088000',
+      hot: false
+    },
+    components: {
+      ContentRouter: () =>
+        import('../components/tool/Qrcode.vue')
+    }
+  }, {
+    path: '/base64',
+    name: 'base64',
+    meta: {
+      label: 'BASE64',
+      title: 'base64转换',
+      icon: '#route-base64',
+      name: 'base64编码解码',
+      desc: '字符与base64互转，图片与base64互转',
+      createTime: '545440088000',
+      hot: false
+    },
+    components: {
+      ContentRouter: () =>
+        import('../components/tool/Base64.vue')
+    }
+  }, {
     path: '/url',
     name: 'url',
     meta: {
@@ -28,13 +60,28 @@ export default {
       title: 'URL参数解析',
       icon: '#route-url',
       name: 'URL参数解析',
-      desc: 'URL参数解析，URL参数转JSON，JSON转URL参数格式',
+      desc: 'URL参数转JSON，JSON转URL参数格式',
       createTime: '545440088000',
       hot: false
     },
     components: {
       ContentRouter: () =>
         import('../components/tool/Url.vue')
+    }
+  }, {
+    path: '/scripts',
+    name: 'scripts',
+    meta: {
+      label: '网页脚本注入',
+      title: '网页脚本注入',
+      icon: '#route-scripts',
+      name: '网页脚本注入',
+      desc: '允许用户向目标网页注入脚本',
+      createTime: '1555234941000',
+      hot: true
+    },
+    components: {
+      ContentRouter: () => import('../components/tool/Scripts.vue')
     }
   }, {
     path: '/time',

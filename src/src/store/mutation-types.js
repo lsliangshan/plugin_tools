@@ -198,6 +198,12 @@ export const CACHE_LOGIN_STATUS = 'CACHE_LOGIN_STATUS'
 // 缓存socket connection
 export const CACHE_SOCKET_CONNECTION = 'CACHE_SOCKET_CONNECTION'
 
+// 缓存 ajax 请求历史
+export const CACHE_AJAX_HISTORY = 'CACHE_AJAX_HISTORY'
+
+// 获取 ajax 请求历史
+export const GET_AJAX_HISTORY = 'GET_AJAX_HISTORY'
+
 // >>>> actions:
 
 // 登录1

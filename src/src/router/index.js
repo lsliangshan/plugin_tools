@@ -48,8 +48,8 @@ export const MainRouter = {
   },
   children: [
     ...PageRoutes.children,
-    ...MultiMediaRoutes.children,
     ...CodeRoutes.children,
+    ...MultiMediaRoutes.children,
     ...ConvenienceRoutes.children,
     ...StationMasterRoutes.children,
     {

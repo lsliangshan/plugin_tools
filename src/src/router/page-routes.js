@@ -1,7 +1,7 @@
 export default {
   meta: {
     label: 'Home',
-    title: 'Dei2 Tools'
+    title: 'Enkel'
   },
   children: [
     {

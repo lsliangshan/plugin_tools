@@ -83,6 +83,25 @@ export const mutations = {
     let cryptoText = CryptoJS[state.cryptoType].encrypt(loginInfoStr, state.privateKey).toString()
     StorageUtil.setItem(state.localStorageKeys.userInfo, cryptoText)
   },
+  [types.CACHE_AJAX_HISTORY] (state, data) {
+    state.ajaxHistory = JSON.parse(JSON.stringify(data))
+    let historyStr = JSON.stringify(data)
+    let cryptoText = CryptoJS[state.cryptoType].encrypt(historyStr, state.privateKey).toString()
+    StorageUtil.setItem(state.localStorageKeys.ajaxHistory, cryptoText)
+  },
+  [types.GET_AJAX_HISTORY] (state) {
+    return new Promise(async (resolve) => {
+      let localAjaxHistory = await StorageUtil.getItem(state.localStorageKeys.ajaxHistory)
+      let ajaxHistory = []
+      if (localAjaxHistory) {
+        ajaxHistory = CryptoJS[state.cryptoType].decrypt(localAjaxHistory, state.privateKey).toString(CryptoJS.enc.Utf8)
+        state.ajaxHistory = JSON.parse(ajaxHistory)
+      } else {
+        state.ajaxHistory = []
+      }
+      resolve(true)
+    })
+  },
   [types.UPDATE_LOGIN_INFO] (state, data) {
     let loginInfo = Object.assign({}, state.loginInfo, data)
     state.loginInfo = loginInfo
