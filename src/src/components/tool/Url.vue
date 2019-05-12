@@ -123,8 +123,18 @@
                             enter-active-class="animated fadeIn"
                             leave-active-class="animated fadeOut">
                   <div class="formatted_response"
-                       v-if="!ajaxLoading"
+                       v-if="!ajaxLoading && (responseType === 'json')"
                        v-html="formattedResponse"></div>
+                </transition>
+                <transition name="response-transition"
+                            enter-active-class="animated fadeIn"
+                            leave-active-class="animated fadeOut">
+                  <div class="formatted_response formatted_response_image"
+                       v-if="!ajaxLoading && (responseType === 'image')">
+                    <img :src="originResponse"
+                         @load="hideAjaxLoading"
+                         alt="">
+                  </div>
                 </transition>
               </div>
             </Split>
@@ -351,9 +361,22 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 .formatted_response {
   word-break: break-all;
+}
+.formatted_response_image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.formatted_response_image img {
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .history_item {
@@ -450,7 +473,9 @@ export default {
         }
       ],
       ajaxLoading: false,
-      historyOpened: false
+      historyOpened: false,
+      originResponse: '',
+      responseType: 'json' // json/image
     }
   },
   computed: {
@@ -482,10 +507,21 @@ export default {
   },
   created () {
     if (this.$route.name === 'url') {
+      this.getQueryStr()
       this.getLocalAjaxHistory()
     }
   },
   methods: {
+    getQueryStr () {
+      if (this.$route.query.q) {
+        this.urlStr = decodeURIComponent(this.$route.query.q.trim())
+        this.change({
+          target: {
+            value: this.urlStr
+          }
+        })
+      }
+    },
     setActiveAjax (data) {
       this.change({
         target: {
@@ -493,8 +529,10 @@ export default {
         }
       })
       this.formattedResponse = ''
+      this.responseType = 'json'
       this.hostStr = data.host
       this.requestMethod = data.method
+      this.closeHistoryDrawer()
     },
     async getLocalAjaxHistory () {
       await this.$store.commit(types.GET_AJAX_HISTORY)
@@ -580,6 +618,8 @@ export default {
       if (!value || value.trim() === '') {
         this.ajaxAvailable = false
         this.setHostStr('')
+        this.responseType = 'json'
+        this.originResponse = ''
         this.jsonParams = []
         return
       }
@@ -739,6 +779,19 @@ export default {
         this.formattedResponse = '<span style="color: #f1592a; font-weight: bold;">' + err + '</span>'
       }
     },
+    getContentType (header) {
+      if (header.hasOwnProperty('content-type')) {
+        return header['content-type']
+      } else if (header.hasOwnProperty('Content-Type')) {
+        return header['Content-Type']
+      } else if (header.hasOwnProperty('content-Type')) {
+        return header['content-Type']
+      } else if (header.hasOwnProperty('Content-type')) {
+        return header['Content-type']
+      } else {
+        return ''
+      }
+    },
     async ajax () {
       return new Promise((resolve, reject) => {
         this.ajaxLoading = true
@@ -772,18 +825,27 @@ export default {
           args.headers = qs.stringify(args.headers)
         }
         let requestParams = {
+          // url: 'http://127.0.0.1:3000/Zpm/cli/a',
           url: 'https://talkapi.dei2.com/Zpm/cli/a',
           method: 'POST',
           data: qs.stringify(args)
         }
-        axios(requestParams).then(({ data }) => {
-          this.hideAjaxLoading()
+        axios(requestParams).then(({ data, headers }) => {
           if ((data.status === 200) && data.data && (Object.keys(data.data).length > 0)) {
-            this.setFormattedResponse(data.data.data)
-            this.$Notice.success({
-              title: '请求成功'
-            })
-            this.cacheLocalAjaxHistory()
+            this.hideAjaxLoading()
+            let contentType = this.getContentType(data.data.headers)
+            if (data.data.headers && contentType.indexOf('image/') > -1) {
+              // 返回图片
+              this.responseType = 'image'
+              this.originResponse = this.urlStr
+            } else {
+              this.responseType = 'json'
+              this.setFormattedResponse(data.data.data)
+              this.$Notice.success({
+                title: '请求成功'
+              })
+              this.cacheLocalAjaxHistory()
+            }
             resolve(true)
           } else {
             let errMsg = data.message || '请求失败，请稍后再试'
@@ -794,6 +856,7 @@ export default {
             resolve(true)
           }
         }).catch(error => {
+          console.log('error: ', error.message)
           this.hideAjaxLoading()
           this.formattedResponse = '<span style="color: #f1592a; font-weight: bold;">' + error.message + '</span>'
           this.$Notice.error({
@@ -805,6 +868,9 @@ export default {
     },
     openHistoryDrawer () {
       this.historyOpened = true
+    },
+    closeHistoryDrawer () {
+      this.historyOpened = false
     }
   },
   watch: {

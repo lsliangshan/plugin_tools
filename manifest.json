@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "enkel",
   "description": "提供JSON格式化、Base64加密解密、传图识色、文字加密等开发工具",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "permissions": [
     "activeTab",
     "tabs",
@@ -40,6 +40,9 @@
       "run_at": "document_start"
     }
   ],
+  "omnibox": {
+    "keyword": "enkel"
+  },
   "background": {
     "scripts": [
       "bg.js"
