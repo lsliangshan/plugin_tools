@@ -473,7 +473,7 @@ export default {
       let emptyCount = 0
       let i = 0
       for (i; i < params.length; i++) {
-        if ((params[i].key.trim() === '') && (params[i].value.trim() === '')) {
+        if (params[i].hasOwnProperty('key') && params[i].hasOwnProperty('value') && (params[i].key.trim() === '') && (params[i].value.trim() === '')) {
           emptyCount += 1
         }
       }
@@ -634,8 +634,8 @@ export default {
       for (let i = 0; i < urlArr.length; i++) {
         if (!outObj.hasOwnProperty(urlArr[i].split('=')[0])) {
           outObj.push({
-            key: urlArr[i].split('=')[0],
-            value: urlArr[i].split('=')[1],
+            key: urlArr[i].split('=')[0] || '',
+            value: urlArr[i].split('=')[1] || '',
             status: true
           })
         }
