@@ -65,3 +65,6 @@ typings/
 html/
 
 static/
+.history/
+precache.*.js
+precache-manifest.*.js
