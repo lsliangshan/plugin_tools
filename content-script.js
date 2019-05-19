@@ -10,6 +10,66 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   })
 
+  function getSelectText () {
+    try {
+      var selecter = window.getSelection().toString();
+      if (selecter != null && selecter.trim() != "") {
+        return selecter
+      } else {
+        return ''
+      }
+    } catch (err) {
+      var selecter = document.selection.createRange();
+      var s = selecter.text;
+      if (s != null && s.trim() != "") {
+        return s
+      } else {
+        return ''
+      }
+    }
+  }
+
+  function getWordBox (args) {
+    let box = document.createElement('div')
+    box.id = 'enkel-word-box'
+    box.style.position = 'absolute'
+    box.style.left = args.left + 'px'
+    box.style.top = (args.top) + 'px'
+    box.style.width = '200px'
+    box.style.height = '250px'
+    box.style.backgroundColor = '#f00'
+    document.body.appendChild(box)
+    return box
+  }
+
+  let wordBox
+
+  // window.addEventListener('mousedown', (evt) => {
+  //   console.log('mouse down: ', evt.target.id)
+  //   if (wordBox && (!evt.target.id || (evt.target.id !== 'enkel-word-box'))) {
+  //     try {
+  //       document.body.removeChild(wordBox)
+  //     } catch (err) { }
+  //   }
+  // })
+
+  // window.addEventListener('mouseup', (evt) => {
+  //   let selectText = getSelectText().trim()
+
+  //   if (selectText) {
+  //     console.log('selected text: ', selectText)
+  //     console.log(evt)
+  //     wordBox = getWordBox({
+  //       left: evt.pageX + 20,
+  //       top: evt.pageY + 20
+  //     })
+  //     // chrome.extension.sendMessage({
+  //     //   location: location.href,
+  //     //   action: 'select-word'
+  //     // })
+  //   }
+  // }, false)
+
   /**
    * 自动密码管理
    */
