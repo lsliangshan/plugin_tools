@@ -34,7 +34,8 @@
         "js/jquery.json.js",
         "js/json2.js",
         "js/jsonlint.js",
-        "content-script.js"
+        "content-script.js",
+        "bg-cookies.js"
       ],
       "css": [],
       "run_at": "document_start"

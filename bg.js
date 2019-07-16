@@ -331,7 +331,7 @@ function show (args) {
 
 function goToExtensionRoute (route) {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.create({ url: chrome.extension.getURL('index.html/#' + route) });
+    chrome.tabs.create({ url: chrome.extension.getURL('index.html#' + route) });
   });
 }
 function goToExtensionRouteWithQuery (info, tab, route) {
@@ -342,70 +342,120 @@ function goToExtensionRouteWithQuery (info, tab, route) {
     q = info.selectionText
   }
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.create({ url: chrome.extension.getURL('index.html/#' + route + '?q=' + q) });
+    chrome.tabs.create({ url: chrome.extension.getURL('index.html#' + route + '?q=' + q) });
   });
 }
 
-let contextMenu = null
-let selectionContextMenu = null
-let contexts = ['selection', 'image']
-if (!selectionContextMenu) {
-  selectionContextMenu = chrome.contextMenus.create({
-    contexts: contexts,
-    title: 'Enkel Loves You'
-  })
-  for (let i = 0; i < AllTools.length; i++) {
-    if (i !== 0) {
-      chrome.contextMenus.create({
-        contexts: contexts,
-        type: 'separator',
-        parentId: selectionContextMenu
-      })
-    }
-    let subMenu = chrome.contextMenus.create({
+try {
+  let contextMenu = null
+  let selectionContextMenu = null
+  let contexts = ['selection', 'image']
+  if (!selectionContextMenu) {
+    selectionContextMenu = chrome.contextMenus.create({
       contexts: contexts,
-      title: AllTools[i].name,
+      title: 'Enkel Loves You'
+    })
+    /**
+     * Cookie操作
+     */
+    chrome.contextMenus.create({
+      contexts: contexts,
+      title: 'Cookie管理',
       parentId: selectionContextMenu
     })
-    for (let j = 0; j < AllTools[i].sublist.length; j++) {
-      chrome.contextMenus.create({
+    chrome.contextMenus.create({
+      contexts: contexts,
+      type: 'separator',
+      parentId: selectionContextMenu
+    })
+    /**
+     * LocalStorage操作
+     */
+    chrome.contextMenus.create({
+      contexts: contexts,
+      title: 'LocalStorage管理',
+      parentId: selectionContextMenu
+    })
+    chrome.contextMenus.create({
+      contexts: contexts,
+      type: 'separator',
+      parentId: selectionContextMenu
+    })
+    for (let i = 0; i < AllTools.length; i++) {
+      if (i !== 0) {
+        chrome.contextMenus.create({
+          contexts: contexts,
+          type: 'separator',
+          parentId: selectionContextMenu
+        })
+      }
+      let subMenu = chrome.contextMenus.create({
         contexts: contexts,
-        title: AllTools[i].sublist[j].title,
-        parentId: subMenu,
-        onclick (info, tab) {
-          goToExtensionRouteWithQuery(info, tab, AllTools[i].sublist[j].path)
-        }
+        title: AllTools[i].name,
+        parentId: selectionContextMenu
       })
+      for (let j = 0; j < AllTools[i].sublist.length; j++) {
+        chrome.contextMenus.create({
+          contexts: contexts,
+          title: AllTools[i].sublist[j].title,
+          parentId: subMenu,
+          onclick (info, tab) {
+            goToExtensionRouteWithQuery(info, tab, AllTools[i].sublist[j].path)
+          }
+        })
+      }
     }
   }
-}
 
-if (!contextMenu) {
-  contextMenu = chrome.contextMenus.create({
-    title: 'Enkel Loves You'
-  })
-  for (let i = 0; i < AllTools.length; i++) {
-    if (i !== 0) {
-      chrome.contextMenus.create({
-        type: 'separator',
-        parentId: contextMenu
-      })
-    }
-    let subMenu = chrome.contextMenus.create({
-      title: AllTools[i].name,
+  if (!contextMenu) {
+    contextMenu = chrome.contextMenus.create({
+      title: 'Enkel Loves You'
+    })
+    /**
+     * Cookie操作
+     */
+    chrome.contextMenus.create({
+      title: 'Cookie管理',
       parentId: contextMenu
     })
-    for (let j = 0; j < AllTools[i].sublist.length; j++) {
-      chrome.contextMenus.create({
-        title: AllTools[i].sublist[j].title,
-        parentId: subMenu,
-        onclick () {
-          goToExtensionRoute(AllTools[i].sublist[j].path)
-        }
+    chrome.contextMenus.create({
+      type: 'separator',
+      parentId: contextMenu
+    })
+    /**
+     * LocalStorage操作
+     */
+    chrome.contextMenus.create({
+      title: 'LocalStorage管理',
+      parentId: contextMenu
+    })
+    chrome.contextMenus.create({
+      type: 'separator',
+      parentId: contextMenu
+    })
+    for (let i = 0; i < AllTools.length; i++) {
+      if (i !== 0) {
+        chrome.contextMenus.create({
+          type: 'separator',
+          parentId: contextMenu
+        })
+      }
+      let subMenu = chrome.contextMenus.create({
+        title: AllTools[i].name,
+        parentId: contextMenu
       })
+      for (let j = 0; j < AllTools[i].sublist.length; j++) {
+        chrome.contextMenus.create({
+          title: AllTools[i].sublist[j].title,
+          parentId: subMenu,
+          onclick () {
+            goToExtensionRoute(AllTools[i].sublist[j].path)
+          }
+        })
+      }
     }
   }
-}
+} catch (err) { }
 
 function formatSuggest (text) {
   let allTools = AllTools
@@ -425,14 +475,16 @@ function formatSuggest (text) {
   return outArr
 }
 
-chrome.omnibox.onInputChanged.addListener(
-  function (text, suggest) {
-    let s = formatSuggest(text)
-    suggest(s)
-  });
+try {
+  chrome.omnibox.onInputChanged.addListener(
+    function (text, suggest) {
+      let s = formatSuggest(text)
+      suggest(s)
+    });
 
-// This event is fired with the user accepts the input in the omnibox.
-chrome.omnibox.onInputEntered.addListener(
-  function (text) {
-    goToExtensionRoute(text)
-  });
+  // This event is fired with the user accepts the input in the omnibox.
+  chrome.omnibox.onInputEntered.addListener(
+    function (text) {
+      goToExtensionRoute(text)
+    });
+} catch (err) { }
