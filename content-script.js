@@ -10,6 +10,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   })
 
+  chrome.extension.onMessage.addListener((request, sender, sendResponse) => {
+    console.log('request: ', request)
+    console.log('sender: ', sender)
+    sendResponse('Content Scripts Responsed')
+  })
+
   function getSelectText () {
     try {
       var selecter = window.getSelection().toString();
