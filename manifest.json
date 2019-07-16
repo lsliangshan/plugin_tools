@@ -34,7 +34,7 @@
         "js/jquery.json.js",
         "js/json2.js",
         "js/jsonlint.js",
-        "content-script.js",
+        "cs.js",
         "bg-cookies.js"
       ],
       "css": [],

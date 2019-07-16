@@ -347,23 +347,17 @@ function goToExtensionRouteWithQuery (info, tab, route) {
 }
 
 function cookieClickHandler (info, tab) {
-  console.log('Cookie管理: ', info)
-
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, { message: "calculate" }, function (response) {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      location: tabs[0].url,
+      action: 'cookie'
+    }, function (response) {
       if (typeof response != 'undefined') {
-        alert(response);
+        // alert(response);
       } else {
-        alert("response为空=>" + response);
+        // alert("response为空=>" + response);
       }
-    });//end  sendMessage   
-  })
-  chrome.extension.sendMessage({
-    location: info.pageUrl,
-    action: 'cookie'
-  }, response => {
-    let bp = chrome.extension
-    console.log('response: ', response)
+    });
   })
 }
 
