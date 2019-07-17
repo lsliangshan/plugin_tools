@@ -9,6 +9,7 @@
     "declarativeContent",
     "contextMenus",
     "notifications",
+    "cookies",
     "file:///*",
     "https://secure.flickr.com/",
     "https://talkapi.dei2.com/",
@@ -35,7 +36,8 @@
         "js/json2.js",
         "js/jsonlint.js",
         "cs.js",
-        "bg-cookies.js"
+        "bg-cookies.js",
+        "bg-storage.js"
       ],
       "css": [],
       "run_at": "document_start"

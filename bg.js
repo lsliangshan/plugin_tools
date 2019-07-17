@@ -361,6 +361,21 @@ function cookieClickHandler (info, tab) {
   })
 }
 
+function localStorageClickHandler (info, tab) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      location: tabs[0].url,
+      action: 'local-storage'
+    }, function (response) {
+      if (typeof response != 'undefined') {
+        // alert(response);
+      } else {
+        // alert("response为空=>" + response);
+      }
+    });
+  })
+}
+
 try {
   let contextMenu = null
   let selectionContextMenu = null
@@ -392,7 +407,10 @@ try {
     chrome.contextMenus.create({
       contexts: contexts,
       title: 'LocalStorage管理',
-      parentId: selectionContextMenu
+      parentId: selectionContextMenu,
+      onclick (info, tab) {
+        localStorageClickHandler(info, tab)
+      }
     })
     chrome.contextMenus.create({
       contexts: contexts,
@@ -448,7 +466,10 @@ try {
      */
     chrome.contextMenus.create({
       title: 'LocalStorage管理',
-      parentId: contextMenu
+      parentId: contextMenu,
+      onclick (info, tab) {
+        localStorageClickHandler(info, tab)
+      }
     })
     chrome.contextMenus.create({
       type: 'separator',
@@ -508,4 +529,39 @@ try {
     function (text) {
       goToExtensionRoute(text)
     });
+} catch (err) { }
+function removeCookie (cookie, url) {
+  chrome.cookies.remove({ "url": url, "name": cookie });
+  // return
+  // var url = "http" + (cookie.secure ? "s" : "") + "://" + cookie.domain.replace(/^\./, '') +
+  //   cookie.path;
+  // chrome.cookies.remove({ "url": url, "name": cookie.name });
+}
+try {
+
+  // chrome.cookies.getAll({
+  //   url: 'https://www.zhaopin.com/'
+  // }, res => {
+  //   console.log('...before..', res)
+  //   for (let i = 0; i < res.length; i++) {
+  //     removeCookie(res[i])
+  //   }
+  //   console.log('.....', res)
+  // })
+  chrome.extension.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'delete-cookie') {
+
+      // chrome.cookies.getAll({
+      //   url: request.href
+      // }, res => {
+      //   console.log('...before..', res)
+      // })
+      /**
+       * cookie 操作
+       */
+      // console.log('delete-cookie request: ', request)
+      removeCookie(request.name, request.href)
+      sendResponse('删除成功')
+    }
+  })
 } catch (err) { }

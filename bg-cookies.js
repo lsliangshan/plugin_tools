@@ -21,11 +21,52 @@ document.addEventListener('DOMContentLoaded', function () {
     left: -490px; 
     top: 0px; 
     background-color: rgba(255, 255, 255, 0.9); 
-    box-shadow: 0 1px 5px #fff; 
+    box-shadow: 0 1px 5px rgba(11, 81, 15, 0.8); 
     transition: all .2s ease-in-out;
     -webkit-transition: all .2s ease-in-out;
     -webkit-user-select: none;
     font-family: sans-serif!important;
+  }
+  #enkel-message-box {
+    position: absolute;
+    width: auto;
+    // height: 32px;
+    bottom: 52px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    padding: 10px 40px 10px 15px;
+    border-radius: 4px;
+    background-color: #31b0d5;
+    color: #fff;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 300;
+    transition: all .3s ease-in-out;
+    -webkit-transition: all .3s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+    word-break: break-all;
+    text-align: justify;
+  }
+  #enkel-message-box.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #enkel-message-box .enkel-message-box-close {
+    position: absolute;
+    right: 5px;
+    font-size: 24px;
+    font-weight: 300;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
   }
   #enkel-cookie-box-header {
     width: 100%; 
@@ -39,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
     box-sizing: border-box;
   }
   #enkel-cookie-box-header .title {
-    color: rgb(11,81,15, 1);
+    color: rgba(11, 81, 15, 1);
     font-size: 16px;
     font-weight: 500;
   }
@@ -54,22 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
     font-weight: 300; 
     cursor: pointer;
     font-family: sans-serif;
-  }
-  #enkel-cookie-box-header .add {
-    width: 36px; 
-    height: 36px;
-    display: flex; 
-    flex-direction: row; 
-    align-items: center; 
-    justify-content: flex-end; 
-    font-size: 28px; 
-    font-weight: 300; 
-    cursor: pointer;
-    font-family: sans-serif;
-    cursor: pointer;
-    position: absolute;
-    right: 80px;
-    top: 5px;
   }
   #enkel-cookie-box-header .enkel-cookie-reload {
     width: 16px;
@@ -88,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
     overflow-y: auto;
     padding: 5px 0;
     box-sizing: border-box;
-    background-color: rgb(11, 81, 15, 0.9);
+    background-color: rgba(11, 81, 15, 0.9);
   }
   #enkel-cookie-box-content.empty {
     display: flex;
@@ -108,6 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
     box-sizing: border-box;
     color: #ccc;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
+    font-size: 15px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -117,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
     -webkit-transition: background-color .2s ease-in-out;
   }
   #enkel-cookie-box-content .enkel-cookie-item:hover {
-    background-color: rgb(11, 81, 15, 0.7);
+    background-color: rgba(11, 81, 15, 0.7);
   }
   #enkel-cookie-box-content .enkel-cookie-item .enkel-cookie-item-label {
     width: 150px;
@@ -169,12 +195,48 @@ document.addEventListener('DOMContentLoaded', function () {
   #enkel-cookie-box-content .enkel-cookie-item .enkel-cookie-item-value::-webkit-scrollbar-corner {background: transparent;}
   #enkel-cookie-box-content .enkel-cookie-item .enkel-cookie-item-value[contenteditable]:focus {
     outline: none;
-    background-color: rgb(11, 81, 15, 0.8);
+    background-color: rgba(11, 81, 15, 0.8);
   }
   #enkel-cookie-box-footer {
     width: 100%;
     height: 48px;
     background-color: #fff;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    box-sizing: border-box;
+  }
+  #enkel-cookie-box-footer .enkel-custom-input:focus {
+    outline: none;
+  }
+  #enkel-cookie-box-footer .enkel-cookie-add-label {
+    width: 150px;
+    height: 32px;
+    line-height: 32px;
+  }
+  #enkel-cookie-box-footer .enkel-cookie-add-value {
+    width: 220px;
+    height: 32px;
+    line-height: 32px;
+    margin-left: 10px;
+  }
+  #enkel-cookie-box-footer .enkel-cookie-add-btn {
+    padding: 4px 15px;
+    border: none;
+    background-color: rgba(11, 81, 15, 0.8);
+    color: #fff;
+    border-radius: 3px;
+    transition: all .1s ease-in-out;
+    -webkit-transition: all .1s ease-in-out;
+    cursor: pointer;
+  }
+  #enkel-cookie-box-footer .enkel-cookie-add-btn:active {
+    background-color: rgba(11, 81, 15, 1);
+  }
+  #enkel-cookie-box-footer .enkel-cookie-add-btn:focus {
+    outline: none;
   }
   `)
 
@@ -198,6 +260,46 @@ document.addEventListener('DOMContentLoaded', function () {
     cookieBox.style.left = '-490px'
   }
 
+  function showMessage (msg) {
+    let cookieBox = document.querySelector('#enkel-cookie-box')
+    let messageBox = document.querySelector('#enkel-message-box')
+    if (!messageBox) {
+      messageBox = document.createElement('div')
+      messageBox.id = 'enkel-message-box'
+
+      let messageText = document.createElement('div')
+      messageText.innerHTML = msg
+      messageBox.appendChild(messageText)
+
+      let messageClose = document.createElement('div')
+      messageClose.className = 'enkel-message-box-close'
+      messageClose.innerHTML = '&times;'
+      messageClose.onclick = function () {
+        hideMessage()
+      }
+      messageBox.appendChild(messageClose)
+
+      cookieBox.appendChild(messageBox)
+    } else {
+      messageBox.querySelectorAll('div')[0].innerHTML = msg
+    }
+    setTimeout(() => {
+      if (!messageBox.classList.contains('show')) {
+        messageBox.classList.add('show')
+        setTimeout(() => {
+          hideMessage()
+        }, 300000)
+      }
+    }, 300)
+  }
+
+  function hideMessage () {
+    let messageBox = document.querySelector('#enkel-message-box')
+    if (messageBox.classList.contains('show')) {
+      messageBox.classList.remove('show')
+    }
+  }
+
   function initCookieBoxHeader (cookieBox) {
     let cookieBoxHeader = document.querySelector('#enkel-cookie-box-header')
     if (!cookieBoxHeader) {
@@ -205,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
       cookieBoxHeader.id = 'enkel-cookie-box-header'
       let title = document.createElement('div')
       title.className = 'title'
-      title.innerHTML = 'Cookie管理'
+      title.innerText = 'Cookie管理'
       cookieBoxHeader.appendChild(title)
 
       let reload = document.createElement('img')
@@ -216,15 +318,6 @@ document.addEventListener('DOMContentLoaded', function () {
         reloadCookieBoxContent(cookieBox)
       }
       cookieBoxHeader.appendChild(reload)
-
-      let add = document.createElement('div')
-      add.className = 'add'
-      add.innerHTML = '+'
-      add.title = '新增Cookie'
-      // add.onclick = function () {
-      //   hideCookieBox(cookieBox)
-      // }
-      cookieBoxHeader.appendChild(add)
 
       let close = document.createElement('div')
       close.className = 'close'
@@ -237,39 +330,113 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  let newCookie = {
+    name: '',
+    value: ''
+  }
+
   function initCookieBoxFooter (cookieBox) {
     let cookieBoxFooter = document.querySelector('#enkel-cookie-box-footer')
     if (!cookieBoxFooter) {
       cookieBoxFooter = document.createElement('div')
       cookieBoxFooter.id = 'enkel-cookie-box-footer'
+
+      let labelInput = document.createElement('input')
+      labelInput.setAttribute('placeholder', '请输入Cookie名称')
+      labelInput.className = 'enkel-cookie-add-label enkel-custom-input w150'
+      labelInput.oninput = function (e) {
+        newCookie.name = e.target.value.trim()
+      }
+      cookieBoxFooter.appendChild(labelInput)
+
+      let valueInput = document.createElement('input')
+      valueInput.setAttribute('placeholder', '请输入Cookie值')
+      valueInput.className = 'enkel-cookie-add-value enkel-custom-input w240'
+      valueInput.oninput = function (e) {
+        newCookie.value = e.target.value.trim()
+      }
+      cookieBoxFooter.appendChild(valueInput)
+
+      let btnAdd = document.createElement('button')
+      btnAdd.className = 'enkel-cookie-add-btn'
+      btnAdd.innerText = '新增'
+      btnAdd.onclick = function () {
+        if (!newCookie.name) {
+          showMessage('Cookie名称不能为空')
+        } else {
+          let added = addCookie(newCookie)
+          if (added) {
+            watchItemLength()
+            let cookieBoxContent = document.querySelector('#enkel-cookie-box-content')
+            if (cookieBoxContent) {
+              cookieBoxContent.appendChild(initCookieItem(newCookie))
+              cookieBoxContent.scrollTop = 1000000
+            }
+            newCookie = {
+              name: '',
+              value: ''
+            }
+            labelInput.value = ''
+            valueInput.value = ''
+          }
+        }
+      }
+      cookieBoxFooter.appendChild(btnAdd)
+
       cookieBox.appendChild(cookieBoxFooter)
     }
   }
 
   function getCookieByName (name) {
-    var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)")
-    if (arr = document.cookie.match(reg))
+    var arr, reg = new RegExp("(^| )" + name + "=([^;]{0,})(;|$)")
+    arr = document.cookie.match(reg)
+    if (arr)
       return unescape(arr[2]);
     else
       return null
   }
 
+  function hasCookie (name) {
+    var reg = new RegExp("(^| )" + name + "=([^;]{0,})(;|$)")
+    return !!document.cookie.match(reg)
+  }
+
   function deleteCookieByName (name) {
-    var exp = new Date();
-    exp.setTime(exp.getTime() - 1);
-    var cval = getCookieByName(name);
-    if (cval != null) {
-      document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
-      return true
-    }
-    return false
+    // delete-cookie
+    // chrome.extension.sendMessage.addListener((request, sender, sendResponse) => {
+    //   if (request.action === 'cookie') {
+    //     /**
+    //      * cookie 操作
+    //      */
+    //     let cookieBox = getCookieBox()
+
+    //     setTimeout(() => {
+    //       showCookieBox(cookieBox)
+    //     }, 200)
+    //   }
+    // })
+    return new Promise((resolve, reject) => {
+      chrome.extension.sendMessage({
+        action: "delete-cookie",
+        name: name,
+        href: location.origin
+      }, function (response) {
+        if (response) {
+          resolve(true)
+        } else {
+          resolve(false)
+        }
+      });
+    })
   }
 
   function addCookie (cookie) {
-    if (getCookieByName(cookie.name)) {
-      console.log('cookie ' + cookie.name + ' 已经存在')
+    if (hasCookie(cookie.name)) {
+      showMessage('Cookie【' + cookie.name + '】已经存在')
+      return false
     } else {
       document.cookie = cookie.name + '=' + cookie.value
+      return true
     }
   }
 
@@ -278,11 +445,15 @@ document.addEventListener('DOMContentLoaded', function () {
     if (document.cookie.trim()) {
       var aCookie = document.cookie.split(";")
       for (var i = 0; i < aCookie.length; i++) {
-        var aCrumb = aCookie[i].split("=")
+        // var aCrumb = aCookie[i].split("=")
+        let _index = aCookie[i].indexOf('=')
+        var aCrumb = [aCookie[i].substring(0, _index), aCookie[i].substring(_index + 1)]
+        // if (aCrumb[1].indexOf('=') < 0) {
         cookies.push({
           name: aCrumb[0].trim(),
           value: aCrumb[1].trim()
         })
+        // }
       }
     }
     return cookies.sort((item, item2) => {
@@ -296,6 +467,23 @@ document.addEventListener('DOMContentLoaded', function () {
     })
   }
 
+  function watchItemLength (allCookies) {
+    let cookieBoxContent = document.querySelector('#enkel-cookie-box-content')
+    if (cookieBoxContent) {
+      if (!allCookies || (allCookies.length === 0)) {
+        if (!cookieBoxContent.classList.contains('empty')) {
+          cookieBoxContent.classList.add('empty')
+        }
+        cookieBoxContent.innerText = '良心网站，无Cookie'
+      } else {
+        if (cookieBoxContent.classList.contains('empty')) {
+          cookieBoxContent.innerText = cookieBoxContent.innerText.replace('良心网站，无Cookie', '')
+          cookieBoxContent.classList.remove('empty')
+        }
+      }
+    }
+  }
+
   function initCookieBoxContent (cookieBox) {
     let cookieBoxContent = document.querySelector('#enkel-cookie-box-content')
     if (!cookieBoxContent) {
@@ -307,7 +495,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!cookieBoxContent.classList.contains('empty')) {
           cookieBoxContent.classList.add('empty')
         }
-        cookieBoxContent.innerHTML = '良心网站，无Cookie'
+        cookieBoxContent.innerText = '良心网站，无Cookie'
+        // watchItemLength(allCookies)
       } else {
         for (let i = 0; i < allCookies.length; i++) {
           cookieBoxContent.appendChild(initCookieItem(allCookies[i]))
@@ -327,6 +516,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (cookieBoxContent) {
       cookieBox.removeChild(cookieBoxContent)
     }
+    // watchItemLength()
     initCookieBoxContent(cookieBox)
   }
 
@@ -336,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let cookieItemLabel = document.createElement('div')
     cookieItemLabel.className = 'enkel-cookie-item-label'
-    cookieItemLabel.innerHTML = cookie.name
+    cookieItemLabel.innerText = cookie.name
     cookieItemLabel.setAttribute('title', cookie.name)
     cookieItem.appendChild(cookieItemLabel)
 
@@ -344,7 +534,7 @@ document.addEventListener('DOMContentLoaded', function () {
     cookieItemValue.className = 'enkel-cookie-item-value'
     cookieItemValue.setAttribute('contenteditable', true)
     cookieItemValue.setAttribute('spellcheck', false)
-    cookieItemValue.innerHTML = cookie.value
+    cookieItemValue.innerText = cookie.value
     cookieItemValue.oninput = function (e) {
       document.cookie = cookie.name + '=' + e.target.innerText.trim()
     }
@@ -353,9 +543,12 @@ document.addEventListener('DOMContentLoaded', function () {
     let cookieItemDelete = document.createElement('div')
     cookieItemDelete.className = 'enkel-cookie-item-delete'
     cookieItemDelete.innerHTML = '&times;'
-    cookieItemDelete.onclick = function () {
-      let deleted = deleteCookieByName(cookie.name)
-      deleted && cookieItem.parentNode.removeChild(cookieItem)
+    cookieItemDelete.onclick = async function () {
+      let deleted = await deleteCookieByName(cookie.name)
+      if (deleted) {
+        cookieItem.parentNode.removeChild(cookieItem)
+        watchItemLength(getAllCookies())
+      }
     }
     cookieItem.appendChild(cookieItemDelete)
 
@@ -373,9 +566,6 @@ document.addEventListener('DOMContentLoaded', function () {
         showCookieBox(cookieBox)
       }, 200)
     }
-    console.log('request: ', request)
-    console.log('sender: ', sender)
-    sendResponse('Content Scripts Responsed')
   })
 })
 
